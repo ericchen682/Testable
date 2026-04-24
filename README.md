@@ -11,3 +11,6 @@ Flashcards remain one of the most research-backed study methods (spaced repetiti
 - merge main into branch frequently to avoid large merge conflicts
 - once feature is completed (acceptance criteria is met), make pull request into main
 - have at least one group member perform a review on the pr before merging into main (checking that acceptance criteria is met)
+
+### database visualization:
+<img src = "TestableDBVisualization.jpg">
