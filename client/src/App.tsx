@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-      <Flashcard></Flashcard>
+      <Flashcard titleText="title" frontText="front" backText="back"></Flashcard>
     </>
   )
 }
