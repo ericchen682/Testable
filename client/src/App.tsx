@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import Flashcard from './components/Flashcard';
 import FlashcardSet from './components/FlashcardSet';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 
 interface FlashcardProps {
     titleText: string;
     frontText: string;
     backText: string;
+    isFlipped?: boolean;
+    onClick?: () => void;
 }
 
 interface FlashcardSetProps {

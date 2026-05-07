@@ -4,11 +4,15 @@ import Flashcard from './Flashcard';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface FlashcardProps {
     titleText: string;
     frontText: string;
     backText: string;
+    isFlipped?: boolean;
+    onClick?: () => void;
+    
 }
 
 interface FlashcardSetProps {
@@ -17,6 +21,7 @@ interface FlashcardSetProps {
 
 function FlashcardSet({ flashcardList }: FlashcardSetProps)
 {
+    const [isFlipped, setFlipped] = React.useState(false);
     const [currCard, setCard] = React.useState(0);
     const setSize = flashcardList.length;
     return(
@@ -24,7 +29,10 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
             <Flashcard 
                 titleText={flashcardList[currCard].titleText} 
                 frontText={flashcardList[currCard].frontText} 
-                backText={flashcardList[currCard].backText}>
+                backText={flashcardList[currCard].backText}
+                isFlipped={isFlipped}
+                onClick={() => setFlipped(!isFlipped)}
+            >
             </Flashcard>
             <div
                 style = {{
@@ -40,6 +48,7 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                     <Button
                         style = {{
                             backgroundColor:"#56B6C6",
+                            color:"#170C79",
                             borderWidth:"0px",
                             borderRadius:"1.5rem",
                             width: "3rem",
@@ -48,20 +57,33 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                             cursor: 'pointer', 
                         }}
                         
-                        onClick={() => setCard(currCard-1)}
+                        onClick={() => {
+                            setCard(currCard-1);
+                            setFlipped(false);
+                        }}
                         >
                         ←
                     </Button>
                 }
-                <ProgressBar 
-                    now={((currCard+1)*100)/setSize} 
-                    label={`${currCard+1}/${setSize}`}
+                <ProgressBar
+                    style = {{
+                        // borderWidth:"1px",
+                        width:"15rem",
+                        height:"1.5rem",
+                        borderRadius:"0.75rem",
+                        // @ts-expect-error - custom CSS properties
+                        "--bs-progress-bg": "rgba(239,227,202,0.18)",
+                        "--bs-progress-bar-bg": "#56B6C6",
+                    }}
+                    now = {((currCard+(isFlipped ? 1 : 0))*100)/setSize} 
+                    // label = {`${currCard+1}/${setSize}`}
                 >
                 </ProgressBar>
                 {
                     <Button
                         style = {{
                             backgroundColor:"#56B6C6",
+                            color:"#170C79",
                             borderWidth:"0px",
                             borderRadius:"1.5rem",
                             width: "3rem",
@@ -69,7 +91,10 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                             visibility: currCard+1 < setSize ? "visible" : "hidden",
                             cursor: 'pointer', 
                         }}
-                        onClick={() => setCard(currCard+1)}
+                        onClick={() => {
+                            setCard(currCard+1);
+                            setFlipped(false);
+                        }}
                         >
                         →
                     </Button>

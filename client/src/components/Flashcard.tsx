@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface FlashcardProps {
     titleText: string;
     frontText: string;
     backText: string;
+    isFlipped?: boolean;
+    onClick?: () => void;
 }
 
 const FONTS = {
@@ -14,8 +17,8 @@ const FONTS = {
     grotesk: '"Space Grotesk", "Inter", system-ui, sans-serif',
 };
 
-function Flashcard({ titleText, frontText, backText }: FlashcardProps) {
-    const [isFlipped, setFlipped] = React.useState(false);
+function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: FlashcardProps) {
+    // const [isFlipped, setFlipped] = React.useState(false);
     const displayText = isFlipped ? backText : frontText;
     const bgColor = isFlipped ? "#56B6C6" : "#EFE3CA";
     const textColor = "#170C79"; 
@@ -33,7 +36,7 @@ function Flashcard({ titleText, frontText, backText }: FlashcardProps) {
                 padding: '1rem 1.25rem',
                 boxSizing: "border-box",
             }} 
-            onClick={() => setFlipped(!isFlipped)}
+            onClick={onClick}
         >
             <Card.Body 
                 style = {{ 
