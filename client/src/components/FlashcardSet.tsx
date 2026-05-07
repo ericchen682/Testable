@@ -75,7 +75,7 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                         "--bs-progress-bg": "rgba(239,227,202,0.18)",
                         "--bs-progress-bar-bg": "#56B6C6",
                     }}
-                    now = {((currCard+(isFlipped ? 1 : 0))*100)/setSize} 
+                    now = {((currCard+(isFlipped ? 1 : 0.5))*100)/setSize} 
                     // label = {`${currCard+1}/${setSize}`}
                 >
                 </ProgressBar>
