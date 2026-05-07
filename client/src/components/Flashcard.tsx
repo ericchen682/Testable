@@ -61,7 +61,7 @@ function Flashcard({ titleText, frontText, backText }: FlashcardProps) {
                 <Card.Text 
                     style = {{ 
                         color: textColor, 
-                        fontSize: isFlipped ? '1.5rem' : '3rem',
+                        fontSize: isFlipped ? '1.5rem' : '3rem',    
                         fontFamily: textFont, 
                     }}
                 >
