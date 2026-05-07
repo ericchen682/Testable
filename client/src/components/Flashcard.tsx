@@ -8,11 +8,20 @@ interface FlashcardProps {
     backText: string;
 }
 
+const FONTS = {
+    serif: '"Instrument Serif", "Cormorant Garamond", Georgia, serif',
+    mono:  '"JetBrains Mono", "IBM Plex Mono", monospace',
+    grotesk: '"Space Grotesk", "Inter", system-ui, sans-serif',
+};
+
 function Flashcard({ titleText, frontText, backText }: FlashcardProps) {
     const [isFlipped, setFlipped] = React.useState(false);
     const displayText = isFlipped ? backText : frontText;
     const bgColor = isFlipped ? "#56B6C6" : "#EFE3CA";
     const textColor = "#170C79"; 
+    
+    const textFont = isFlipped ? FONTS.grotesk : FONTS.serif;
+
     return(
         <Card 
             style = {{ 
@@ -33,7 +42,7 @@ function Flashcard({ titleText, frontText, backText }: FlashcardProps) {
                     justifyContent: 'center', 
                     alignItems: 'flex-start', 
                     textAlign: 'left', 
-                    height: '100%'
+                    height: '100%', 
                 }}
             >
                 <Card.Title 
@@ -43,7 +52,8 @@ function Flashcard({ titleText, frontText, backText }: FlashcardProps) {
                         left: '0rem', 
                         textTransform: 'uppercase', 
                         color: textColor, 
-                        fontSize: '1rem',  
+                        fontSize: '1rem',
+                        fontFamily: FONTS.mono,
                     }}
                 >
                     {titleText}
@@ -51,7 +61,8 @@ function Flashcard({ titleText, frontText, backText }: FlashcardProps) {
                 <Card.Text 
                     style = {{ 
                         color: textColor, 
-                        fontSize: '3rem', 
+                        fontSize: isFlipped ? '1.5rem' : '3rem',
+                        fontFamily: textFont, 
                     }}
                 >
                     {displayText}
