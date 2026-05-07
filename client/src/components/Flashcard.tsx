@@ -25,12 +25,13 @@ function Flashcard({ titleText, frontText, backText }: FlashcardProps) {
     return(
         <Card 
             style = {{ 
-                width: '25rem', 
-                height: '12rem', 
+                width: '27rem', 
+                height: '14.5rem', 
                 backgroundColor: bgColor, 
                 borderRadius: "1rem", 
                 cursor: 'pointer', 
-                padding: '1rem 1.25rem' 
+                padding: '1rem 1.25rem',
+                boxSizing: "border-box",
             }} 
             onClick={() => setFlipped(!isFlipped)}
         >
