@@ -26,25 +26,55 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                 frontText={flashcardList[currCard].frontText} 
                 backText={flashcardList[currCard].backText}>
             </Flashcard>
-            {
-                currCard > 0 && <Button
-                    onClick={() => setCard(currCard-1)}
-                    >
-                    Previous
-                </Button>
-            }
-            <ProgressBar 
-                now={((currCard+1)*100)/setSize} 
-                label={`${currCard+1}/${setSize}`}
+            <div
+                style = {{
+                    display:"flex",
+                    width:"27rem",
+                    boxSizing:"border-box",
+                    justifyContent:"space-between",
+                    alignItems:"center",
+                    padding:"0.5rem 0",
+                }}
             >
-            </ProgressBar>
-            {
-                currCard < (setSize-1) && <Button
-                    onClick={() => setCard(currCard+1)}
-                    >
-                    Next
-                </Button>
-            }
+                {
+                    <Button
+                        style = {{
+                            backgroundColor:"#56B6C6",
+                            borderWidth:"0px",
+                            borderRadius:"1.5rem",
+                            width: "3rem",
+                            height: "3rem",
+                            visibility: currCard > 0 ? "visible" : "hidden",
+                            cursor: 'pointer', 
+                        }}
+                        
+                        onClick={() => setCard(currCard-1)}
+                        >
+                        ←
+                    </Button>
+                }
+                <ProgressBar 
+                    now={((currCard+1)*100)/setSize} 
+                    label={`${currCard+1}/${setSize}`}
+                >
+                </ProgressBar>
+                {
+                    <Button
+                        style = {{
+                            backgroundColor:"#56B6C6",
+                            borderWidth:"0px",
+                            borderRadius:"1.5rem",
+                            width: "3rem",
+                            height: "3rem",
+                            visibility: currCard+1 < setSize ? "visible" : "hidden",
+                            cursor: 'pointer', 
+                        }}
+                        onClick={() => setCard(currCard+1)}
+                        >
+                        →
+                    </Button>
+                }
+            </div>
         </>
     );
 }
