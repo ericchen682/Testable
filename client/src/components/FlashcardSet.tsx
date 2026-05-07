@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Flashcard from './Flashcard';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import ProgressBar from 'react-bootstrap/ProgressBar'
 
 interface FlashcardProps {
     titleText: string;
@@ -32,6 +33,11 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                     Previous
                 </Button>
             }
+            <ProgressBar 
+                now={((currCard+1)*100)/setSize} 
+                label={`${currCard+1}/${setSize}`}
+            >
+            </ProgressBar>
             {
                 currCard < (setSize-1) && <Button
                     onClick={() => setCard(currCard+1)}
