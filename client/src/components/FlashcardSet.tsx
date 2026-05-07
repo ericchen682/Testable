@@ -17,6 +17,7 @@ interface FlashcardSetProps {
 function FlashcardSet({ flashcardList }: FlashcardSetProps)
 {
     const [currCard, setCard] = React.useState(0);
+    const setSize = flashcardList.length;
     return(
         <>
             <Flashcard 
@@ -24,6 +25,20 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                 frontText={flashcardList[currCard].frontText} 
                 backText={flashcardList[currCard].backText}>
             </Flashcard>
+            {
+                currCard > 0 && <Button
+                    onClick={() => setCard(currCard-1)}
+                    >
+                    Previous
+                </Button>
+            }
+            {
+                currCard < (setSize-1) && <Button
+                    onClick={() => setCard(currCard+1)}
+                    >
+                    Next
+                </Button>
+            }
         </>
     );
 }
