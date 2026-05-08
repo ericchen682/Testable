@@ -1,0 +1,9 @@
+[
+  {
+    "id": "9d61daca-ead2-4b4f-b58f-1880cadcfe22",
+    "email": "test@gmail.com",
+    "passwordSalt": "a7233005d954e16187d907923e4b5695",
+    "passwordHash": "ad962a7e758466473802b8437dfbfe01d638f3ee8370dfae7b92fc5aae15fc10c22ffcc427f839dc8120f4346a22d611718cd88f6c8d28feecc89a5395324a65",
+    "createdAt": "2026-05-08T04:19:28.921Z"
+  }
+]
