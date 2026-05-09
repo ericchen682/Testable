@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Flashcard from './components/Flashcard';
 import FlashcardSet from './components/FlashcardSet';
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -42,7 +42,6 @@ function App() {
     localStorage.setItem('token', data.token);
     setToken(data.token);
     setMessage(`Signed up as ${data.user.email}`);
-    await loadFlashcards(data.token);
   }
 
   async function handleLogin() {
@@ -64,7 +63,6 @@ function App() {
     localStorage.setItem('token', data.token);
     setToken(data.token);
     setMessage(`Logged in as ${data.user.email}`);
-    await loadFlashcards(data.token);
   }
 
   function handleLogout() {
@@ -92,6 +90,14 @@ function App() {
     setMessage('Flashcards loaded');
   }
 
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+
+    loadFlashcards(token);
+  }, [token]);
+
   return (
     <div style={{ padding: '2rem' }}>
 
@@ -106,10 +112,14 @@ function App() {
 
           <input
             type="password"
-            placeholder="password"
+            placeholder="Password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
+
+          <small>
+            At least 8 characters, with a capital letter, number, and special character.
+          </small>
 
           <button onClick={handleSignup}>Sign up</button>
           <button onClick={handleLogin}>Log in</button>

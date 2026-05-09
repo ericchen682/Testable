@@ -25,8 +25,12 @@ app.post('/api/auth/signup', async (req, res) => {
     return res.status(400).json({ error: 'Valid email is required.' });
   }
 
-  if (password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  const strongPasswordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
+  if (!strongPasswordPattern.test(password)) {
+    return res.status(400).json({
+      error: 'Password must be at least 8 characters and include a capital letter, a number, and a special character.',
+    });
   }
 
   const existingUser = await findUserByEmail(email);
