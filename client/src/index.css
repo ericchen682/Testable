@@ -15,6 +15,7 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
+
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
@@ -51,9 +52,12 @@
 }
 
 #root {
+
+
   width: 1126px;
   max-width: 100%;
   margin: 0 auto;
+
   text-align: center;
   border-inline: 1px solid var(--border);
   min-height: 100svh;
@@ -62,6 +66,8 @@
   box-sizing: border-box;
 }
 
+
+/* COMMON TAGS */
 body {
   margin: 0;
 }
@@ -108,4 +114,18 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+@keyframes tspin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.4); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
