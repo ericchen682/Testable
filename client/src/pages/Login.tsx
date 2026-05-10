@@ -104,14 +104,14 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="social-row">
+        {/* <div className="social-row">
           <button className="btn-social">
             <img src="https://www.google.com/favicon.ico" width="16" height="16" alt="" />
             Google
           </button>
         </div>
 
-        <div className="divider"><span>or with email</span></div>
+        <div className="divider"><span>or with email</span></div> */}
 
         <Field label="Email" type="email" value={email} onChange={setEmail} error={errors.email} autoFocus />
         <Field
