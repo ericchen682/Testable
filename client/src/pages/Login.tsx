@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 const Field = ({ label, type = 'text', value, onChange, error, autoFocus, suffix }: {
@@ -44,24 +45,50 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [formError, setFormError] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  const submit = () => {
+  const submit = async () => {
     const next: { email?: string; password?: string } = {};
     if (!email) next.email = 'Email is required';
     else if (!/^\S+@\S+\.\S+$/.test(email)) next.email = "That doesn't look like an email";
     if (!password) next.password = 'Password is required';
-    else if (password.length < 6) next.password = 'At least 6 characters';
     setErrors(next);
+    setFormError('');
     if (Object.keys(next).length > 0) return;
+
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSuccess(true); }, 1100);
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setFormError(data.error || 'Login failed');
+        return;
+      }
+
+      localStorage.setItem('token', data.token);
+      setSuccess(true);
+      navigate('/dashboard');
+    } catch {
+      setFormError('Could not connect to the server');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const reset = () => {
-    setEmail(''); setPassword(''); setErrors({}); setSuccess(false); setLoading(false);
+    setEmail(''); setPassword(''); setErrors({}); setFormError(''); setSuccess(false); setLoading(false);
   };
 
   return (
@@ -129,6 +156,8 @@ export default function Login() {
           </label>
           <a href="#" className="login-link">Forgot password?</a>
         </div>
+
+        {formError && <span className="field-error">{formError}</span>}
 
         <button className="btn-primary" onClick={submit} disabled={loading}>
           {loading ? (

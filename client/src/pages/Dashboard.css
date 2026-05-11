@@ -1,0 +1,38 @@
+.dashboard-root {
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dashboard-logout {
+  padding: 4px 8px;
+  border: 2px solid #3FB6B2;
+  border-radius: 999px;
+  background: #3FB6B2;
+  color: #0A1238;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.dashboard-message {
+  margin: 0;
+  font-size: 14px;
+}
+
+.dashboard-flashcards {
+  display: flex;
+  justify-content: center;
+}
