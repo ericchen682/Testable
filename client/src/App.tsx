@@ -1,3 +1,5 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Login from './pages/Login'
 import { useEffect, useState } from 'react';
 import Flashcard from './components/Flashcard';
 import FlashcardSet from './components/FlashcardSet';
@@ -99,45 +101,52 @@ function App() {
   }, [token]);
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
+      <div style={{ padding: '2rem' }}>
+        
+        {!token && (
+          <>
+            <input
+              type="email"
+              placeholder="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
 
-      {!token && (
-        <>
-          <input
-            type="email"
-            placeholder="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
+            <small>
+              At least 8 characters, with a capital letter, number, and special character.
+            </small>
 
-          <small>
-            At least 8 characters, with a capital letter, number, and special character.
-          </small>
+            <button onClick={handleSignup}>Sign up</button>
+            <button onClick={handleLogin}>Log in</button>
+          </>
+        )}
 
-          <button onClick={handleSignup}>Sign up</button>
-          <button onClick={handleLogin}>Log in</button>
-        </>
-      )}
+        {token && (
+          <>
+            <button onClick={handleLogout}>Log out</button>
+          </>
+        )}
 
-      {token && (
-        <>
-          <button onClick={handleLogout}>Log out</button>
-        </>
-      )}
+        <p>{message}</p>
 
-      <p>{message}</p>
-
-      {flashcards.length > 0 && (
-        <FlashcardSet flashcardList={flashcards} />
-      )}
-    </div>
+        {flashcards.length > 0 && (
+          <FlashcardSet flashcardList={flashcards} />
+        )}
+      </div>
+    </>
   );
 }
 
