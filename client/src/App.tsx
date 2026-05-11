@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login'
+import Signup from './pages/Signup'
 import { useEffect, useState } from 'react';
 import Flashcard from './components/Flashcard';
 import FlashcardSet from './components/FlashcardSet';
@@ -105,6 +106,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </BrowserRouter>
       <div style={{ padding: '2rem' }}>
