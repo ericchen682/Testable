@@ -1,4 +1,5 @@
 import { type ReactNode, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 const Field = ({ label, type = 'text', value, onChange, error, autoFocus, suffix }: {
@@ -49,32 +50,61 @@ export default function Signup() {
     password?: string;
     confirmPassword?: string;
   }>({});
+  const [formError, setFormError] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [showConfirmPw, setShowConfirmPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  const submit = () => {
+  const submit = async () => {
     const next: {
       email?: string;
       password?: string;
       confirmPassword?: string;
     } = {};
+    const strongPasswordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
     if (!email) next.email = 'Email is required';
     else if (!/^\S+@\S+\.\S+$/.test(email)) next.email = "That doesn't look like an email";
 
     if (!password) next.password = 'Password is required';
-    else if (password.length < 8) next.password = 'At least 8 characters';
+    else if (!strongPasswordPattern.test(password)) {
+      next.password = 'Use 8+ characters with a capital letter, number, and special character';
+    }
 
     if (!confirmPassword) next.confirmPassword = 'Confirm your password';
     else if (confirmPassword !== password) next.confirmPassword = 'Passwords do not match';
 
     setErrors(next);
+    setFormError('');
     if (Object.keys(next).length > 0) return;
 
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSuccess(true); }, 1100);
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setFormError(data.error || 'Signup failed');
+        return;
+      }
+
+      localStorage.setItem('token', data.token);
+      setSuccess(true);
+      navigate('/dashboard');
+    } catch {
+      setFormError('Could not connect to the server');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const reset = () => {
@@ -82,6 +112,7 @@ export default function Signup() {
     setPassword('');
     setConfirmPassword('');
     setErrors({});
+    setFormError('');
     setSuccess(false);
     setLoading(false);
   };
@@ -143,6 +174,8 @@ export default function Signup() {
           error={errors.confirmPassword}
           suffix={<PasswordEye visible={showConfirmPw} onToggle={() => setShowConfirmPw(!showConfirmPw)} />}
         />
+
+        {formError && <span className="field-error">{formError}</span>}
 
         <button className="btn-primary" onClick={submit} disabled={loading}>
           {loading ? (
