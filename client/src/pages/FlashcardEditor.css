@@ -1,0 +1,84 @@
+.flashcard-editor-root {
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.flashcard-editor-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.flashcard-editor-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.flashcard-title-input {
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 2px solid #e5e4e7;
+  background: transparent;
+  color: var(--text-h);
+  font: inherit;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.flashcard-title-input:focus {
+  outline: none;
+  border-bottom-color: #3fb6b2;
+}
+
+.flashcard-editor-message {
+  margin: 0;
+  font-size: 14px;
+}
+
+.flashcard-editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.flashcard-editor-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid #e5e4e7;
+  border-radius: 8px;
+}
+
+.flashcard-editor-card span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b6375;
+}
+
+.flashcard-editor-card textarea {
+  min-height: 90px;
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid #e5e4e7;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-h);
+  font: inherit;
+}
+
+.flashcard-add-card,
+.flashcard-editor-header button {
+  width: fit-content;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #3fb6b2;
+  color: #0a1238;
+  font-weight: 700;
+  cursor: pointer;
+}
