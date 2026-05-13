@@ -1,0 +1,53 @@
+.flashcard-view-root {
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.flashcard-view-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.flashcard-view-header button,
+.flashcard-view-empty button {
+  width: fit-content;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #3fb6b2;
+  color: #0a1238;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.flashcard-view-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.flashcard-view-title {
+  margin: 0;
+  font-size: 32px;
+}
+
+.flashcard-view-message {
+  margin: 0;
+  font-size: 14px;
+}
+
+.flashcard-view-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.flashcard-view-player {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
