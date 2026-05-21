@@ -6,6 +6,7 @@ const findByEmailStmt = db.prepare('SELECT * FROM users WHERE email = ?');
 const findByIdStmt = db.prepare('SELECT * FROM USERS WHERE id = ?');
 const insertUserStmt = db.prepare('INSERT INTO users (id, email, password_hash, password_salt, created_at) VALUES (@id, @email, @passwordHash, @passwordSalt, @createdAt)');
 
+// converts snake to camelcase
 function mapUserRow(row) {
   if(!row) return null;
   return {
@@ -18,15 +19,16 @@ function mapUserRow(row) {
 }
 
 function findUserByEmail(email) {
-  
+  return mapUserRow(findByEmailStmt.get(email));
 }
 
 function findUserById(id) {
-
+  return mapUserRow(findByIdStmt.get(id));
 }
 
 function createUser(user) {
-  
+  insertUserStmt.run(user);
+  return user;
 }
 
 module.exports = {
