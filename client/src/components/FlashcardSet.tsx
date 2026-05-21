@@ -1,7 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import Flashcard from './Flashcard';
-import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -25,7 +23,13 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
     const [currCard, setCard] = React.useState(0);
     const setSize = flashcardList.length;
     return(
-        <>
+        <div
+            style = {{
+                display:"flex",
+                flexDirection:"column",
+                alignItems:"center",
+            }}
+        >
             <Flashcard 
                 titleText={flashcardList[currCard].titleText} 
                 frontText={flashcardList[currCard].frontText} 
@@ -100,7 +104,7 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                     </Button>
                 }
             </div>
-        </>
+        </div>
     );
 }
 

@@ -8,6 +8,7 @@ const cors = require('cors');
 
 const requireAuth = require('./middleware/requireAuth');
 const { getUsers, saveUsers, findUserByEmail } = require('./utils/users');
+const { getFlashcardSets, saveFlashcardSets, findFlashcardSetById } = require('./utils/flashcardSets');
 const { hashPassword, comparePassword } = require('./utils/passwords');
 const { createToken } = require('./utils/tokens');
 
@@ -124,6 +125,81 @@ app.get('/api/flashcards', requireAuth, (req, res) => {
       },
     ],
   });
+});
+
+app.get('/api/flashcard-sets', requireAuth, async (req, res) => {
+  const sets = await getFlashcardSets();
+
+  const userSets = sets
+    .filter((set) => set.userId === req.user.id)
+    .map((set) => ({
+      id: set.id,
+      title: set.title,
+      cardCount: set.cards.length,
+      updatedAt: set.updatedAt,
+    }))
+    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+  res.json({ flashcardSets: userSets });
+});
+
+app.post('/api/flashcard-sets', requireAuth, async (req, res) => {
+  const sets = await getFlashcardSets();
+  const now = new Date().toISOString();
+
+  const newSet = {
+    id: crypto.randomUUID(),
+    userId: req.user.id,
+    title: 'Untitled',
+    cards: [],
+    isPublished: false,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  sets.push(newSet);
+  await saveFlashcardSets(sets);
+
+  res.status(201).json({ flashcardSet: newSet });
+});
+
+app.get('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
+  const set = await findFlashcardSetById(req.params.id);
+
+  if (!set || set.userId !== req.user.id) {
+    return res.status(404).json({ error: 'Flashcard set not found.' });
+  }
+
+  res.json({ flashcardSet: set });
+});
+
+app.put('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
+  const sets = await getFlashcardSets();
+  const setIndex = sets.findIndex((set) => set.id === req.params.id);
+
+  if (setIndex === -1 || sets[setIndex].userId !== req.user.id) {
+    return res.status(404).json({ error: 'Flashcard set not found.' });
+  }
+
+  const title = String(req.body.title || 'Untitled').trim() || 'Untitled';
+  const cards = Array.isArray(req.body.cards)
+    ? req.body.cards.map((card) => ({
+        id: card.id || crypto.randomUUID(),
+        front: String(card.front || ''),
+        back: String(card.back || ''),
+      }))
+    : [];
+
+  sets[setIndex] = {
+    ...sets[setIndex],
+    title,
+    cards,
+    updatedAt: new Date().toISOString(),
+  };
+
+  await saveFlashcardSets(sets);
+
+  res.json({ flashcardSet: sets[setIndex] });
 });
 
 app.listen(PORT, () => {

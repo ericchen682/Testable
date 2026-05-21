@@ -1,0 +1,76 @@
+.dashboard-root {
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.dashboard-logout {
+  padding: 4px 8px;
+  border: 2px solid #3FB6B2;
+  border-radius: 999px;
+  background: #3FB6B2;
+  color: #0A1238;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-create {
+  padding: 4px 12px;
+  border: 2px solid #3FB6B2;
+  border-radius: 999px;
+  background: transparent;
+  color: #3FB6B2;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.dashboard-message {
+  margin: 0;
+  font-size: 14px;
+}
+
+.dashboard-flashcards {
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-set-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  width: min(900px, 100%);
+}
+
+.dashboard-set-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid #e5e4e7;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dashboard-set-title {
+  color: var(--text-h);
+  font-size: 18px;
+  font-weight: 700;
+}
