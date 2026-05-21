@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import { useEffect, useState } from 'react';
 import Flashcard from './components/Flashcard';
 import FlashcardSet from './components/FlashcardSet';
+import Analytics from './pages/Analytics'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 
@@ -105,10 +106,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/analytics" element={<Analytics />} />
         </Routes>
       </BrowserRouter>
       <div style={{ padding: '2rem' }}>
-        
+
         {!token && (
           <>
             <input
