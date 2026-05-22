@@ -1,25 +1,39 @@
 const db = require('./db');
 
 // find all sets given a specific user
-const listSetsForUserStmt = db.prepare();
+const listSetsForUserStmt = db.prepare(`
+  SELECT s.id, s.title, s.updated_at,
+         COUNT(c.id) AS cardCount
+    FROM flashcard_sets s
+    LEFT JOIN flashcards c ON c.set_id = s.id
+   WHERE s.user_id = ?
+   GROUP BY s.id
+   ORDER BY s.updated_at DESC
+`);
 
 // find specific set given set id
-const findSetByIdStmt = db.prepare();
+const findSetByIdStmt = db.prepare('SELECT * FROM flashcards WHERE id = ?');
 
 // find cards given set id
-const listCardsBySetIdStmt = db.prepare();
+const listCardsBySetIdStmt = db.prepare('SELECT id, front, back FROM flashcards WHERE set_id = ? ORDER BY position ASC');
 
 // create a set
-const insertSetStmt = db.prepare();
+const insertSetStmt = db.prepare(`
+  INSERT INTO flashcard_sets (id, user_id, title, is_published, created_at, updated_at)
+  VALUES (@id, @userId, @title, @isPublished, @createdAt, @updatedAt)
+`);
 
 // update metadata of a set
-const updateSetMetaStmt = db.prepare();
+const updateSetMetaStmt = db.prepare('UPDATE flashcard_sets SET title = @title, updated_at = @updatedAt WHERE id = @id');
 
 // delete all flashcards in a set
-const deleteCardsForSetStmt = db.prepare();
+const deleteCardsForSetStmt = db.prepare('DELETE FROM flashcards WHERE set_id = ?');
 
 // insert a card into a set
-const insertCardStmt = db.prepare();
+const insertCardStmt = db.prepare(`
+  INSERT INTO flashcards (id, set_id, position, front, back)
+  VALUES (@id, @setId, @position, @front, @back)
+`);
 
 // convert snake to camelcase
 function mapSetRow(row) {
