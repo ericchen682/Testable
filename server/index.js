@@ -138,22 +138,12 @@ app.get('/api/flashcard-sets', requireAuth, (req, res) => {
   res.json({ flashcardSets: getFlashcardSetsForUser(req.user.id) });
 });
 
-app.post('/api/flashcard-sets', requireAuth, async (req, res) => {
-  const sets = await getFlashcardSets();
-  const now = new Date().toISOString();
-
-  const newSet = {
+app.post('/api/flashcard-sets', requireAuth, (req, res) => {
+  const newSet = createFlashcardSet({
     id: crypto.randomUUID(),
     userId: req.user.id,
-    title: 'Untitled',
-    cards: [],
-    isPublished: false,
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  sets.push(newSet);
-  await saveFlashcardSets(sets);
+    createdAt: newDate.toISOString(),
+  });
 
   res.status(201).json({ flashcardSet: newSet });
 });
