@@ -6,11 +6,29 @@ const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
 
-const requireAuth = require('./middleware/requireAuth');
-const { getUsers, saveUsers, findUserByEmail } = require('./utils/users');
-const { hashPassword, comparePassword } = require('./utils/passwords');
-const { createToken } = require('./utils/tokens');
-const { create } = require('domain');
+const { 
+  requireAuth, 
+} = require('./middleware/requireAuth');
+
+const { 
+  getUsers, 
+  saveUsers, 
+  findUserByEmail, 
+} = require('./utils/users');
+
+const { 
+  hashPassword, 
+  comparePassword 
+} = require('./utils/passwords');
+
+const { 
+  createToken,
+} = require('./utils/tokens');
+
+const { 
+  create, 
+} = require('domain');
+
 const {
   getFlashcardSetsForUser,
   findFlashcardSetById,
