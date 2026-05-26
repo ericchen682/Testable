@@ -92,7 +92,8 @@ const replaceCardsTx = db.transaction((id, title, cards, updatedAt) => {
 });
 
 function updateFlashcardSet(id, {title, cards, updatedAt }) {
-
+  replaceCardsTx(id, title, cards, updatedAt);
+  return findFlashcardSetById(id);
 }
 
 module.exports = {
