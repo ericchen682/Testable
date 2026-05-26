@@ -67,7 +67,7 @@ app.post('/api/auth/signup', (req, res) => {
   try {
     createUser(user);
   } catch (err) {
-    if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
+    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       return res.status(409).json({ error: 'Email is already in use.' });
     }
     throw err;
