@@ -66,7 +66,15 @@ function findFlashcardSetById(id) {
 }
 
 function createFlashcardSet({ id, userId, createdAt }) {
-
+  insertSetStmt.run({
+    id,
+    userId,
+    title: 'Untitled',
+    isPublished: 0,
+    createdAt,
+    updatedAt: createdAt,
+  });
+  return findFlashcardSetById(id);
 }
 
 const replaceCardsTx = db.transaction();
