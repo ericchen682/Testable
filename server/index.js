@@ -11,6 +11,7 @@ const { getUsers, saveUsers, findUserByEmail } = require('./utils/users');
 const { getFlashcardSets, saveFlashcardSets, findFlashcardSetById } = require('./utils/flashcardSets');
 const { hashPassword, comparePassword } = require('./utils/passwords');
 const { createToken } = require('./utils/tokens');
+const { create } = require('domain');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -34,15 +35,11 @@ app.post('/api/auth/signup', async (req, res) => {
     });
   }
 
-  const existingUser = await findUserByEmail(email);
-
-  if (existingUser) {
+  if ( findUserByEmail(email)) {
     return res.status(409).json({ error: 'Email is already in use.' });
   }
 
-  const users = await getUsers();
   const { passwordHash, passwordSalt } = hashPassword(password);
-
   const user = {
     id: crypto.randomUUID(),
     email,
@@ -51,9 +48,15 @@ app.post('/api/auth/signup', async (req, res) => {
     createdAt: new Date().toISOString(),
   };
 
-  users.push(user);
-  await saveUsers(users);
-
+  try {
+    createUser(user);
+  } catch (err) {
+    if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
+      return res.status(409).json({ error: 'Email is already in use.' });
+    }
+    throw err;
+  }
+  
   const token = createToken(user);
 
   res.status(201).json({
