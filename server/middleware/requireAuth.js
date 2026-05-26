@@ -15,7 +15,7 @@ function requireAuth(req, res, next) {
 
   try {
     const decoded = verifyToken(token);
-    const user = await findUserById(decoded.userId);
+    const user = findUserById(decoded.userId);
 
     if (!user) {
       return res.status(401).json({ error: 'You must be logged in.' });
