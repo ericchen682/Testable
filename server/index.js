@@ -169,7 +169,7 @@ app.get('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   res.json({ flashcardSet: set });
 });
 
-app.put('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
+app.put('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   const existing = findFlashcardSetById(req.params.id);
   if (!existing || existing.userId !== req.user.id) {
     return res.status(404).json({ error: 'Flashcard set not found.' });
