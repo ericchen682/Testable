@@ -77,7 +77,19 @@ function createFlashcardSet({ id, userId, createdAt }) {
   return findFlashcardSetById(id);
 }
 
-const replaceCardsTx = db.transaction();
+const replaceCardsTx = db.transaction((id, title, cards, updatedAt) => {
+  updateSetMetaStmt.run({ id, title, updatedAt });
+  deleteCardsForSetStmt.run(id);
+  cards.forEach((card, index) => {
+    insertCardStmt.run({
+      id: card.id,
+      setId: id,
+      position: index,
+      front: card.front,
+      back: card.back,
+    });
+  });
+});
 
 function updateFlashcardSet(id, {title, cards, updatedAt }) {
 
