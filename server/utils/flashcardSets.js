@@ -12,7 +12,7 @@ const listSetsForUserStmt = db.prepare(`
 `);
 
 // find specific set given set id
-const findSetByIdStmt = db.prepare('SELECT * FROM flashcards_sets WHERE id = ?');
+const findSetByIdStmt = db.prepare('SELECT * FROM flashcard_sets WHERE id = ?');
 
 // find cards given set id
 const listCardsBySetIdStmt = db.prepare('SELECT id, front, back FROM flashcards WHERE set_id = ? ORDER BY position ASC');
