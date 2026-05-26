@@ -58,7 +58,11 @@ function getFlashcardSetsForUser(userId) {
 }
 
 function findFlashcardSetById(id) {
-  
+  const setRow = findSetByIdStmt.get(id);
+  if (!setRow) return null;
+  const set = mapSetRow(setRow);
+  set.cards = listCardsBySetIdStmt.all(id);
+  return set;
 }
 
 function createFlashcardSet({ id, userId, createdAt }) {
