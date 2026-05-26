@@ -1,6 +1,6 @@
 // read and write users from data/testable.db
 
-const db = require()
+const db = require('./db');
 
 const findByEmailStmt = db.prepare('SELECT * FROM users WHERE email = ?');
 const findByIdStmt = db.prepare('SELECT * FROM USERS WHERE id = ?');
