@@ -56,7 +56,7 @@ app.post('/api/auth/signup', async (req, res) => {
     }
     throw err;
   }
-  
+
   const token = createToken(user);
 
   res.status(201).json({
@@ -72,8 +72,7 @@ app.post('/api/auth/login', async (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
   const password = String(req.body.password || '');
 
-  const user = await findUserByEmail(email);
-
+  const user = findUserByEmail(email);
   if (!user || !comparePassword(password, user)) {
     return res.status(401).json({ error: 'Invalid email or password.' });
   }
