@@ -6,14 +6,11 @@ const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
 
-const { 
-  requireAuth, 
-} = require('./middleware/requireAuth');
+const requireAuth = require('./middleware/requireAuth');
 
 const { 
-  getUsers, 
-  saveUsers, 
-  findUserByEmail, 
+  findUserByEmail,
+  createUser,
 } = require('./utils/users');
 
 const { 
@@ -24,10 +21,6 @@ const {
 const { 
   createToken,
 } = require('./utils/tokens');
-
-const { 
-  create, 
-} = require('domain');
 
 const {
   getFlashcardSetsForUser,
