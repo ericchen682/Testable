@@ -153,7 +153,7 @@ app.post('/api/flashcard-sets', requireAuth, (req, res) => {
   const newSet = createFlashcardSet({
     id: crypto.randomUUID(),
     userId: req.user.id,
-    createdAt: new Date.toISOString(),
+    createdAt: new Date().toISOString(),
   });
 
   res.status(201).json({ flashcardSet: newSet });
