@@ -159,10 +159,8 @@ app.get('/api/flashcard-sets/:id', requireAuth, (req, res) => {
 });
 
 app.put('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
-  const sets = await getFlashcardSets();
-  const setIndex = sets.findIndex((set) => set.id === req.params.id);
-
-  if (setIndex === -1 || sets[setIndex].userId !== req.user.id) {
+  const existing = findFlashcardSetById(req.params.id);
+  if (!existing || existing.userId !== req.user.id) {
     return res.status(404).json({ error: 'Flashcard set not found.' });
   }
 
@@ -175,16 +173,13 @@ app.put('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
       }))
     : [];
 
-  sets[setIndex] = {
-    ...sets[setIndex],
+  const updated = updateFlashcardSet(req.params.id, {
     title,
     cards,
     updatedAt: new Date().toISOString(),
-  };
-
-  await saveFlashcardSets(sets);
-
-  res.json({ flashcardSet: sets[setIndex] });
+  });
+  
+  res.json({ flashcardSet: updated });
 });
 
 app.listen(PORT, () => {
