@@ -49,11 +49,16 @@ function mapSetRow(row) {
 }
 
 function getFlashcardSetsForUser(userId) {
-
+  return listSetsForUserStmt.all(userId).map((row) => ({
+    id: row.id,
+    title: row.title,
+    cardCount: row.cardCount,
+    updatedAt: row.updated_at,
+  }));
 }
 
 function findFlashcardSetById(id) {
-
+  
 }
 
 function createFlashcardSet({ id, userId, createdAt }) {
