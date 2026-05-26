@@ -8,10 +8,15 @@ const cors = require('cors');
 
 const requireAuth = require('./middleware/requireAuth');
 const { getUsers, saveUsers, findUserByEmail } = require('./utils/users');
-const { getFlashcardSets, saveFlashcardSets, findFlashcardSetById } = require('./utils/flashcardSets');
 const { hashPassword, comparePassword } = require('./utils/passwords');
 const { createToken } = require('./utils/tokens');
 const { create } = require('domain');
+const {
+  getFlashcardSetsForUser,
+  findFlashcardSetById,
+  createFlashcardSet,
+  updateFlashcardSet,
+} = require('./utils/flashcardSets');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,7 +24,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/auth/signup', async (req, res) => {
+app.post('/api/auth/signup', (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
   const password = String(req.body.password || '');
 
@@ -68,7 +73,7 @@ app.post('/api/auth/signup', async (req, res) => {
   });
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
   const password = String(req.body.password || '');
 
@@ -129,20 +134,8 @@ app.get('/api/flashcards', requireAuth, (req, res) => {
   });
 });
 
-app.get('/api/flashcard-sets', requireAuth, async (req, res) => {
-  const sets = await getFlashcardSets();
-
-  const userSets = sets
-    .filter((set) => set.userId === req.user.id)
-    .map((set) => ({
-      id: set.id,
-      title: set.title,
-      cardCount: set.cards.length,
-      updatedAt: set.updatedAt,
-    }))
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-
-  res.json({ flashcardSets: userSets });
+app.get('/api/flashcard-sets', requireAuth, (req, res) => {
+  res.json({ flashcardSets: getFlashcardSetsForUser(req.user.id) });
 });
 
 app.post('/api/flashcard-sets', requireAuth, async (req, res) => {
