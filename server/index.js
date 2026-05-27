@@ -7,10 +7,27 @@ const express = require('express');
 const cors = require('cors');
 
 const requireAuth = require('./middleware/requireAuth');
-const { getUsers, saveUsers, findUserByEmail } = require('./utils/users');
-const { getFlashcardSets, saveFlashcardSets, findFlashcardSetById } = require('./utils/flashcardSets');
-const { hashPassword, comparePassword } = require('./utils/passwords');
-const { createToken } = require('./utils/tokens');
+
+const { 
+  findUserByEmail,
+  createUser,
+} = require('./utils/users');
+
+const { 
+  hashPassword, 
+  comparePassword 
+} = require('./utils/passwords');
+
+const { 
+  createToken,
+} = require('./utils/tokens');
+
+const {
+  getFlashcardSetsForUser,
+  findFlashcardSetById,
+  createFlashcardSet,
+  updateFlashcardSet,
+} = require('./utils/flashcardSets');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -18,7 +35,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/auth/signup', async (req, res) => {
+app.post('/api/auth/signup', (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
   const password = String(req.body.password || '');
 
@@ -34,15 +51,11 @@ app.post('/api/auth/signup', async (req, res) => {
     });
   }
 
-  const existingUser = await findUserByEmail(email);
-
-  if (existingUser) {
+  if ( findUserByEmail(email)) {
     return res.status(409).json({ error: 'Email is already in use.' });
   }
 
-  const users = await getUsers();
   const { passwordHash, passwordSalt } = hashPassword(password);
-
   const user = {
     id: crypto.randomUUID(),
     email,
@@ -51,8 +64,14 @@ app.post('/api/auth/signup', async (req, res) => {
     createdAt: new Date().toISOString(),
   };
 
-  users.push(user);
-  await saveUsers(users);
+  try {
+    createUser(user);
+  } catch (err) {
+    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      return res.status(409).json({ error: 'Email is already in use.' });
+    }
+    throw err;
+  }
 
   const token = createToken(user);
 
@@ -65,12 +84,11 @@ app.post('/api/auth/signup', async (req, res) => {
   });
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
   const password = String(req.body.password || '');
 
-  const user = await findUserByEmail(email);
-
+  const user = findUserByEmail(email);
   if (!user || !comparePassword(password, user)) {
     return res.status(401).json({ error: 'Invalid email or password.' });
   }
@@ -127,44 +145,22 @@ app.get('/api/flashcards', requireAuth, (req, res) => {
   });
 });
 
-app.get('/api/flashcard-sets', requireAuth, async (req, res) => {
-  const sets = await getFlashcardSets();
-
-  const userSets = sets
-    .filter((set) => set.userId === req.user.id)
-    .map((set) => ({
-      id: set.id,
-      title: set.title,
-      cardCount: set.cards.length,
-      updatedAt: set.updatedAt,
-    }))
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-
-  res.json({ flashcardSets: userSets });
+app.get('/api/flashcard-sets', requireAuth, (req, res) => {
+  res.json({ flashcardSets: getFlashcardSetsForUser(req.user.id) });
 });
 
-app.post('/api/flashcard-sets', requireAuth, async (req, res) => {
-  const sets = await getFlashcardSets();
-  const now = new Date().toISOString();
-
-  const newSet = {
+app.post('/api/flashcard-sets', requireAuth, (req, res) => {
+  const newSet = createFlashcardSet({
     id: crypto.randomUUID(),
     userId: req.user.id,
-    title: 'Untitled',
-    cards: [],
-    isPublished: false,
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  sets.push(newSet);
-  await saveFlashcardSets(sets);
+    createdAt: new Date().toISOString(),
+  });
 
   res.status(201).json({ flashcardSet: newSet });
 });
 
-app.get('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
-  const set = await findFlashcardSetById(req.params.id);
+app.get('/api/flashcard-sets/:id', requireAuth, (req, res) => {
+  const set = findFlashcardSetById(req.params.id);
 
   if (!set || set.userId !== req.user.id) {
     return res.status(404).json({ error: 'Flashcard set not found.' });
@@ -173,11 +169,9 @@ app.get('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
   res.json({ flashcardSet: set });
 });
 
-app.put('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
-  const sets = await getFlashcardSets();
-  const setIndex = sets.findIndex((set) => set.id === req.params.id);
-
-  if (setIndex === -1 || sets[setIndex].userId !== req.user.id) {
+app.put('/api/flashcard-sets/:id', requireAuth, (req, res) => {
+  const existing = findFlashcardSetById(req.params.id);
+  if (!existing || existing.userId !== req.user.id) {
     return res.status(404).json({ error: 'Flashcard set not found.' });
   }
 
@@ -190,16 +184,13 @@ app.put('/api/flashcard-sets/:id', requireAuth, async (req, res) => {
       }))
     : [];
 
-  sets[setIndex] = {
-    ...sets[setIndex],
+  const updated = updateFlashcardSet(req.params.id, {
     title,
     cards,
     updatedAt: new Date().toISOString(),
-  };
-
-  await saveFlashcardSets(sets);
-
-  res.json({ flashcardSet: sets[setIndex] });
+  });
+  
+  res.json({ flashcardSet: updated });
 });
 
 app.listen(PORT, () => {

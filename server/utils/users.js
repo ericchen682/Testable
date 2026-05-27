@@ -1,32 +1,41 @@
-// read and write users from data/users,json
+// read and write users from data/testable.db
 
-const fs = require('fs/promises');
-const path = require('path');
+const db = require('./db');
 
-const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
+const findByEmailStmt = db.prepare('SELECT * FROM USERS WHERE email = ?');
+const findByIdStmt = db.prepare('SELECT * FROM USERS WHERE id = ?');
+const insertUserStmt = db.prepare(`
+  INSERT INTO users (id, email, password_hash, password_salt, created_at) 
+  VALUES (@id, @email, @passwordHash, @passwordSalt, @createdAt)
+  `);
 
-async function getUsers() {
-  const rawUsers = await fs.readFile(USERS_FILE, 'utf8');
-  return JSON.parse(rawUsers);
+// converts snake to camelcase
+function mapUserRow(row) {
+  if(!row) return null;
+  return {
+    id: row.id,
+    email: row.email,
+    passwordHash: row.password_hash,
+    passwordSalt: row.password_salt,
+    createdAt: row.created_at,
+  };
 }
 
-async function saveUsers(users) {
-  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+function findUserByEmail(email) {
+  return mapUserRow(findByEmailStmt.get(email));
 }
 
-async function findUserByEmail(email) {
-  const users = await getUsers();
-  return users.find((user) => user.email === email);
+function findUserById(id) {
+  return mapUserRow(findByIdStmt.get(id));
 }
 
-async function findUserById(id) {
-  const users = await getUsers();
-  return users.find((user) => user.id === id);
+function createUser(user) {
+  insertUserStmt.run(user);
+  return user;
 }
 
 module.exports = {
-  getUsers,
-  saveUsers,
   findUserByEmail,
   findUserById,
+  createUser
 };
