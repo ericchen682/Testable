@@ -65,14 +65,15 @@ export default function Dashboard() {
 
     const loadSets = async () => {
       try {
-        const mockSets = [
+        /*const mockSets = [
           { id : "1", title: "CS 35L Midterm 1", cardCount: 3, updatedAt: "2026-05-20"},
           { id : "2", title: "Brain Anatomy", cardCount: 4, updatedAt: "2026-05-22"},
           { id : "3", title: "English", cardCount: 6, updatedAt: "2026-05-24"},
         ]
         setSets(mockSets);
         setMessage('');
-        /*const response = await fetch('http://localhost:3001/api/flashcard-sets', {
+        */
+        const response = await fetch('http://localhost:3001/api/flashcard-sets', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -92,7 +93,7 @@ export default function Dashboard() {
         }
         
         setSets(data.flashcardSets);
-        setMessage(''); */
+        setMessage('');
       } catch {
         setMessage('Could not connect to the server');
       }
