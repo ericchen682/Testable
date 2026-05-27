@@ -61,7 +61,6 @@
   margin-top: auto;
 }
 
-
 .dashboard-create {
   padding: 4px 12px;
   border: 2px solid #1a254f;
@@ -99,7 +98,6 @@
   font-weight: 600;
 }
 
-
 .dashboard-banner {
   font-family: 'Instrument Serif', Georgia, serif;
   font-size: 55px;
@@ -115,13 +113,19 @@
   padding: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
+  width: 100%;
 }
 
+.dashboard-greeting,
+.dashboard-no-set,
 .dashboard-message {
-  margin: 0;
-  font-size: 14px;
+  margin: 0 auto;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 30px;
+  font-weight: 700;
+  text-align: center; 
 }
 
 .dashboard-flashcards {

@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [message, setMessage] = useState('Loading flashcard sets...');
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  const [username, setUsername] = useState('{Insert Username Here}');
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -32,6 +33,7 @@ export default function Dashboard() {
     }
 
     try {
+
       const response = await fetch('http://localhost:3001/api/flashcard-sets', {
         method: 'POST',
         headers: {
@@ -63,16 +65,11 @@ export default function Dashboard() {
       return;
     }
 
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) setUsername(storedUsername);
+
     const loadSets = async () => {
       try {
-        /*const mockSets = [
-          { id : "1", title: "CS 35L Midterm 1", cardCount: 3, updatedAt: "2026-05-20"},
-          { id : "2", title: "Brain Anatomy", cardCount: 4, updatedAt: "2026-05-22"},
-          { id : "3", title: "English", cardCount: 6, updatedAt: "2026-05-24"},
-        ]
-        setSets(mockSets);
-        setMessage('');
-        */
         const response = await fetch('http://localhost:3001/api/flashcard-sets', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -112,13 +109,13 @@ export default function Dashboard() {
           </svg>
           Testable<span className="logo-dot">.</span>
         </div>
-
+        <span className="dashboard-greeting"> Ready to continue your studying journey, {username}? </span>
         
       </header>
       <div className="dashboard-body">
         
         <div className = "dashboard-left">
-          <button className="dashboard-home">
+          <button className="dashboard-home" onClick={() => navigate('/dashboard')}>
             Home
           </button>
           <button className="dashboard-library">
@@ -147,6 +144,7 @@ export default function Dashboard() {
           <span className="dashboard-banner">
             Pick up where you left off!
           </span>
+          {sets.length === 0 && (<div className="dashboard-no-set">No sets yet! Click "+ Create set" to get started.</div>)}
           <div className="dashboard-set-grid">
             {sets.map((set) => (
               <button
@@ -159,7 +157,7 @@ export default function Dashboard() {
                   <span>Updated {new Date(set.updatedAt).toLocaleDateString()}</span> <span>  {set.cardCount} cards </span>
                 </div>
                 <span>
-                  <button className="dashboard-continue">
+                  <button className="dashboard-continue" onClick={() => navigate(`/flashcards/${set.id}`)}>
                     <div>
                       Continue
                     </div>
