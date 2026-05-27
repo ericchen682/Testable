@@ -4,7 +4,7 @@
 const { verifyToken } = require('../utils/tokens');
 const { findUserById } = require('../utils/users');
 
-async function requireAuth(req, res, next) {
+function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -15,7 +15,7 @@ async function requireAuth(req, res, next) {
 
   try {
     const decoded = verifyToken(token);
-    const user = await findUserById(decoded.userId);
+    const user = findUserById(decoded.userId);
 
     if (!user) {
       return res.status(401).json({ error: 'You must be logged in.' });
