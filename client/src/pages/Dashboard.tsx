@@ -166,9 +166,9 @@ export default function Dashboard() {
                       Continue
                     </div>
                   </button>
-                  <button className="dashboard-progress-report">
+                  <button className="dashboard-edit" onClick={(e) => {e.stopPropagation(); navigate(`/flashcards/${set.id}/edit`);}}>
                     <div>
-                      View Progress Report
+                      Edit
                     </div>
                   </button>
                 </span>
