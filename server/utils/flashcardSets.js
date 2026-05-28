@@ -2,7 +2,7 @@ const db = require('./db');
 
 // find all sets given a specific user
 const listSetsForUserStmt = db.prepare(`
-  SELECT s.id, s.title, s.updated_at,
+  SELECT s.id, s.title, s.is_published, s.updated_at,
          COUNT(c.id) AS cardCount
     FROM flashcard_sets s
     LEFT JOIN flashcards c ON c.set_id = s.id
@@ -69,6 +69,7 @@ function getFlashcardSetsForUser(userId) {
   return listSetsForUserStmt.all(userId).map((row) => ({
     id: row.id,
     title: row.title,
+    isPublished: !!row.is_published,
     cardCount: row.cardCount,
     updatedAt: row.updated_at,
   }));
