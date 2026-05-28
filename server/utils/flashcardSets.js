@@ -26,6 +26,20 @@ const insertSetStmt = db.prepare(`
 // update metadata of a set
 const updateSetMetaStmt = db.prepare('UPDATE flashcard_sets SET title = @title, updated_at = @updatedAt WHERE id = @id');
 
+// toggle published status of a set
+const updatePublishedStmt = db.prepare('UPDATE flashcard_sets SET is_published = @isPublished, updated_at = @updatedAt WHERE id = @id');
+
+// get all public sets
+const listPublicSetsStmt = db.prepare(`
+  SELECT s.id, s.title, s.updated_at,
+         COUNT(c.id) AS cardCount
+    FROM flashcard_sets s
+    LEFT JOIN flashcards c ON c.set_id = s.id
+   WHERE s.is_published = 1
+   GROUP BY s.id
+   ORDER BY s.updated_at DESC
+`);
+
 // delete all flashcards in a set
 const deleteCardsForSetStmt = db.prepare('DELETE FROM flashcards WHERE set_id = ?');
 
@@ -96,9 +110,25 @@ function updateFlashcardSet(id, {title, cards, updatedAt }) {
   return findFlashcardSetById(id);
 }
 
+function publishFlashcardSet(id, isPublished, updatedAt) {
+  updatePublishedStmt.run({ id, isPublished: isPublished ? 1 : 0, updatedAt });
+  return findFlashcardSetById(id);
+}
+
+function getPublicFlashcardSets() {
+  return listPublicSetsStmt.all().map((row) => ({
+    id: row.id,
+    title: row.title,
+    cardCount: row.cardCount,
+    updatedAt: row.updated_at,
+  }));
+}
+
 module.exports = {
     getFlashcardSetsForUser,
     findFlashcardSetById,
     createFlashcardSet,
     updateFlashcardSet,
+    publishFlashcardSet,  
+    getPublicFlashcardSets,
 };
