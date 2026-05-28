@@ -29,6 +29,8 @@ const {
   updateFlashcardSet,
 } = require('./utils/flashcardSets');
 
+const { insertAnalyticsRecord } = require('./utils/analytics');
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -191,6 +193,25 @@ app.put('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   });
   
   res.json({ flashcardSet: updated });
+});
+
+app.post('/api/analytics', requireAuth, (req, res) => {
+  const { cardId, setId, correct, timeSpent } = req.body;
+
+  if (!cardId || !setId || correct === undefined || timeSpent ===undefined) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  insertAnalyticsRecord({
+    userId: req.user.id,
+    cardId: String(cardId),
+    setId: String(setId),
+    correct: Boolean(correct),
+    timeSpent: Math.max(0, parseInt(timeSpent, 10) || 0),
+    reviewedAt: new Date().toISOString(),
+  });
+
+  res.status(201).json({ ok: true });
 });
 
 app.listen(PORT, () => {

@@ -5,6 +5,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface FlashcardProps {
+    id:string;
     titleText: string;
     frontText: string;
     backText: string;
@@ -15,15 +16,39 @@ interface FlashcardProps {
 
 interface FlashcardSetProps {
     flashcardList: FlashcardProps[];
+    setId: string;
+    token: string;
 }
 
-function FlashcardSet({ flashcardList }: FlashcardSetProps)
+function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
 {
     const [isFlipped, setFlipped] = React.useState(false);
     const [currCard, setCard] = React.useState(0);
     const setSize = flashcardList.length;
     const [hoveredBtn, setHoveredBtn] = React.useState<'wrong' | 'correct' |
     null>(null);
+    const [cardShownAt, setCardShownAt] = React.useState(Date.now());
+    const recordAnswer = async (correct: boolean) => {
+        const timeSpent = Date.now() - cardShownAt;
+        const card = flashcardList[currCard];
+        try {
+            await fetch('http://localhost:3001/api/analytics', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    cardId: card.id,
+                    setId,
+                    correct,
+                    timeSpent,
+                }),
+            });
+        } catch {
+            // fire and forget, don't block UI
+        }
+    };
     return(
         <div
             style = {{
@@ -33,6 +58,7 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
             }}
         >
             <Flashcard 
+                id = {flashcardList[currCard].id} 
                 titleText={flashcardList[currCard].titleText} 
                 frontText={flashcardList[currCard].frontText} 
                 backText={flashcardList[currCard].backText}
@@ -125,7 +151,9 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                         cursor: 'pointer', 
                     }}
                     onClick={() => {
-                        setCard(currCard+1);
+                        recordAnswer(false);
+                        setCard(currCard + 1);
+                        setCardShownAt(Date.now());
                         setFlipped(false);
                     }}
                     >
@@ -147,7 +175,9 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                         cursor: 'pointer', 
                     }}
                     onClick={() => {
-                        setCard(currCard+1);
+                        recordAnswer(true);
+                        setCard(currCard + 1);
+                        setCardShownAt(Date.now());
                         setFlipped(false);
                     }}
                     >
