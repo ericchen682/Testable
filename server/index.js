@@ -27,6 +27,7 @@ const {
   findFlashcardSetById,
   createFlashcardSet,
   updateFlashcardSet,
+  deleteFlashcardSet,
 } = require('./utils/flashcardSets');
 
 const app = express();
@@ -191,6 +192,17 @@ app.put('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   });
   
   res.json({ flashcardSet: updated });
+});
+
+app.delete('/api/flashcard-sets/:id', requireAuth, (req, res) => {
+  const existing = findFlashcardSetById(req.params.id);
+  if (!existing || existing.userId !== req.user.id) {
+    return res.status(404).json({ error: 'Flashcard set not found.' });
+  }
+
+  deleteFlashcardSet(req.params.id);
+
+  res.status(204).send();
 });
 
 app.listen(PORT, () => {

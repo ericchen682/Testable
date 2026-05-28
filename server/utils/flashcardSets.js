@@ -26,6 +26,9 @@ const insertSetStmt = db.prepare(`
 // update metadata of a set
 const updateSetMetaStmt = db.prepare('UPDATE flashcard_sets SET title = @title, updated_at = @updatedAt WHERE id = @id');
 
+// delete a set and cascade its cards
+const deleteSetStmt = db.prepare('DELETE FROM flashcard_sets WHERE id = ?');
+
 // delete all flashcards in a set
 const deleteCardsForSetStmt = db.prepare('DELETE FROM flashcards WHERE set_id = ?');
 
@@ -96,9 +99,14 @@ function updateFlashcardSet(id, {title, cards, updatedAt }) {
   return findFlashcardSetById(id);
 }
 
+function deleteFlashcardSet(id) {
+  return deleteSetStmt.run(id).changes > 0;
+}
+
 module.exports = {
     getFlashcardSetsForUser,
     findFlashcardSetById,
     createFlashcardSet,
     updateFlashcardSet,
+    deleteFlashcardSet,
 };
