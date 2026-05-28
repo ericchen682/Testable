@@ -28,6 +28,8 @@ const {
   createFlashcardSet,
   updateFlashcardSet,
   deleteFlashcardSet,
+  publishFlashcardSet,
+  getPublicFlashcardSets,
 } = require('./utils/flashcardSets');
 
 const app = express();
@@ -160,10 +162,18 @@ app.post('/api/flashcard-sets', requireAuth, (req, res) => {
   res.status(201).json({ flashcardSet: newSet });
 });
 
+app.get('/api/flashcard-sets/public', (req, res) => {
+  res.json({ flashcardSets: getPublicFlashcardSets() });
+});
+
 app.get('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   const set = findFlashcardSetById(req.params.id);
 
-  if (!set || set.userId !== req.user.id) {
+  if (!set) {
+    return res.status(404).json({ error: 'Flashcard set not found.' });
+  }
+
+  if (set.userId !== req.user.id && !set.isPublished) {
     return res.status(404).json({ error: 'Flashcard set not found.' });
   }
 
@@ -199,12 +209,21 @@ app.delete('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   if (!existing || existing.userId !== req.user.id) {
     return res.status(404).json({ error: 'Flashcard set not found.' });
   }
-
   deleteFlashcardSet(req.params.id);
-
   res.status(204).send();
+});
+
+app.put('/api/flashcard-sets/:id/publish', requireAuth, (req, res) => {
+  const existing = findFlashcardSetById(req.params.id);
+  if (!existing || existing.userId !== req.user.id) {
+    return res.status(404).json({ error: 'Flashcard set not found.' });
+  }
+  const isPublished = req.body.isPublished === true;
+  const updated = publishFlashcardSet(req.params.id, isPublished, new Date().toISOString());
+  res.json({ flashcardSet: updated });
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
