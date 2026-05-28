@@ -12,9 +12,9 @@ interface FlashcardSetSummary {
 export default function Dashboard() {
   const [sets, setSets] = useState<FlashcardSetSummary[]>([]);
   const [message, setMessage] = useState('Loading flashcard sets...');
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const [username, setUsername] = useState('{Insert Username Here}');
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -65,8 +65,6 @@ export default function Dashboard() {
       return;
     }
 
-    const storedUsername = localStorage.getItem('username');
-    if (storedUsername) setUsername(storedUsername);
 
     const loadSets = async () => {
       try {
@@ -109,7 +107,7 @@ export default function Dashboard() {
           </svg>
           Testable<span className="logo-dot">.</span>
         </div>
-        <span className="dashboard-greeting"> Ready to continue your studying journey, {username}? </span>
+        <span className="dashboard-greeting"> Ready to continue your studying journey? </span>
         
       </header>
       <div className="dashboard-body">
@@ -118,7 +116,10 @@ export default function Dashboard() {
           <button className="dashboard-home" onClick={() => navigate('/dashboard')}>
             Home
           </button>
-          <button className="dashboard-library">
+          <button className="dashboard-published" onClick={() => navigate('/dashboard')}>
+            Published Sets
+          </button>
+          <button className="dashboard-user-owned" onClick={() => navigate('/dashboard')}>
             My Sets
           </button>
           <button className="dashboard-logout" onClick={logout}>
@@ -126,27 +127,30 @@ export default function Dashboard() {
           </button>
         </div>
         <section className="dashboard-content">
-          <span>
-            <button className="dashboard-search-bar">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <circle cx="11" cy="11" r="7" stroke="#707ba5" strokeWidth="2"/>
-                  <path d="M16.5 16.5L21 21" stroke="#707ba5" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-                  Search study sets
-              </div>
-            </button>
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginTop: '24px', marginLeft: '24px' }}>
+            <div className="dashboard-search-bar" style={{ marginTop: 0, marginLeft: 0, flex: 1, maxWidth: '900px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="7" stroke="#707ba5" strokeWidth="2"/>
+                <path d="M16.5 16.5L21 21" stroke="#707ba5" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search study sets"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
             <button className="dashboard-create" onClick={createFlashcardSet}>
               + Create set
             </button>
-          </span>
+          </div>
           {message && <p className="dashboard-message">{message}</p>}
           <span className="dashboard-banner">
             Pick up where you left off!
           </span>
           {sets.length === 0 && (<div className="dashboard-no-set">No sets yet! Click "+ Create set" to get started.</div>)}
           <div className="dashboard-set-grid">
-            {sets.map((set) => (
+            {sets.filter((set) => set.title.toLowerCase().includes(search.toLowerCase())).map((set) => (
               <button
                 key={set.id}
                 className="dashboard-set-card"

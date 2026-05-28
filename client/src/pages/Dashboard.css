@@ -45,8 +45,9 @@
 }
 
 .dashboard-logout,
-.dashboard-home,
-.dashboard-library {
+.dashboard-published,
+.dashboard-user-owned,
+.dashboard-home {
   padding: 4px 8px;
   border: 2px solid #1a254f;
   border-radius: 999px;
@@ -61,6 +62,14 @@
   margin-top: auto;
 }
 
+.dashboard-home:hover,
+.dashboard-published:hover,
+.dashboard-user-owned:hover,
+.dashboard-logout:hover {
+  box-shadow: 0 0 12px #3FB6B2;
+  transition: box-shadow 0.2s ease;
+}
+
 .dashboard-create {
   padding: 4px 12px;
   border: 2px solid #1a254f;
@@ -73,6 +82,10 @@
   margin-left: 20px;
 }
 
+.dashboard-create:hover {
+  box-shadow: 0 0 12px #00b9b3;
+  transition: box-shadow 0.2s ease;
+}
 
 .dashboard-continue,
 .dashboard-progress-report {
@@ -96,6 +109,12 @@
 
 .dashboard-progress-report {
   font-weight: 600;
+}
+
+.dashboard-continue:hover,
+.dashboard-progress-report:hover {
+  box-shadow: 0 0 12px #00b9b3;
+  transition: box-shadow 0.2s ease;
 }
 
 .dashboard-banner {
@@ -182,7 +201,6 @@
 
 .dashboard-search-bar {
   padding: 12px;
-  width: 999px;
   border: 2px solid #707ba5;
   border-radius: 20px;
   background: #334071;
@@ -195,4 +213,22 @@
   align-self: flex-start;
   margin-top: 24px;
   margin-left: 24px;
+  display: flex;     
+  align-items: center; 
+  gap: 8px; 
+}
+
+.dashboard-search-bar input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #F5F0E1;
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  width: 100%;
+}
+
+.dashboard-search-bar input::placeholder {
+  color: #707ba5;
 }
