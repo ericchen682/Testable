@@ -22,6 +22,8 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
     const [isFlipped, setFlipped] = React.useState(false);
     const [currCard, setCard] = React.useState(0);
     const setSize = flashcardList.length;
+    const [hoveredBtn, setHoveredBtn] = React.useState<'wrong' | 'correct' |
+    null>(null);
     return(
         <div
             style = {{
@@ -68,6 +70,7 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                         >
                         ←
                     </Button>
+                    
                 }
                 <ProgressBar
                     style = {{
@@ -78,31 +81,79 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                         // @ts-expect-error - custom CSS properties
                         "--bs-progress-bg": "rgba(239,227,202,0.18)",
                         "--bs-progress-bar-bg": "#56B6C6",
+                        
                     }}
                     now = {((currCard+(isFlipped ? 1 : 0.5))*100)/setSize} 
                     // label = {`${currCard+1}/${setSize}`}
                 >
                 </ProgressBar>
                 {
-                    <Button
-                        style = {{
-                            backgroundColor:"#56B6C6",
-                            color:"#170C79",
-                            borderWidth:"0px",
-                            borderRadius:"1.5rem",
-                            width: "3rem",
-                            height: "3rem",
-                            visibility: currCard+1 < setSize ? "visible" : "hidden",
-                            cursor: 'pointer', 
-                        }}
-                        onClick={() => {
-                            setCard(currCard+1);
-                            setFlipped(false);
-                        }}
-                        >
-                        →
-                    </Button>
+                    <div style={{ width: "3rem", height: "3rem" }} /> 
                 }
+                <Button
+                    style = {{
+                        backgroundColor:"#56B6C6",
+                        color:"#170C79",
+                        borderWidth:"0px",
+                        borderRadius:"1.5rem",
+                        width: "3rem",
+                        height: "3rem",
+                        visibility: currCard+1 < setSize ? "visible" : "hidden",
+                        cursor: 'pointer', 
+                    }}
+                    onClick={() => {
+                        setCard(currCard+1);
+                        setFlipped(false);
+                    }}
+                    >
+                    →
+                </Button>
+            </div>
+            <div style = {{ display: "flex", gap: "1rem"}}>
+                <Button
+                    onMouseEnter={() => setHoveredBtn('wrong')}                          
+                    onMouseLeave={() => setHoveredBtn(null)}       
+                    style = {{
+                        border: "2px solid #56B6C6",
+                        backgroundColor: hoveredBtn === 'wrong' ? '#FF3131' : '#FFFFFF',
+                        color: hoveredBtn === 'wrong' ? '#FFFFFF' : '#FF3131',
+                        // borderWidth:"0px",
+                        borderRadius:"0.5rem",
+                        width: "4rem",
+                        height: "3rem",
+                        visibility: currCard+1 < setSize ? "visible" : "hidden",
+                        cursor: 'pointer', 
+                    }}
+                    onClick={() => {
+                        setCard(currCard+1);
+                        setFlipped(false);
+                    }}
+                    >
+                    X
+                </Button>
+
+                <Button
+                    onMouseEnter={() => setHoveredBtn('correct')}
+                    onMouseLeave={() => setHoveredBtn(null)}
+                    style = {{
+                        border: "2px solid #56B6C6",
+                        backgroundColor: hoveredBtn === 'correct' ? '#39FF14' :'#FFFFFF',
+                        color: hoveredBtn === 'correct' ? '#FFFFFF' : '#39FF14',
+                        // borderWidth:"0px",
+                        borderRadius:"0.5rem",
+                        width: "4rem",
+                        height: "3rem",
+                        visibility: currCard+1 < setSize ? "visible" : "hidden",
+                        cursor: 'pointer', 
+                    }}
+                    onClick={() => {
+                        setCard(currCard+1);
+                        setFlipped(false);
+                    }}
+                    >
+                    ✓
+                </Button>
+                    
             </div>
         </div>
     );
