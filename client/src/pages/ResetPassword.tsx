@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { type ReactNode, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Login.css';
 
 const Field = ({ label, type = 'text', value, onChange, error, autoFocus, suffix }: {
@@ -9,7 +9,7 @@ const Field = ({ label, type = 'text', value, onChange, error, autoFocus, suffix
   onChange: (v: string) => void;
   error?: string;
   autoFocus?: boolean;
-  suffix?: React.ReactNode;
+  suffix?: ReactNode;
 }) => (
   <div className="field">
     <label>{label}</label>
@@ -41,54 +41,58 @@ const PasswordEye = ({ visible, onToggle }: { visible: boolean; onToggle: () => 
   </button>
 );
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  const [formError, setFormError] = useState('');
-  const [showPw, setShowPw] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+export default function ResetPassword() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string }>({});
+  const [formError, setFormError] = useState('');
+  const [message, setMessage] = useState('');
+  const [showPw, setShowPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const submit = async () => {
-    const next: { email?: string; password?: string } = {};
-    if (!email) next.email = 'Email is required';
-    else if (!/^\S+@\S+\.\S+$/.test(email)) next.email = "That doesn't look like an email";
+    const next: { password?: string; confirmPassword?: string } = {};
+    const strongPasswordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
     if (!password) next.password = 'Password is required';
+    else if (!strongPasswordPattern.test(password)) {
+      next.password = 'Use 8+ characters with a capital letter, number, and special character';
+    }
+
+    if (!confirmPassword) next.confirmPassword = 'Confirm your password';
+    else if (confirmPassword !== password) next.confirmPassword = 'Passwords do not match';
+
     setErrors(next);
     setFormError('');
+    setMessage('');
     if (Object.keys(next).length > 0) return;
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const response = await fetch('http://localhost:3001/api/auth/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ token: searchParams.get('token'), password }),
       });
 
       const data = await response.json();
-
       if (!response.ok) {
-        setFormError(data.error || 'Login failed');
+        setFormError(data.error || 'Could not reset password');
         return;
       }
 
-      localStorage.setItem('token', data.token);
-      setSuccess(true);
-      navigate('/dashboard');
+      setMessage(data.message || 'Your password has been reset. You can sign in now.');
+      setTimeout(() => navigate('/login'), 1200);
     } catch {
       setFormError('Could not connect to the server');
     } finally {
       setLoading(false);
     }
-  };
-
-  const reset = () => {
-    setEmail(''); setPassword(''); setErrors({}); setFormError(''); setSuccess(false); setLoading(false);
   };
 
   return (
@@ -125,39 +129,32 @@ export default function Login() {
 
       <div className="login-right">
         <div>
-          <h2 className="login-title">Sign in</h2>
+          <h2 className="login-title">Choose new password</h2>
           <p className="login-subtitle">
-            New here? <a href="/signup" className="login-link">Create an account</a>
+            Back to <a href="/login" className="login-link">sign in</a>
           </p>
         </div>
 
-        {/* <div className="social-row">
-          <button className="btn-social">
-            <img src="https://www.google.com/favicon.ico" width="16" height="16" alt="" />
-            Google
-          </button>
-        </div>
-
-        <div className="divider"><span>or with email</span></div> */}
-
-        <Field label="Email" type="email" value={email} onChange={setEmail} error={errors.email} autoFocus />
         <Field
-          label="Password"
+          label="New password"
           type={showPw ? 'text' : 'password'}
           value={password}
           onChange={setPassword}
           error={errors.password}
+          autoFocus
           suffix={<PasswordEye visible={showPw} onToggle={() => setShowPw(!showPw)} />}
         />
-
-        <div className="login-extras">
-          <label className="remember-me">
-            <input type="checkbox" /> Remember me
-          </label>
-          <a href="/forgot-password" className="login-link">Forgot password?</a>
-        </div>
+        <Field
+          label="Confirm password"
+          type={showConfirmPw ? 'text' : 'password'}
+          value={confirmPassword}
+          onChange={setConfirmPassword}
+          error={errors.confirmPassword}
+          suffix={<PasswordEye visible={showConfirmPw} onToggle={() => setShowConfirmPw(!showConfirmPw)} />}
+        />
 
         {formError && <span className="field-error">{formError}</span>}
+        {message && <span className="field-success">{message}</span>}
 
         <button className="btn-primary" onClick={submit} disabled={loading}>
           {loading ? (
@@ -167,30 +164,13 @@ export default function Login() {
             </svg>
           ) : (
             <>
-              Sign in
+              Save password
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12h14M13 6l6 6-6 6" stroke="#0A1238" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </>
           )}
         </button>
-
-        <p className="login-terms">
-          By continuing you agree to our <a href="#" className="login-link-muted">Terms</a> &amp; <a href="#" className="login-link-muted">Privacy</a>.
-        </p>
-
-        {success && (
-          <div className="success-overlay">
-            <div className="success-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                <path d="M5 12.5l4.5 4.5L19 7.5" stroke="#0A1238" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <div className="success-title">You're in.</div>
-            <div className="success-sub">Loading your decks…</div>
-            <button onClick={reset} className="success-reset">reset demo</button>
-          </div>
-        )}
       </div>
     </div>
   );

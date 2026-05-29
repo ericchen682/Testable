@@ -5,13 +5,18 @@ import './Dashboard.css';
 interface FlashcardSetSummary {
   id: string;
   title: string;
+  isPublished?: boolean;
   cardCount: number;
   updatedAt: string;
 }
 
 export default function Dashboard() {
   const [sets, setSets] = useState<FlashcardSetSummary[]>([]);
+  const [publicSets, setPublicSets] = useState<FlashcardSetSummary[]>([]);
+  const [activeView, setActiveView] = useState<'mine' | 'public'>('mine');
   const [message, setMessage] = useState('Loading flashcard sets...');
+  const [deletingSetId, setDeletingSetId] = useState<string | null>(null);
+  const [publishingSetId, setPublishingSetId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -59,12 +64,112 @@ export default function Dashboard() {
     }
   };
 
+  const deleteFlashcardSet = async (set: FlashcardSetSummary) => {
+    if (!token) {
+      handleAuthError();
+      return;
+    }
+
+    const confirmed = window.confirm(`Delete "${set.title}"? This cannot be undone.`);
+    if (!confirmed) return;
+
+    setDeletingSetId(set.id);
+    setMessage('');
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/flashcard-sets/${set.id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError();
+          return;
+        }
+
+        const data = await response.json();
+        setMessage(data.error || 'Could not delete flashcard set');
+        return;
+      }
+
+      setSets((currentSets) => currentSets.filter((currentSet) => currentSet.id !== set.id));
+    } catch {
+      setMessage('Could not connect to the server');
+    } finally {
+      setDeletingSetId(null);
+    }
+  };
+
+  const togglePublish = async (set: FlashcardSetSummary) => {
+    if (!token) {
+      handleAuthError();
+      return;
+    }
+
+    const nextIsPublished = !set.isPublished;
+    setPublishingSetId(set.id);
+    setMessage('');
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/flashcard-sets/${set.id}/publish`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isPublished: nextIsPublished }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError();
+          return;
+        }
+
+        setMessage(data.error || 'Could not update publish status');
+        return;
+      }
+
+      setSets((currentSets) =>
+        currentSets.map((currentSet) =>
+          currentSet.id === set.id
+            ? { ...currentSet, isPublished: data.flashcardSet.isPublished }
+            : currentSet
+        )
+      );
+
+      if (data.flashcardSet.isPublished) {
+        setPublicSets((currentSets) => {
+          const nextPublicSet = {
+            id: data.flashcardSet.id,
+            title: data.flashcardSet.title,
+            isPublished: true,
+            cardCount: data.flashcardSet.cards?.length ?? set.cardCount,
+            updatedAt: data.flashcardSet.updatedAt,
+          };
+          const withoutCurrent = currentSets.filter((currentSet) => currentSet.id !== set.id);
+          return [nextPublicSet, ...withoutCurrent];
+        });
+      } else {
+        setPublicSets((currentSets) => currentSets.filter((currentSet) => currentSet.id !== set.id));
+      }
+    } catch {
+      setMessage('Could not connect to the server');
+    } finally {
+      setPublishingSetId(null);
+    }
+  };
+
   useEffect(() => {
     if (!token) {
       navigate('/login');
       return;
     }
-
 
     const loadSets = async () => {
       try {
@@ -97,22 +202,65 @@ export default function Dashboard() {
     loadSets();
   }, [handleAuthError, navigate, token]);
 
+  useEffect(() => {
+    if (activeView !== 'public') return;
+
+    const loadPublicSets = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/flashcard-sets/public');
+        const data = await response.json();
+
+        if (!response.ok) {
+          setMessage(data.error || 'Could not load public flashcard sets');
+          return;
+        }
+
+        setPublicSets(data.flashcardSets.map((set: FlashcardSetSummary) => ({
+          ...set,
+          isPublished: true,
+        })));
+        setMessage('');
+      } catch {
+        setMessage('Could not connect to the server');
+      }
+    };
+
+    loadPublicSets();
+  }, [activeView]);
+
+  const displayedSets = activeView === 'mine' ? sets : publicSets;
+
   return (
     <main className="dashboard-root">
       <header className="dashboard-header">
-        <div className = "logo">
+        <div className="logo">
           <svg width={31} height={31} viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10.5" stroke="#F5F0E1" strokeWidth="1.4" />
             <path d="M7.5 12.2l3.2 3.2 6-6.4" stroke="#F5F0E1" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Testable<span className="logo-dot">.</span>
         </div>
+        <div className="dashboard-view-toggle" aria-label="Flashcard set view">
+          <button
+            className={activeView === 'mine' ? 'dashboard-view-button dashboard-view-button--active' : 'dashboard-view-button'}
+            onClick={() => setActiveView('mine')}
+          >
+            My sets
+          </button>
+          <button
+            className={activeView === 'public' ? 'dashboard-view-button dashboard-view-button--active' : 'dashboard-view-button'}
+            onClick={() => setActiveView('public')}
+          >
+            Public sets
+          </button>
+        </div>
         <span className="dashboard-greeting"> Ready to continue your studying journey? </span>
-        
+        <button className="dashboard-create" onClick={createFlashcardSet}>
+          + Create set
+        </button>
       </header>
       <div className="dashboard-body">
-        
-        <div className = "dashboard-left">
+        <div className="dashboard-left">
           <button className="dashboard-home" onClick={() => navigate('/dashboard')}>
             Home
           </button>
@@ -150,29 +298,48 @@ export default function Dashboard() {
           </span>
           {sets.length === 0 && (<div className="dashboard-no-set">No sets yet! Click "+ Create set" to get started.</div>)}
           <div className="dashboard-set-grid">
-            {sets.filter((set) => set.title.toLowerCase().includes(search.toLowerCase())).map((set) => (
-              <button
-                key={set.id}
-                className="dashboard-set-card"
-                onClick={() => navigate(`/flashcards/${set.id}`)}
-              >
-                <span className="dashboard-set-title">{set.title}</span>
-                <div className="dashboard-set-updated">
-                  <span>Updated {new Date(set.updatedAt).toLocaleDateString()}</span> <span>  {set.cardCount} cards </span>
-                </div>
-                <span>
+            {displayedSets.filter((set) => set.title.toLowerCase().includes(search.toLowerCase())).map((set) => (
+              <article key={set.id} className="dashboard-set-card">
+                <button
+                  className="dashboard-set-open"
+                  onClick={() => navigate(`/flashcards/${set.id}`)}
+                >
+                  <span className="dashboard-set-title">{set.title}</span>
+                  <span className={set.isPublished ? 'dashboard-set-badge dashboard-set-badge--public' : 'dashboard-set-badge'}>
+                    {set.isPublished ? 'Published' : 'Private'}
+                  </span>
+                  <div className="dashboard-set-updated">
+                    <span>Updated {new Date(set.updatedAt).toLocaleDateString()}</span>
+                    <span>{set.cardCount} cards</span>
+                  </div>
                   <button className="dashboard-continue" onClick={() => navigate(`/flashcards/${set.id}`)}>
-                    <div>
-                      Continue
-                    </div>
+                    Continue
                   </button>
-                  <button className="dashboard-edit" onClick={(e) => {e.stopPropagation(); navigate(`/flashcards/${set.id}/edit`);}}>
-                    <div>
-                      Edit
-                    </div>
+                  <button className="dashboard-edit" onClick={(e) => { e.stopPropagation(); navigate(`/flashcards/${set.id}/edit`); }}>
+                    Edit
                   </button>
-                </span>
-              </button>
+                </button>
+                {activeView === 'mine' && (
+                  <div className="dashboard-set-actions">
+                    <button
+                      className="dashboard-set-publish"
+                      disabled={publishingSetId === set.id}
+                      onClick={() => togglePublish(set)}
+                    >
+                      {publishingSetId === set.id
+                        ? 'Saving...'
+                        : set.isPublished ? 'Unpublish' : 'Publish'}
+                    </button>
+                    <button
+                      className="dashboard-set-delete"
+                      disabled={deletingSetId === set.id}
+                      onClick={() => deleteFlashcardSet(set)}
+                    >
+                      {deletingSetId === set.id ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
+                )}
+              </article>
             ))}
           </div>
         </section>

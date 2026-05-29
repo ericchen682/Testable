@@ -8,6 +8,14 @@ CREATE TABLE IF NOT EXISTS users (
   created_at    TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  token_hash TEXT PRIMARY KEY,
+  user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  expires_at TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
+
 CREATE TABLE IF NOT EXISTS flashcard_sets (
   id           TEXT PRIMARY KEY,
   user_id      TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -26,3 +34,14 @@ CREATE TABLE IF NOT EXISTS flashcards (
   back     TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS idx_flashcards_set_id ON flashcards(set_id);
+
+CREATE TABLE IF NOT EXISTS analytics (                                                                                                 
+  id           TEXT PRIMARY KEY,                                                                                                       
+  user_id      TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,                                                                   
+  card_id      TEXT NOT NULL REFERENCES flashcards(id) ON DELETE CASCADE,                                                              
+  set_id       TEXT NOT NULL REFERENCES flashcard_sets(id) ON DELETE CASCADE,
+  correct      INTEGER NOT NULL,
+  time_spent   INTEGER NOT NULL,
+  reviewed_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_analytics_user_id ON analytics(user_id);
