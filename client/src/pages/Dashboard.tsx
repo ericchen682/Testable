@@ -17,6 +17,8 @@ export default function Dashboard() {
   const [message, setMessage] = useState('Loading flashcard sets...');
   const [deletingSetId, setDeletingSetId] = useState<string | null>(null);
   const [publishingSetId, setPublishingSetId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<FlashcardSetSummary[] | null>(null);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
@@ -29,6 +31,31 @@ export default function Dashboard() {
     localStorage.removeItem('token');
     navigate('/login');
   }, [navigate]);
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults(null);
+      return;
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/flashcard-sets/search?q=${encodeURIComponent(query)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError();
+          return;
+        }
+        return;
+      }
+      setSearchResults(data.flashcardSets);
+    } catch {
+      setMessage('Could not connect to the server');
+    }
+  };
 
   const createFlashcardSet = async () => {
     if (!token) {
@@ -247,12 +274,26 @@ export default function Dashboard() {
         <button className="dashboard-create" onClick={createFlashcardSet}>
           create flashcards +
         </button>
+        <input
+          className="dashboard-search"
+          type="text"
+          placeholder="Search flashcard sets..."
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+        />
         <button className="dashboard-logout" onClick={logout}>Log out</button>
       </header>
 
       <section className="dashboard-content">
         {message && <p className="dashboard-message">{message}</p>}
 
+        {searchResults !== null && searchQuery && (
+          <p className="dashboard-message">
+            {searchResults.length === 0
+              ? 'No flashcard sets found matching your search.'
+              : `${searchResults.length} result${searchResults.length === 1 ? '' : 's'} for "${searchQuery}"`}
+          </p>
+        )}
         <div className="dashboard-set-grid">
           {displayedSets.map((set) => (
             <article key={set.id} className="dashboard-set-card">

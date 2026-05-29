@@ -247,6 +247,37 @@ app.post('/api/flashcard-sets', requireAuth, (req, res) => {
 
 app.get('/api/flashcard-sets/public', (req, res) => {
   res.json({ flashcardSets: getPublicFlashcardSets() });
+app.get("/api/flashcard-sets/search", requireAuth, (req, res) => {
+  const query = String(req.query.q || "").trim().toLowerCase();
+
+  if (!query) {
+    return res.json({ flashcardSets: [] });
+  }
+
+  const sets = getFlashcardSetsForUser(req.user.id);
+
+  const results = sets
+    .filter((set) => {
+      const titleMatch = (set.title || "").toLowerCase().includes(query);
+      const contentMatch = (set.cards || []).some(
+        (card) =>
+          String(card.front || "").toLowerCase().includes(query) ||
+          String(card.back || "").toLowerCase().includes(query)
+      );
+      return titleMatch || contentMatch;
+    })
+    .map((set) => ({
+      id: set.id,
+      title: set.title,
+      cardCount: (set.cards || []).length,
+      updatedAt: set.updatedAt,
+    }));
+
+  if (results.length === 0) {
+    return res.json({ flashcardSets: [], message: "No flashcard sets found matching your search." });
+  }
+
+  res.json({ flashcardSets: results });
 });
 
 app.get('/api/flashcard-sets/:id', requireAuth, (req, res) => {
