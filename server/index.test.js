@@ -38,6 +38,27 @@ async function createFlashcardSet(token) {
     .set('Authorization', authHeader(token));
 }
 
+async function updateFlashcardSet(token, setId, payload = {}) {
+  return request(app)
+    .put(`/api/flashcard-sets/${setId}`)
+    .set('Authorization', authHeader(token))
+    .send({
+      title: 'Published Biology',
+      cards: [
+        { id: 'card-1', front: 'Cell', back: 'Basic unit of life' },
+        { id: 'card-2', front: 'DNA', back: 'Genetic material' },
+      ],
+      ...payload,
+    });
+}
+
+async function publishFlashcardSet(token, setId, isPublished = true) {
+  return request(app)
+    .put(`/api/flashcard-sets/${setId}/publish`)
+    .set('Authorization', authHeader(token))
+    .send({ isPublished });
+}
+
 beforeEach(() => {
   resetDb();
 });
@@ -328,5 +349,127 @@ describe('flashcard set routes', () => {
 
     expect(res.status).toBe(404);
     expect(res.body.error).toBe('Flashcard set not found.');
+  });
+});
+
+describe('publish flashcard set routes', () => {
+  test('publishes a flashcard set and marks it public', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, setId);
+
+    const res = await publishFlashcardSet(token, setId, true);
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSet).toMatchObject({
+      id: setId,
+      title: 'Published Biology',
+      isPublished: true,
+      cards: [
+        { id: 'card-1', front: 'Cell', back: 'Basic unit of life' },
+        { id: 'card-2', front: 'DNA', back: 'Genetic material' },
+      ],
+    });
+    expect(new Date(res.body.flashcardSet.updatedAt).toString()).not.toBe('Invalid Date');
+  });
+
+  test('shows published flashcard sets in the public list', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, setId);
+    await publishFlashcardSet(token, setId, true);
+
+    const res = await request(app).get('/api/flashcard-sets/public');
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSets).toHaveLength(1);
+    expect(res.body.flashcardSets[0]).toMatchObject({
+      id: setId,
+      title: 'Published Biology',
+      cardCount: 2,
+      updatedAt: expect.any(String),
+    });
+    expect(res.body.flashcardSets[0].userId).toBeUndefined();
+  });
+
+  test('does not show private flashcard sets in the public list', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    await updateFlashcardSet(token, createRes.body.flashcardSet.id);
+
+    const res = await request(app).get('/api/flashcard-sets/public');
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSets).toEqual([]);
+  });
+
+  test('unpublishes a flashcard set and removes it from the public list', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, setId);
+    await publishFlashcardSet(token, setId, true);
+
+    const unpublishRes = await publishFlashcardSet(token, setId, false);
+    const publicRes = await request(app).get('/api/flashcard-sets/public');
+
+    expect(unpublishRes.status).toBe(200);
+    expect(unpublishRes.body.flashcardSet.isPublished).toBe(false);
+    expect(publicRes.status).toBe(200);
+    expect(publicRes.body.flashcardSets).toEqual([]);
+  });
+
+  test('requires login to publish a flashcard set', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+
+    const res = await request(app)
+      .put(`/api/flashcard-sets/${createRes.body.flashcardSet.id}/publish`)
+      .send({ isPublished: true });
+
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe('You must be logged in.');
+  });
+
+  test('does not allow one user to publish another user flashcard set', async () => {
+    const ownerToken = await authToken('owner@example.com');
+    const otherToken = await authToken('other@example.com');
+    const createRes = await createFlashcardSet(ownerToken);
+
+    const res = await publishFlashcardSet(otherToken, createRes.body.flashcardSet.id, true);
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Flashcard set not found.');
+  });
+
+  test('returns not found when publishing a missing flashcard set', async () => {
+    const token = await authToken();
+
+    const res = await publishFlashcardSet(token, 'missing-set', true);
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Flashcard set not found.');
+  });
+
+  test('allows a logged-in user to view another user published flashcard set', async () => {
+    const ownerToken = await authToken('owner@example.com');
+    const viewerToken = await authToken('viewer@example.com');
+    const createRes = await createFlashcardSet(ownerToken);
+    const setId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(ownerToken, setId);
+    await publishFlashcardSet(ownerToken, setId, true);
+
+    const res = await request(app)
+      .get(`/api/flashcard-sets/${setId}`)
+      .set('Authorization', authHeader(viewerToken));
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSet).toMatchObject({
+      id: setId,
+      title: 'Published Biology',
+      isPublished: true,
+    });
   });
 });
