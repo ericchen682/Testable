@@ -255,21 +255,9 @@ export default function Dashboard() {
           </button>
         </div>
         <span className="dashboard-greeting"> Ready to continue your studying journey? </span>
-        <button className="dashboard-create" onClick={createFlashcardSet}>
-          + Create set
-        </button>
       </header>
       <div className="dashboard-body">
         <div className="dashboard-left">
-          <button className="dashboard-home" onClick={() => navigate('/dashboard')}>
-            Home
-          </button>
-          <button className="dashboard-published" onClick={() => navigate('/dashboard')}>
-            Published Sets
-          </button>
-          <button className="dashboard-user-owned" onClick={() => navigate('/dashboard')}>
-            My Sets
-          </button>
           <button className="dashboard-logout" onClick={logout}>
             Logout
           </button>
@@ -304,21 +292,26 @@ export default function Dashboard() {
                   className="dashboard-set-open"
                   onClick={() => navigate(`/flashcards/${set.id}`)}
                 >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span className="dashboard-set-title">{set.title}</span>
                   <span className={set.isPublished ? 'dashboard-set-badge dashboard-set-badge--public' : 'dashboard-set-badge'}>
                     {set.isPublished ? 'Published' : 'Private'}
                   </span>
+                  </div>
                   <div className="dashboard-set-updated">
                     <span>Updated {new Date(set.updatedAt).toLocaleDateString()}</span>
                     <span>{set.cardCount} cards</span>
                   </div>
-                  <button className="dashboard-continue" onClick={() => navigate(`/flashcards/${set.id}`)}>
-                    Continue
-                  </button>
-                  <button className="dashboard-edit" onClick={(e) => { e.stopPropagation(); navigate(`/flashcards/${set.id}/edit`); }}>
-                    Edit
-                  </button>
+                  <div>
+                    <button className="dashboard-continue" onClick={() => navigate(`/flashcards/${set.id}`)}>
+                      Continue
+                    </button>
+                    <button className="dashboard-edit" onClick={(e) => { e.stopPropagation(); navigate(`/flashcards/${set.id}/edit`); }}>
+                      Edit
+                    </button>
+                  </div>
                 </button>
+
                 {activeView === 'mine' && (
                   <div className="dashboard-set-actions">
                     <button
