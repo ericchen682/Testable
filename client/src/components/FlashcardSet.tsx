@@ -147,12 +147,13 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         borderRadius:"0.5rem",
                         width: "4rem",
                         height: "3rem",
-                        visibility: currCard+1 < setSize ? "visible" : "hidden",
-                        cursor: 'pointer', 
+                        cursor: 'pointer',
                     }}
                     onClick={() => {
                         recordAnswer(false);
-                        setCard(currCard + 1);
+                        if (currCard + 1 < setSize) {
+                            setCard(currCard + 1);
+                        }
                         setCardShownAt(Date.now());
                         setFlipped(false);
                     }}
@@ -171,12 +172,13 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         borderRadius:"0.5rem",
                         width: "4rem",
                         height: "3rem",
-                        visibility: currCard+1 < setSize ? "visible" : "hidden",
-                        cursor: 'pointer', 
+                        cursor: 'pointer',
                     }}
                     onClick={() => {
                         recordAnswer(true);
-                        setCard(currCard + 1);
+                        if (currCard + 1 < setSize) {
+                            setCard(currCard + 1);
+                        }
                         setCardShownAt(Date.now());
                         setFlipped(false);
                     }}
