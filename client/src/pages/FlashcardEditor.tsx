@@ -11,6 +11,7 @@ interface Flashcard {
 interface FlashcardSet {
   id: string;
   title: string;
+  isPublished: boolean;
   cards: Flashcard[];
 }
 
@@ -25,6 +26,7 @@ export default function FlashcardEditor() {
   const navigate = useNavigate();
   const [set, setSet] = useState<FlashcardSet | null>(null);
   const [message, setMessage] = useState('Loading flashcard set...');
+  const [publishing, setPublishing] = useState(false);
   const token = localStorage.getItem('token');
 
   const handleAuthError = useCallback(() => {
@@ -80,6 +82,43 @@ export default function FlashcardEditor() {
   const addCard = () => {
     if (!set) return;
     updateSet({ ...set, cards: [...set.cards, createBlankCard()] });
+  };
+
+  const togglePublish = async () => {
+    if (!set || !token || !setId) return;
+
+    setPublishing(true);
+    setMessage('');
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/flashcard-sets/${setId}/publish`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isPublished: !set.isPublished }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError();
+          return;
+        }
+
+        setMessage(data.error || 'Could not update publish status');
+        return;
+      }
+
+      setSet(data.flashcardSet);
+      setMessage(data.flashcardSet.isPublished ? 'Set published.' : 'Set unpublished.');
+    } catch {
+      setMessage('Could not connect to the server');
+    } finally {
+      setPublishing(false);
+    }
   };
 
   useEffect(() => {
@@ -141,6 +180,22 @@ export default function FlashcardEditor() {
           placeholder="Untitled"
         />
 
+        <div className="flashcard-publish-panel">
+          <div>
+            <span className={set.isPublished ? 'flashcard-publish-status flashcard-publish-status--public' : 'flashcard-publish-status'}>
+              {set.isPublished ? 'Published' : 'Private'}
+            </span>
+            <p>
+              {set.isPublished
+                ? 'This set is visible in public flashcard sets.'
+                : 'Publish this set to make it visible to other users.'}
+            </p>
+          </div>
+          <button onClick={togglePublish} disabled={publishing}>
+            {publishing ? 'Saving...' : set.isPublished ? 'Unpublish' : 'Publish'}
+          </button>
+        </div>
+
         {message && <p className="flashcard-editor-message">{message}</p>}
 
         <div className="flashcard-editor-list">
@@ -168,8 +223,6 @@ export default function FlashcardEditor() {
         <button className="flashcard-add-card" onClick={addCard}>
           Add card +
         </button>
-
-        {/* Later: add publishing controls so users can share sets publicly. */}
       </section>
     </main>
   );

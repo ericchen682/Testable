@@ -12,6 +12,7 @@ interface Flashcard {
 interface FlashcardSetData {
   id: string;
   title: string;
+  isPublished: boolean;
   cards: Flashcard[];
 }
 
@@ -82,7 +83,14 @@ export default function FlashcardView() {
       </header>
 
       <section className="flashcard-view-content">
-        {set && <h1 className="flashcard-view-title">{set.title}</h1>}
+        {set && (
+          <div className="flashcard-view-title-row">
+            <h1 className="flashcard-view-title">{set.title}</h1>
+            <span className={set.isPublished ? 'flashcard-view-badge flashcard-view-badge--public' : 'flashcard-view-badge'}>
+              {set.isPublished ? 'Published' : 'Private'}
+            </span>
+          </div>
+        )}
         {message && <p className="flashcard-view-message">{message}</p>}
 
         {set && flashcardList.length === 0 && (
