@@ -8,6 +8,7 @@ const request = require('supertest');
 
 const app = require('./index');
 const db = require('./utils/db');
+const { createPasswordResetToken } = require('./utils/passwordResetTokens');
 
 function resetDb() {
   db.prepare('DELETE FROM analytics').run();
@@ -20,6 +21,12 @@ function resetDb() {
 function signup(email = 'test@example.com', password = 'Password1!') {
   return request(app)
     .post('/api/auth/signup')
+    .send({ email, password });
+}
+
+function login(email = 'test@example.com', password = 'Password1!') {
+  return request(app)
+    .post('/api/auth/login')
     .send({ email, password });
 }
 
@@ -471,5 +478,125 @@ describe('publish flashcard set routes', () => {
       title: 'Published Biology',
       isPublished: true,
     });
+  });
+});
+
+describe('password reset routes', () => {
+  test('forgot password returns a generic message for an existing account', async () => {
+    await signup('test@example.com', 'Password1!');
+
+    const res = await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: 'test@example.com' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe('Reset password link has been sent to your email if this account exists.');
+  });
+
+  test('forgot password returns the same generic message for an unknown account', async () => {
+    const res = await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: 'missing@example.com' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe('Reset password link has been sent to your email if this account exists.');
+  });
+
+  test('forgot password rejects invalid email', async () => {
+    const res = await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: 'not-an-email' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Valid email is required.');
+  });
+
+  test('forgot password creates only one active reset token per user', async () => {
+    const signupRes = await signup('test@example.com', 'Password1!');
+
+    await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: 'test@example.com' });
+    await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: 'test@example.com' });
+
+    const tokenCount = db
+      .prepare('SELECT COUNT(*) AS count FROM password_reset_tokens WHERE user_id = ?')
+      .get(signupRes.body.user.id)
+      .count;
+
+    expect(tokenCount).toBe(1);
+  });
+
+  test('reset password requires a token', async () => {
+    const res = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ password: 'NewPassword1!' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Reset token is required.');
+  });
+
+  test('reset password rejects weak password', async () => {
+    const signupRes = await signup('test@example.com', 'Password1!');
+    const { token } = createPasswordResetToken(signupRes.body.user.id);
+
+    const res = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ token, password: 'weak' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toContain('Password must be at least 8 characters');
+  });
+
+  test('reset password rejects invalid token', async () => {
+    const res = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ token: 'not-a-real-token', password: 'NewPassword1!' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Reset link is invalid or expired.');
+  });
+
+  test('reset password changes the password and consumes the token', async () => {
+    const signupRes = await signup('test@example.com', 'Password1!');
+    const { token } = createPasswordResetToken(signupRes.body.user.id);
+
+    const resetRes = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ token, password: 'NewPassword1!' });
+    const oldLoginRes = await login('test@example.com', 'Password1!');
+    const newLoginRes = await login('test@example.com', 'NewPassword1!');
+    const reusedTokenRes = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ token, password: 'AnotherPassword1!' });
+
+    expect(resetRes.status).toBe(200);
+    expect(resetRes.body.message).toBe('Your password has been reset. You can sign in now.');
+    expect(oldLoginRes.status).toBe(401);
+    expect(newLoginRes.status).toBe(200);
+    expect(newLoginRes.body.token).toEqual(expect.any(String));
+    expect(reusedTokenRes.status).toBe(400);
+    expect(reusedTokenRes.body.error).toBe('Reset link is invalid or expired.');
+  });
+
+  test('reset password rejects expired token and deletes it', async () => {
+    const signupRes = await signup('test@example.com', 'Password1!');
+    const { token } = createPasswordResetToken(signupRes.body.user.id);
+    db.prepare('UPDATE password_reset_tokens SET expires_at = ? WHERE user_id = ?')
+      .run('2000-01-01T00:00:00.000Z', signupRes.body.user.id);
+
+    const res = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ token, password: 'NewPassword1!' });
+    const tokenCount = db
+      .prepare('SELECT COUNT(*) AS count FROM password_reset_tokens WHERE user_id = ?')
+      .get(signupRes.body.user.id)
+      .count;
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Reset link is invalid or expired.');
+    expect(tokenCount).toBe(0);
   });
 });
