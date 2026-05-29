@@ -259,6 +259,12 @@
   color: #E89B7A;
 }
 
+.field-success {
+  font-size: 12px;
+  color: #3FB6B2;
+  line-height: 1.5;
+}
+
 .pw-toggle {
   background: none;
   border: none;
