@@ -247,6 +247,7 @@ app.post('/api/flashcard-sets', requireAuth, (req, res) => {
 
 app.get('/api/flashcard-sets/public', (req, res) => {
   res.json({ flashcardSets: getPublicFlashcardSets() });
+});
 app.get("/api/flashcard-sets/search", requireAuth, (req, res) => {
   const query = String(req.query.q || "").trim().toLowerCase();
 
