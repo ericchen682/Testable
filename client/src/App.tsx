@@ -6,6 +6,7 @@ import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import FlashcardView from './pages/FlashcardView'
 import FlashcardEditor from './pages/FlashcardEditor'
+import Analytics from './pages/Analytics'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/flashcards/:setId" element={<FlashcardView />} />
         <Route path="/flashcards/:setId/edit" element={<FlashcardEditor />} />
+        <Route path="/analytics" element={<Analytics />} />
       </Routes>
     </BrowserRouter>
   );

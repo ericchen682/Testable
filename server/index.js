@@ -41,6 +41,12 @@ const {
   getPublicFlashcardSets,
 } = require('./utils/flashcardSets');
 
+
+// GETS FOR ANALYTICS
+
+
+
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 const PASSWORD_RESET_MESSAGE = 'Reset password link has been sent to your email if this account exists.';
@@ -287,6 +293,8 @@ app.put('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   res.json({ flashcardSet: updated });
 });
 
+<<<<<<< aaron/login-pages
+=======
 app.delete('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   const existing = findFlashcardSetById(req.params.id);
   if (!existing || existing.userId !== req.user.id) {
@@ -305,6 +313,7 @@ app.put('/api/flashcard-sets/:id/publish', requireAuth, (req, res) => {
   const updated = publishFlashcardSet(req.params.id, isPublished, new Date().toISOString());
   res.json({ flashcardSet: updated });
 });
+>>>>>>> main
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
