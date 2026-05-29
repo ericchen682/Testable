@@ -87,9 +87,9 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                     // label = {`${currCard+1}/${setSize}`}
                 >
                 </ProgressBar>
-                {
+                {/* {
                     <div style={{ width: "3rem", height: "3rem" }} /> 
-                }
+                } */}
                 <Button
                     style = {{
                         backgroundColor:"#56B6C6",
