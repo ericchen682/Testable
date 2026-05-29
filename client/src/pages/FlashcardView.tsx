@@ -12,6 +12,7 @@ interface Flashcard {
 interface FlashcardSetData {
   id: string;
   title: string;
+  isPublished: boolean;
   cards: Flashcard[];
 }
 
@@ -64,6 +65,7 @@ export default function FlashcardView() {
   }, [handleAuthError, navigate, setId, token]);
 
   const flashcardList = set?.cards.map((card) => ({
+    id: card.id,
     titleText: set.title,
     frontText: card.front || 'Blank front',
     backText: card.back || 'Blank back',
@@ -81,7 +83,14 @@ export default function FlashcardView() {
       </header>
 
       <section className="flashcard-view-content">
-        {set && <h1 className="flashcard-view-title">{set.title}</h1>}
+        {set && (
+          <div className="flashcard-view-title-row">
+            <h1 className="flashcard-view-title">{set.title}</h1>
+            <span className={set.isPublished ? 'flashcard-view-badge flashcard-view-badge--public' : 'flashcard-view-badge'}>
+              {set.isPublished ? 'Published' : 'Private'}
+            </span>
+          </div>
+        )}
         {message && <p className="flashcard-view-message">{message}</p>}
 
         {set && flashcardList.length === 0 && (
@@ -93,9 +102,9 @@ export default function FlashcardView() {
           </div>
         )}
 
-        {flashcardList.length > 0 && (
+         {set && flashcardList.length > 0 && (
           <div className="flashcard-view-player">
-            <FlashcardSet flashcardList={flashcardList} />
+            <FlashcardSet flashcardList={flashcardList} setId={set.id} token={token!} />  
           </div>
         )}
       </section>

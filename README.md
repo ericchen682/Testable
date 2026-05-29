@@ -43,11 +43,13 @@ npm install
 
 Create `server/.env`:
 ```bash
-JWT_SECRET=replace-this-with-a-long-random-secret
+JWT_SECRET=long-random-secret
 PORT=3001
+RESEND_API_KEY=resend-api-key
+CLIENT_URL=http://localhost:5173
 ```
 
-`PORT` is optional because the server defaults to `3001`
+`PORT` is optional because the server defaults to `3001`. `CLIENT_URL` is used for password reset email links and defaults to `http://localhost:5173`.
 
 ### 3. Start the Backend and Database
 

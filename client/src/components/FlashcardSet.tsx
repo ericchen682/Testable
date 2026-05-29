@@ -5,6 +5,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface FlashcardProps {
+    id:string;
     titleText: string;
     frontText: string;
     backText: string;
@@ -15,15 +16,39 @@ interface FlashcardProps {
 
 interface FlashcardSetProps {
     flashcardList: FlashcardProps[];
+    setId: string;
+    token: string;
 }
 
-function FlashcardSet({ flashcardList }: FlashcardSetProps)
+function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
 {
     const [isFlipped, setFlipped] = React.useState(false);
     const [currCard, setCard] = React.useState(0);
     const setSize = flashcardList.length;
     const [hoveredBtn, setHoveredBtn] = React.useState<'wrong' | 'correct' |
     null>(null);
+    const [cardShownAt, setCardShownAt] = React.useState(Date.now());
+    const recordAnswer = async (correct: boolean) => {
+        const timeSpent = Date.now() - cardShownAt;
+        const card = flashcardList[currCard];
+        try {
+            await fetch('http://localhost:3001/api/analytics', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    cardId: card.id,
+                    setId,
+                    correct,
+                    timeSpent,
+                }),
+            });
+        } catch {
+            // fire and forget, don't block UI
+        }
+    };
     return(
         <div
             style = {{
@@ -33,6 +58,7 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
             }}
         >
             <Flashcard 
+                id = {flashcardList[currCard].id} 
                 titleText={flashcardList[currCard].titleText} 
                 frontText={flashcardList[currCard].frontText} 
                 backText={flashcardList[currCard].backText}
@@ -87,9 +113,9 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                     // label = {`${currCard+1}/${setSize}`}
                 >
                 </ProgressBar>
-                {
+                {/* {
                     <div style={{ width: "3rem", height: "3rem" }} /> 
-                }
+                } */}
                 <Button
                     style = {{
                         backgroundColor:"#56B6C6",
@@ -121,11 +147,14 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                         borderRadius:"0.5rem",
                         width: "4rem",
                         height: "3rem",
-                        visibility: currCard+1 < setSize ? "visible" : "hidden",
-                        cursor: 'pointer', 
+                        cursor: 'pointer',
                     }}
                     onClick={() => {
-                        setCard(currCard+1);
+                        recordAnswer(false);
+                        if (currCard + 1 < setSize) {
+                            setCard(currCard + 1);
+                        }
+                        setCardShownAt(Date.now());
                         setFlipped(false);
                     }}
                     >
@@ -143,11 +172,14 @@ function FlashcardSet({ flashcardList }: FlashcardSetProps)
                         borderRadius:"0.5rem",
                         width: "4rem",
                         height: "3rem",
-                        visibility: currCard+1 < setSize ? "visible" : "hidden",
-                        cursor: 'pointer', 
+                        cursor: 'pointer',
                     }}
                     onClick={() => {
-                        setCard(currCard+1);
+                        recordAnswer(true);
+                        if (currCard + 1 < setSize) {
+                            setCard(currCard + 1);
+                        }
+                        setCardShownAt(Date.now());
                         setFlipped(false);
                     }}
                     >
