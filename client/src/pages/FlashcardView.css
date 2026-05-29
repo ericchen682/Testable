@@ -34,6 +34,29 @@
   font-size: 32px;
 }
 
+.flashcard-view-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flashcard-view-badge {
+  width: fit-content;
+  padding: 2px 8px;
+  border: 1px solid #c8c2d0;
+  border-radius: 999px;
+  color: #6b6375;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.flashcard-view-badge--public {
+  border-color: #3fb6b2;
+  color: #18736f;
+}
+
 .flashcard-view-message {
   margin: 0;
   font-size: 14px;
