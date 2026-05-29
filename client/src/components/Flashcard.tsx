@@ -2,6 +2,7 @@ import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface FlashcardProps {
+    id:string;
     titleText: string;
     frontText: string;
     backText: string;

@@ -41,6 +41,7 @@ const {
   getPublicFlashcardSets,
 } = require('./utils/flashcardSets');
 
+const { insertAnalyticsRecord } = require('./utils/analytics');
 
 // GETS FOR ANALYTICS
 
@@ -293,8 +294,6 @@ app.put('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   res.json({ flashcardSet: updated });
 });
 
-<<<<<<< aaron/login-pages
-=======
 app.delete('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   const existing = findFlashcardSetById(req.params.id);
   if (!existing || existing.userId !== req.user.id) {
@@ -313,7 +312,25 @@ app.put('/api/flashcard-sets/:id/publish', requireAuth, (req, res) => {
   const updated = publishFlashcardSet(req.params.id, isPublished, new Date().toISOString());
   res.json({ flashcardSet: updated });
 });
->>>>>>> main
+
+app.post('/api/analytics', requireAuth, (req, res) => {
+  const { cardId, setId, correct, timeSpent } = req.body;
+
+  if (!cardId || !setId || correct === undefined || timeSpent ===undefined) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  insertAnalyticsRecord({
+    userId: req.user.id,
+    cardId: String(cardId),
+    setId: String(setId),
+    correct: Boolean(correct),
+    timeSpent: Math.max(0, parseInt(timeSpent, 10) || 0),
+    reviewedAt: new Date().toISOString(),
+  });
+
+  res.status(201).json({ ok: true });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

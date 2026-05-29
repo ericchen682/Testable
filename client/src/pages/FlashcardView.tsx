@@ -65,6 +65,7 @@ export default function FlashcardView() {
   }, [handleAuthError, navigate, setId, token]);
 
   const flashcardList = set?.cards.map((card) => ({
+    id: card.id,
     titleText: set.title,
     frontText: card.front || 'Blank front',
     backText: card.back || 'Blank back',
@@ -101,9 +102,9 @@ export default function FlashcardView() {
           </div>
         )}
 
-        {flashcardList.length > 0 && (
+         {set && flashcardList.length > 0 && (
           <div className="flashcard-view-player">
-            <FlashcardSet flashcardList={flashcardList} />
+            <FlashcardSet flashcardList={flashcardList} setId={set.id} token={token!} />  
           </div>
         )}
       </section>
