@@ -96,8 +96,14 @@
 .dashboard-home:hover,
 .dashboard-published:hover,
 .dashboard-user-owned:hover,
-.dashboard-logout:hover {
+.dashboard-logout:hover,
+.dashboard-set-publish:hover {
   box-shadow: 0 0 12px #3FB6B2;
+  transition: box-shadow 0.2s ease;
+}
+
+.dashboard-set-delete:hover {
+  box-shadow: 0 0 12px #d43131;
   transition: box-shadow 0.2s ease;
 }
 
