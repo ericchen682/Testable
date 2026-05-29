@@ -8,6 +8,11 @@ const insertUserStmt = db.prepare(`
   INSERT INTO users (id, email, password_hash, password_salt, created_at) 
   VALUES (@id, @email, @passwordHash, @passwordSalt, @createdAt)
   `);
+const updatePasswordStmt = db.prepare(`
+  UPDATE users
+  SET password_hash = @passwordHash, password_salt = @passwordSalt
+  WHERE id = @id
+`);
 
 // converts snake to camelcase
 function mapUserRow(row) {
@@ -34,8 +39,13 @@ function createUser(user) {
   return user;
 }
 
+function updateUserPassword(id, passwordHash, passwordSalt) {
+  updatePasswordStmt.run({ id, passwordHash, passwordSalt });
+}
+
 module.exports = {
   findUserByEmail,
   findUserById,
-  createUser
+  createUser,
+  updateUserPassword,
 };
