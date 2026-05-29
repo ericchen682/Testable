@@ -43,6 +43,11 @@ const {
 
 const { insertAnalyticsRecord } = require('./utils/analytics');
 
+// GETS FOR ANALYTICS
+
+
+
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 const PASSWORD_RESET_MESSAGE = 'Reset password link has been sent to your email if this account exists.';
