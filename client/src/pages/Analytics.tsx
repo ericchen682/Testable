@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import './Analytics.css';
-
+import { useNavigate } from 'react-router-dom'; 
 // ── Types ──────────────────────────────────────────────────
 interface CardSet {
   id: string;
@@ -632,30 +632,27 @@ export default function Analytics() {
   const [periodId, setPeriodId] = useState('7d');
   const [tab, setTab] = useState('overview');
   const period = PERIODS.find(p => p.id === periodId)!;
+  const navigate = useNavigate();
 
   return (
     <div className="analytics-root">
-      <div className="analytics-app">
-        <header className="an-topnav">
+      <header className="an-topnav">
           <div className="an-topnav-inner">
             <div className="an-brand">
               <span className="an-brand-mark" />
               Testable
             </div>
             <nav className="an-nav-links">
-              <button className="an-nav-link">Study</button>
-              <button className="an-nav-link">My sets</button>
+              <button className="an-nav-link"  onClick={() => navigate('/dashboard')}>My sets</button>
               <button className="an-nav-link active">Analytics</button>
-              <button className="an-nav-link">Discover</button>
             </nav>
             <div className="an-nav-right">
-              <button className="an-icon-btn" aria-label="Notifications"><BellIcon /></button>
-              <button className="an-icon-btn" aria-label="Settings"><SettingsIcon /></button>
+              
               <div className="an-avatar">JM</div>
             </div>
           </div>
         </header>
-
+      <div className="analytics-app">
         <div className="an-page">
           <div className="an-page-head">
             <div className="an-page-title">
@@ -693,6 +690,7 @@ export default function Analytics() {
           {tab === 'history'  && <HistoryTab setId={setId} period={period} />}
         </div>
       </div>
+      
     </div>
   );
 }

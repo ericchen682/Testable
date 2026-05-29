@@ -29,6 +29,12 @@ const {
   updateFlashcardSet,
 } = require('./utils/flashcardSets');
 
+
+// GETS FOR ANALYTICS
+
+
+
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -192,6 +198,7 @@ app.put('/api/flashcard-sets/:id', requireAuth, (req, res) => {
   
   res.json({ flashcardSet: updated });
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

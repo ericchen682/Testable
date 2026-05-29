@@ -37,6 +37,8 @@
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .analytics-root::before {
@@ -68,6 +70,8 @@
   justify-content: space-between;
   gap: 24px;
   border-bottom: 3px solid var(--teal);
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 .an-topnav-inner {
@@ -88,6 +92,7 @@
   letter-spacing: -0.01em;
   font-size: 19px;
   color: var(--cream);
+  
 }
 
 .an-brand-mark {
@@ -97,6 +102,7 @@
   background: var(--cream);
   position: relative;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  
 }
 
 .an-brand-mark::after {
@@ -173,13 +179,16 @@
   font-size: 13px;
   cursor: pointer;
   border: 2px solid var(--cream);
+  
 }
 
 /* ── Page body ── */
 .an-page {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
   padding: 36px 32px 0;
+  width: 80vw;
+  margin-left: calc(50% - 40vw);
 }
 
 .an-page-head {
@@ -203,6 +212,7 @@
   margin: 0;
   color: var(--ink-soft);
   font-size: 15px;
+  
 }
 
 .an-page-title .accent {
