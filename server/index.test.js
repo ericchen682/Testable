@@ -23,15 +23,30 @@ function signup(email = 'test@example.com', password = 'Password1!') {
     .send({ email, password });
 }
 
+async function authToken(email = 'test@example.com', password = 'Password1!') {
+  const res = await signup(email, password);
+  return res.body.token;
+}
+
+function authHeader(token) {
+  return `Bearer ${token}`;
+}
+
+async function createFlashcardSet(token) {
+  return request(app)
+    .post('/api/flashcard-sets')
+    .set('Authorization', authHeader(token));
+}
+
+beforeEach(() => {
+  resetDb();
+});
+
+afterAll(() => {
+  db.close();
+});
+
 describe('auth routes', () => {
-  beforeEach(() => {
-    resetDb();
-  });
-
-  afterAll(() => {
-    db.close();
-  });
-
   test('signup creates a user and returns a token without password fields', async () => {
     const res = await signup('USER@example.com', 'Password1!');
 
@@ -109,5 +124,209 @@ describe('auth routes', () => {
 
     expect(res.status).toBe(401);
     expect(res.body.error).toBe('Invalid email or password.');
+  });
+});
+
+describe('flashcard set routes', () => {
+  test('creates an empty flashcard set for the logged-in user', async () => {
+    const token = await authToken();
+
+    const res = await createFlashcardSet(token);
+
+    expect(res.status).toBe(201);
+    expect(res.body.flashcardSet).toMatchObject({
+      id: expect.any(String),
+      userId: expect.any(String),
+      title: 'Untitled',
+      isPublished: false,
+      cards: [],
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+    });
+  });
+
+  test('requires login to create a flashcard set', async () => {
+    const res = await request(app).post('/api/flashcard-sets');
+
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe('You must be logged in.');
+  });
+
+  test('lists only the logged-in user flashcard sets', async () => {
+    const firstUserToken = await authToken('first@example.com');
+    const secondUserToken = await authToken('second@example.com');
+    const firstSet = await createFlashcardSet(firstUserToken);
+    await createFlashcardSet(secondUserToken);
+
+    const res = await request(app)
+      .get('/api/flashcard-sets')
+      .set('Authorization', authHeader(firstUserToken));
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSets).toHaveLength(1);
+    expect(res.body.flashcardSets[0]).toMatchObject({
+      id: firstSet.body.flashcardSet.id,
+      title: 'Untitled',
+      isPublished: false,
+      cardCount: 0,
+      updatedAt: expect.any(String),
+    });
+  });
+
+  test('edits a flashcard set title and cards', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+
+    const res = await request(app)
+      .put(`/api/flashcard-sets/${setId}`)
+      .set('Authorization', authHeader(token))
+      .send({
+        title: 'Biology 101',
+        cards: [
+          { id: 'card-1', front: 'Cell', back: 'Basic unit of life' },
+          { id: 'card-2', front: 'Mitochondria', back: 'Produces ATP' },
+        ],
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSet).toMatchObject({
+      id: setId,
+      title: 'Biology 101',
+      isPublished: false,
+      cards: [
+        { id: 'card-1', front: 'Cell', back: 'Basic unit of life' },
+        { id: 'card-2', front: 'Mitochondria', back: 'Produces ATP' },
+      ],
+    });
+    expect(new Date(res.body.flashcardSet.updatedAt).toString()).not.toBe('Invalid Date');
+  });
+
+  test('persists edited flashcard set cards in order', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+
+    await request(app)
+      .put(`/api/flashcard-sets/${setId}`)
+      .set('Authorization', authHeader(token))
+      .send({
+        title: 'Chemistry',
+        cards: [
+          { id: 'card-a', front: 'Atom', back: 'Smallest unit of matter' },
+          { id: 'card-b', front: 'Ion', back: 'Charged atom or molecule' },
+        ],
+      });
+
+    const res = await request(app)
+      .get(`/api/flashcard-sets/${setId}`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSet.title).toBe('Chemistry');
+    expect(res.body.flashcardSet.cards.map((card) => card.id)).toEqual(['card-a', 'card-b']);
+    expect(res.body.flashcardSet.cards[0].front).toBe('Atom');
+    expect(res.body.flashcardSet.cards[1].back).toBe('Charged atom or molecule');
+  });
+
+  test('replaces old cards when editing a flashcard set', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+
+    await request(app)
+      .put(`/api/flashcard-sets/${setId}`)
+      .set('Authorization', authHeader(token))
+      .send({
+        title: 'First version',
+        cards: [
+          { id: 'old-card', front: 'Old front', back: 'Old back' },
+        ],
+      });
+
+    const res = await request(app)
+      .put(`/api/flashcard-sets/${setId}`)
+      .set('Authorization', authHeader(token))
+      .send({
+        title: 'Second version',
+        cards: [
+          { id: 'new-card', front: 'New front', back: 'New back' },
+        ],
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSet.title).toBe('Second version');
+    expect(res.body.flashcardSet.cards).toEqual([
+      { id: 'new-card', front: 'New front', back: 'New back' },
+    ]);
+  });
+
+  test('defaults a blank edited title to Untitled', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+
+    const res = await request(app)
+      .put(`/api/flashcard-sets/${setId}`)
+      .set('Authorization', authHeader(token))
+      .send({ title: '   ', cards: [] });
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSet.title).toBe('Untitled');
+  });
+
+  test('generates an id for edited cards without one', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+
+    const res = await request(app)
+      .put(`/api/flashcard-sets/${setId}`)
+      .set('Authorization', authHeader(token))
+      .send({
+        title: 'Generated ids',
+        cards: [
+          { front: 'Front without id', back: 'Back without id' },
+        ],
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.flashcardSet.cards[0]).toMatchObject({
+      id: expect.any(String),
+      front: 'Front without id',
+      back: 'Back without id',
+    });
+  });
+
+  test('does not allow one user to edit another user flashcard set', async () => {
+    const ownerToken = await authToken('owner@example.com');
+    const otherToken = await authToken('other@example.com');
+    const createRes = await createFlashcardSet(ownerToken);
+
+    const res = await request(app)
+      .put(`/api/flashcard-sets/${createRes.body.flashcardSet.id}`)
+      .set('Authorization', authHeader(otherToken))
+      .send({
+        title: 'Changed by someone else',
+        cards: [],
+      });
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Flashcard set not found.');
+  });
+
+  test('returns not found when editing a missing flashcard set', async () => {
+    const token = await authToken();
+
+    const res = await request(app)
+      .put('/api/flashcard-sets/missing-set')
+      .set('Authorization', authHeader(token))
+      .send({
+        title: 'Missing',
+        cards: [],
+      });
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Flashcard set not found.');
   });
 });
