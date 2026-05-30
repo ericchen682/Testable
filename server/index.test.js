@@ -600,3 +600,116 @@ describe('password reset routes', () => {
     expect(tokenCount).toBe(0);
   });
 });
+
+// integration tests for copying flashcard sets
+describe('POST /api/flashcard-sets/:id/copy', () => {
+  test('copies your own set with proper title, new card ids, and defaults to private', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const originalId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, originalId);
+
+    const res = await request(app)
+      .post(`/api/flashcard-sets/${originalId}/copy`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(201);
+
+    const copy = res.body.flashcardSet;
+    expect(copy.title).toBe('Copy of Published Biology');
+    expect(copy.isPublished).toBe(false);
+    expect(copy.id).not.toBe(originalId);
+    expect(copy.userId).toEqual(expect.any(String));
+    expect(copy.cards).toHaveLength(2);
+    expect(copy.cards[0]).toMatchObject({ front: 'Cell', back: 'Basic unit of life' });
+    expect(copy.cards[1]).toMatchObject({ front: 'DNA', back: 'Genetic material' });
+    
+    const copyCardIds = copy.cards.map((card) => card.id);
+    expect(copyCardIds).not.toContain('card-1');
+    expect(copyCardIds).not.toContain('card-2');
+  });
+
+  test('copied set is under current user', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const originalId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, originalId);
+
+    const res = await request(app)
+      .post(`/api/flashcard-sets/${originalId}/copy`)
+      .set('Authorization', authHeader(token));
+    
+    const list = await request(app)
+      .get('/api/flashcard-sets')
+      .set('Authorization', authHeader(token));
+    
+    expect(list.status).toBe(200);
+    expect(list.body.flashcardSets).toHaveLength(2);
+    expect(list.body.flashcardSets.some((set) => set.title === 'Copy of Published Biology')).toBe(true);
+  })
+
+  test('lets a user copy another users published set', async () => {
+    const originalToken = await authToken('original@example.com');
+    const otherToken = await authToken('other@example.com');
+    const createRes = await createFlashcardSet(originalToken);
+    const originalId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(originalToken, originalId);
+    await publishFlashcardSet(originalToken, originalId, true);
+    
+    const res = await request(app)
+      .post(`/api/flashcard-sets/${originalId}/copy`)
+      .set('Authorization', authHeader(otherToken));
+    
+    expect(res.status).toBe(201);
+
+    const list = await request(app)
+      .get('/api/flashcard-sets')
+      .set('Authorization', authHeader(otherToken));
+    
+    expect(list.status).toBe(200);
+    expect(list.body.flashcardSets).toHaveLength(1);
+    expect(list.body.flashcardSets.some((set) => set.title === 'Copy of Published Biology')).toBe(true);
+  })
+
+  test('does not allow copying of unpublished set', async () => {
+    const originalToken = await authToken('original@example.com');
+    const otherToken = await authToken('other@example.com');
+    const createRes = await createFlashcardSet(originalToken);
+    const originalId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(originalToken, originalId);
+
+    const res = await request(app)
+      .post(`/api/flashcard-sets/${originalId}/copy`)
+      .set('Authorization', authHeader(otherToken));
+    
+    expect(res.status).toBe(404);
+
+    const list = await request(app)
+      .get('/api/flashcard-sets')
+      .set('Authorization', authHeader(otherToken));
+    
+    expect(list.status).toBe(200);
+    expect(list.body.flashcardSets).toHaveLength(0);
+  })
+
+  test('copying nonexistent set returns 404', async () => {
+    const token = await authToken();
+    const res = await request(app)
+      .post('/api/flashcard-sets/nonexistent-set/copy')
+      .set('Authorization', authHeader(token));
+    
+    expect(res.status).toBe(404);
+  })
+
+  test('must be logged in to copy sets', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const originalId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, originalId);
+
+    const res = await request(app)
+      .post(`/api/flashcard-sets/${originalId}/copy`);
+    
+    expect(res.status).toBe(401);
+  })
+})

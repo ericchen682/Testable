@@ -346,6 +346,36 @@ app.put('/api/flashcard-sets/:id/publish', requireAuth, (req, res) => {
   res.json({ flashcardSet: updated });
 });
 
+app.post('/api/flashcard-sets/:id/copy', requireAuth, (req, res) => {
+  const original = findFlashcardSetById(req.params.id);
+
+  // check if owned/public set
+  if(!original || original.userId !== req.user.id && !original.isPublished)
+  {
+    return res.status(404).json({ error: 'Flashcard set not found.' });
+  }
+
+  const now = new Date().toISOString();
+
+  const newSet = createFlashcardSet({
+    id: crypto.randomUUID(),
+    userId: req.user.id,
+    createdAt: now,
+  });
+
+  const copy = updateFlashcardSet(newSet.id, {
+    title: `Copy of ${original.title}`,
+    cards: original.cards.map((card) => ({
+      id: crypto.randomUUID(),
+      front: card.front,
+      back: card.back,
+    })),
+    updatedAt: now,
+  });
+
+  res.status(201).json({ flashcardSet: copy });
+});
+
 app.post('/api/analytics', requireAuth, (req, res) => {
   const { cardId, setId, correct, timeSpent } = req.body;
 
