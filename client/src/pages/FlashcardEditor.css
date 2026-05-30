@@ -232,3 +232,11 @@
 .flashcard-editor-card textarea::-webkit-scrollbar-thumb:hover {
   background: #1f2b54;
 }
+
+.flashcard-publish-panel button:hover,
+.flashcard-add-card:hover,
+.flashcard-delete-card:hover,
+.flashcard-save-set:hover {
+  box-shadow: 0 0 12px #3FB6B2;
+  transition: box-shadow 0.2s ease-in-out;
+}
