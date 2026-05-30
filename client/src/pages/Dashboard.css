@@ -26,7 +26,12 @@
 .logo {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 200px;
+  box-sizing: border-box;
+  padding: 16px;
+  background: #0a1230;
   font-family: 'Instrument Serif', Georgia, serif;
   font-size: 33px;
   font-weight: 400;
@@ -38,7 +43,9 @@
 .dashboard-left {
   height: 100%;
   width: 200px;
+  flex-shrink: 0;
   background: #1a254f;
+  box-sizing: border-box;
   padding: 16px;
   display: flex;
   flex-direction: column;
