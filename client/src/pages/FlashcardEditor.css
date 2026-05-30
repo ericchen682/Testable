@@ -191,6 +191,9 @@
 
 .flashcard-add-card {
   background:#3fb6b2;
+  color:#0a1238;
+  margin-left: 30px;
+  margin-bottom: 30px;
 }
 
 @media (max-width: 640px) {
