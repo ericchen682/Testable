@@ -168,61 +168,70 @@ export default function FlashcardEditor() {
   return (
     <main className="flashcard-editor-root">
       <header className="flashcard-editor-header">
-        <button onClick={() => navigate('/dashboard')}>Back to dashboard</button>
-        <button onClick={() => navigate(`/flashcards/${set.id}`)}>View flashcards</button>
+        <button onClick={() => navigate('/dashboard')}>
+          {"<"} Back to dashboard
+        </button>
+        <button  onClick={() => navigate(`/flashcards/${set.id}`)}>
+          View flashcards
+        </button>
       </header>
 
       <section className="flashcard-editor-content">
-        <input
-          className="flashcard-title-input"
-          value={set.title}
-          onChange={(event) => updateTitle(event.target.value)}
-          placeholder="Untitled"
-        />
-
-        <div className="flashcard-publish-panel">
-          <div>
-            <span className={set.isPublished ? 'flashcard-publish-status flashcard-publish-status--public' : 'flashcard-publish-status'}>
+        <div className="flashcard-editor-left">
+          <input
+            className="flashcard-title-input"
+            value={set.title}
+            onChange={(event) => updateTitle(event.target.value)}
+            placeholder="Untitled"
+          />
+          <div className="flashcard-publish-panel">
+            <div>
+              <span className={set.isPublished ? 'flashcard-publish-status flashcard-publish-status--public' : 'flashcard-publish-status'}>
               {set.isPublished ? 'Published' : 'Private'}
-            </span>
-            <p>
-              {set.isPublished
+              </span>
+              <p>
+                {set.isPublished
                 ? 'This set is visible in public flashcard sets.'
                 : 'Publish this set to make it visible to other users.'}
-            </p>
-          </div>
-          <button onClick={togglePublish} disabled={publishing}>
+              </p>
+            </div>
+            <button onClick={togglePublish} disabled={publishing}>
             {publishing ? 'Saving...' : set.isPublished ? 'Unpublish' : 'Publish'}
+            </button>
+          </div>
+          {message && <p className="flashcard-editor-message">{message}</p>}
+        </div>
+
+        <div className="flashcard-editor-right">
+          <div className="flashcard-editor-list-header">
+            Terms
+          </div>
+          <div className="flashcard-editor-list">
+            {set.cards.map((card, index) => (
+              <div className="flashcard-editor-card" key={card.id}>
+                <span>Card {index + 1}</span>
+                <div className="flashcard-editor-card-set">
+                  <textarea 
+                  value={card.front} 
+                  onChange={(event) => updateCard(card.id, 'front', event.target.value)} 
+                  placeholder="Front"
+                  />
+
+                  <textarea 
+                  value={card.back} 
+                  onChange={(event) => updateCard(card.id, 'back', event.target.value)} 
+                  placeholder="Back"
+                  />
+
+                  {/* Later: add image upload fields to each card here. */}
+                </div>
+              </div>
+            ))}
+          </div>
+          <button className="flashcard-add-card" onClick={addCard}>
+            Add card +
           </button>
         </div>
-
-        {message && <p className="flashcard-editor-message">{message}</p>}
-
-        <div className="flashcard-editor-list">
-          {set.cards.map((card, index) => (
-            <div className="flashcard-editor-card" key={card.id}>
-              <span>Card {index + 1}</span>
-
-              <textarea
-                value={card.front}
-                onChange={(event) => updateCard(card.id, 'front', event.target.value)}
-                placeholder="Front"
-              />
-
-              <textarea
-                value={card.back}
-                onChange={(event) => updateCard(card.id, 'back', event.target.value)}
-                placeholder="Back"
-              />
-
-              {/* Later: add image upload fields to each card here. */}
-            </div>
-          ))}
-        </div>
-
-        <button className="flashcard-add-card" onClick={addCard}>
-          Add card +
-        </button>
       </section>
     </main>
   );

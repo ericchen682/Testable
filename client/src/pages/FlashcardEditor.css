@@ -1,12 +1,14 @@
 .flashcard-editor-root {
-  height: max-content;
-  position: absolute;
+  height: 100vh;
+  position: fixed;
   inset: 0;
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   color: #F5F0E1;
-  background: #07133b;
+  background: #1a254f;
+  font-size: 25px;
+  overflow: hidden;
 }
 
 .flashcard-editor-header {
@@ -18,24 +20,51 @@
 }
 
 .flashcard-editor-content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+
+.flashcard-editor-left {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  max-width: 760px;
-  margin: 0 auto;
-  text-align: left;
-  font-family: 'Inter', sans-serif;
+  position: sticky;
+  top: 0px;
+  height: 500px;
+  justify-content: center;
+  margin-left: -200px;}
+
+.flashcard-editor-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #334071;
+  align-items: start;
+  padding-top: 24px;
+  margin-right: -200px;
+  margin-top: -30px;
+  width: 800px;
+  border-radius: 15px;
+  border: 20px;
+  border: 1.5px solid #3fb6b2;
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
 }
 
 .flashcard-title-input {
+  width: 100%;
+  font-size: 70px;
   padding: 8px 0;
   border: 0;
-  border-bottom: 2px solid #e5e4e7;
   background: transparent;
   color: var(--text-h);
-  font-size: 64px;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
   font-family: 'Instrument Serif', Georgia, serif;
   width: 600px;
 }
@@ -48,6 +77,7 @@
 .flashcard-editor-message {
   margin: 0;
   font-size: 14px;
+  font-family: 'Instrument Serif', Georgia, serif;
 }
 
 .flashcard-publish-panel {
@@ -63,7 +93,7 @@
 .flashcard-publish-panel p {
   margin: 6px 0 0;
   color: #6b6375;
-  font-size: 14px;
+  font-size: 22px;
 }
 
 .flashcard-publish-panel button {
@@ -76,6 +106,7 @@
   color: #0a1238;
   font-weight: 700;
   cursor: pointer;
+  text-align: center;
 }
 
 .flashcard-publish-panel button:disabled {
@@ -84,12 +115,12 @@
 }
 
 .flashcard-publish-status {
-  width: fit-content;
+  width: center;
   padding: 2px 8px;
   border: 1px solid #c8c2d0;
   border-radius: 999px;
   color: #6b6375;
-  font-size: 12px;
+  font-size: 22px;
   font-weight: 700;
 }
 
@@ -98,37 +129,52 @@
   color: #18736f;
 }
 
+.flashcard-editor-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 40px;
+  font-weight: 700;
+  color: #99a8dd;
+  padding: 0 50px;
+}
+
 .flashcard-editor-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  background: #334071;
+  gap: 1px;
 }
 
 .flashcard-editor-card {
   display: grid;
-  gap: 10px;
-  padding: 16px;
-  border: 1px solid #e5e4e7;
+  gap: 1px;
+  padding: 1px;
   border-radius: 8px;
 }
 
 .flashcard-editor-card span {
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 700;
   color: #6b6375;
+}
+
+.flashcard-editor-card-set {
+  display: flex;
+  gap: 8px;
 }
 
 .flashcard-editor-card textarea {
   min-height: 90px;
   resize: horizontal;
-  padding: 10px;
-  border: 1px solid #e5e4e7;
+  padding: 1px;
   border-radius: 6px;
   background: #f3e8d4;
   color: #000000;
   font: inherit;
   text-align: center;
+  width: 350px;
+  margin-left: 30px;
+  
 }
 
 .flashcard-add-card,
@@ -137,10 +183,14 @@
   padding: 8px 12px;
   border: 0;
   border-radius: 999px;
-  background: #3fb6b2;
-  color: #0a1238;
+  color: #6274b4;
   font-weight: 700;
   cursor: pointer;
+  background:transparent;
+}
+
+.flashcard-add-card {
+  background:#3fb6b2;
 }
 
 @media (max-width: 640px) {
@@ -149,3 +199,4 @@
     flex-direction: column;
   }
 }
+
