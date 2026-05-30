@@ -346,7 +346,7 @@ app.put('/api/flashcard-sets/:id/publish', requireAuth, (req, res) => {
   res.json({ flashcardSet: updated });
 });
 
-app.post('api/flashcard-sets/:id/copy', requireAuth, (req, res) => {
+app.post('/api/flashcard-sets/:id/copy', requireAuth, (req, res) => {
   const original = findFlashcardSetById(req.params.id);
 
   // check if owned/public set
@@ -363,7 +363,7 @@ app.post('api/flashcard-sets/:id/copy', requireAuth, (req, res) => {
     createdAt: now,
   });
 
-  const copy = updateFlashcardSet(created.id, {
+  const copy = updateFlashcardSet(newSet.id, {
     title: `Copy of ${original.title}`,
     cards: original.cards.map((card) => ({
       id: crypto.randomUUID(),
