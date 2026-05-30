@@ -730,6 +730,7 @@ describe('analytics routes', () => {
     await updateFlashcardSet(token, setId);
     return { token, setId };
   }
+
   test('computes accuracy correctly', async () => {
     const { token, setId } = await setupSetWithCards();
 
@@ -745,5 +746,35 @@ describe('analytics routes', () => {
     expect(res.status).toBe(200);
     const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
     expect(card1).toMatchObject({ attempts: 4, correctCount: 3, accuracy: 75 });
-  })
-})
+  });
+
+  test('rounds accuracy up correctly', async () => {
+    const { token, setId } = await setupSetWithCards();
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+
+    const res = await request(app)
+      .get(`/api/analytics/${setId}`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(200);
+    const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
+    expect(card1).toMatchObject({ attempts: 3, correctCount: 2, accuracy: 67 });
+  });
+
+  test('rounds accuracy down correctly', async () => {
+    const { token, setId } = await setupSetWithCards();
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+
+    const res = await request(app)
+      .get(`/api/analytics/${setId}`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(200);
+    const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
+    expect(card1).toMatchObject({ attempts: 3, correctCount: 1, accuracy: 33 });
+  });
+});
