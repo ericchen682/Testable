@@ -628,4 +628,23 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     expect(copyCardIds).not.toContain('card-1');
     expect(copyCardIds).not.toContain('card-2');
   });
+
+  test('copied set is under current user', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const originalId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, originalId);
+
+    const res = await request(app)
+      .post(`/api/flashcard-sets/${originalId}/copy`)
+      .set('Authorization', authHeader(token));
+    
+    const list = await request(app)
+      .get('/api/flashcard-sets')
+      .set('Authorization', authHeader(token));
+    
+    expect(list.status).toBe(200);
+    expect(list.body.flashcardSets).toHaveLength(2);
+    expect(list.body.flashcardSets.some((set) => set.title === 'Copy of Published Biology')).toBe(true);
+  })
 })
