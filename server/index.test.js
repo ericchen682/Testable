@@ -777,4 +777,34 @@ describe('analytics routes', () => {
     const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
     expect(card1).toMatchObject({ attempts: 3, correctCount: 1, accuracy: 33 });
   });
+
+  test('card accuracies are independent and total set accuracy is combined', async () => {
+    const { token, setId } = await setupSetWithCards();
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+    
+    await recordAnalytics(token, {cardId: 'card-2', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-2', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-2', setId, correct: true });
+
+    const res = await request(app)
+      .get(`/api/analytics/${setId}`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(200);
+
+    const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
+    expect(card1).toMatchObject({ attempts: 3, correctCount: 1, accuracy: 33 });
+
+    const card2 = res.body.analytics.find((row) => row.cardId === 'card-2');
+    expect(card2).toMatchObject({ attempts: 3, correctCount: 3, accuracy: 100 });
+
+    const analytics = res.body.analytics;
+    const totalAttempts = analytics.reduce((sum, row) => sum + row.attempts, 0);
+    const totalCorrect = analytics.reduce((sum, row) => sum + row.correctCount, 0);
+    const setAccuracy = Math.round((totalCorrect / totalAttempts) * 100);
+
+    expect(setAccuracy).toBe(67);
+  })
 });
