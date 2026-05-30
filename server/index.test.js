@@ -691,4 +691,25 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     expect(list.status).toBe(200);
     expect(list.body.flashcardSets).toHaveLength(0);
   })
+
+  test('copying nonexistent set returns 404', async () => {
+    const token = await authToken();
+    const res = await request(app)
+      .post('/api/flashcard-sets/nonexistent-set/copy')
+      .set('Authorization', authHeader(token));
+    
+    expect(res.status).toBe(404);
+  })
+
+  test('must be logged in to copy sets', async () => {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const originalId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, originalId);
+
+    const res = await request(app)
+      .post(`/api/flashcard-sets/${originalId}/copy`);
+    
+    expect(res.status).toBe(401);
+  })
 })
