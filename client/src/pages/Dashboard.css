@@ -79,9 +79,20 @@
 }
 
 .dashboard-logout {
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
+  margin-top: auto;
+  background: transparent;
+  border: 0;
+  padding: 2px 0;
+  text-align: left;
+  color: #F5F0E1;
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-logout:hover {
+  color: #3FB6B2;
 }
 
 .dashboard-view-toggle {
@@ -109,25 +120,9 @@
   color: #0A1238;
 }
 
-.dashboard-logout {
-  padding: 4px 8px;
-  border: 2px solid #1a254f;
-  border-radius: 999px;
-  background: #1a254f;
-  color: #F5F0E1;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.dashboard-logout {
-  margin-top: auto;
-}
-
 .dashboard-home:hover,
 .dashboard-published:hover,
 .dashboard-user-owned:hover,
-.dashboard-logout:hover,
 .dashboard-set-publish:hover {
   box-shadow: 0 0 12px #3FB6B2;
   transition: box-shadow 0.2s ease;
