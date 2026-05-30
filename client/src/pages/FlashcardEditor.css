@@ -138,7 +138,7 @@
   color: #99a8dd;
   padding: 0px 50px;
   margin-bottom: 0;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .flashcard-editor-list {
@@ -181,6 +181,7 @@
 
 .flashcard-add-card,
 .flashcard-delete-card,
+.flashcard-save-set,
 .flashcard-editor-header button {
   width: fit-content;
   padding: 8px 12px;
@@ -193,11 +194,13 @@
 }
 
 .flashcard-add-card,
+.flashcard-save-set,
 .flashcard-delete-card {
   background:#3fb6b2;
   color:#0a1238;
-  margin-left: 30px;
+  margin-left: 90px;
   margin-bottom: 30px;
+  margin-top: 10px;
 }
 
 @media (max-width: 640px) {

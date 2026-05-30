@@ -84,7 +84,7 @@ export default function FlashcardEditor() {
     updateSet({ ...set, cards: [...set.cards, createBlankCard()] });
   };
 
-    const deleteCard = (cardId: string) => {
+  const deleteCard = (cardId: string) => {
     if (!set) return;
     updateSet({ ...set, cards: set.cards.filter((card) => card.id !== cardId) });
   };
@@ -235,11 +235,14 @@ export default function FlashcardEditor() {
           </div>
           <div>
             <button className="flashcard-add-card" onClick={addCard}>
-              Add card +
+              Add a Card +
             </button>
             <button className="flashcard-delete-card" onClick={() => deleteCard(set.cards[set.cards.length - 1].id)}>
               Delete Last Card -
             </button> 
+            <button className="flashcard-save-set" onClick={() => saveSet(set)}>
+              Save Set
+            </button>
           </div>
         </div>
       </section>
