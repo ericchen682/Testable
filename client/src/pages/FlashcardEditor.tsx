@@ -84,6 +84,11 @@ export default function FlashcardEditor() {
     updateSet({ ...set, cards: [...set.cards, createBlankCard()] });
   };
 
+    const deleteCard = (cardId: string) => {
+    if (!set) return;
+    updateSet({ ...set, cards: set.cards.filter((card) => card.id !== cardId) });
+  };
+
   const togglePublish = async () => {
     if (!set || !token || !setId) return;
 
@@ -207,9 +212,9 @@ export default function FlashcardEditor() {
             Terms
           </div>
           <div className="flashcard-editor-list">
-            {set.cards.map((card, index) => (
+            {set.cards.map((card) => (
               <div className="flashcard-editor-card" key={card.id}>
-                <span>Card {index + 1}</span>
+                
                 <div className="flashcard-editor-card-set">
                   <textarea 
                   value={card.front} 
@@ -228,9 +233,14 @@ export default function FlashcardEditor() {
               </div>
             ))}
           </div>
-          <button className="flashcard-add-card" onClick={addCard}>
-            Add card +
-          </button>
+          <div>
+            <button className="flashcard-add-card" onClick={addCard}>
+              Add card +
+            </button>
+            <button className="flashcard-delete-card" onClick={() => deleteCard(set.cards[set.cards.length - 1].id)}>
+              Delete Last Card -
+            </button> 
+          </div>
         </div>
       </section>
     </main>
