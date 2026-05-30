@@ -350,9 +350,9 @@ export default function Dashboard() {
                 <span>{set.cardCount} cards</span>
                 <span>Updated {new Date(set.updatedAt).toLocaleDateString()}</span>
               </button>
-              {activeView === 'mine' && (
+              
                 <div className="dashboard-set-actions">
-                  <button
+                  {activeView === 'mine' && (<button
                     className="dashboard-set-publish"
                     disabled={publishingSetId === set.id}
                     onClick={() => togglePublish(set)}
@@ -361,13 +361,15 @@ export default function Dashboard() {
                       ? 'Saving...'
                       : set.isPublished ? 'Unpublish' : 'Publish'}
                   </button>
-                  <button
+                  )}
+                  {activeView === 'mine' && (<button
                     className="dashboard-set-delete"
                     disabled={deletingSetId === set.id}
                     onClick={() => deleteFlashcardSet(set)}
                   >
                     {deletingSetId === set.id ? 'Deleting...' : 'Delete'}
                   </button>
+                  )}
                   <button
                     className="dashboard-set-copy"
                     disabled={copyingSetId === set.id}
@@ -376,7 +378,6 @@ export default function Dashboard() {
                     Make a copy
                   </button>
                 </div>
-              )}
             </article>
           ))}
         </div>
