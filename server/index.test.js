@@ -66,6 +66,13 @@ async function publishFlashcardSet(token, setId, isPublished = true) {
     .send({ isPublished });
 }
 
+async function recordAnalytics(token, { cardId, setId, correct, timeSpent = 1000 }) {
+  return request(app)
+    .post('/api/analytics')
+    .set('Authorization', authHeader(token))
+    .send({ cardId, setId, correct, timeSpent });
+}
+
 beforeEach(() => {
   resetDb();
 });
@@ -646,7 +653,7 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     expect(list.status).toBe(200);
     expect(list.body.flashcardSets).toHaveLength(2);
     expect(list.body.flashcardSets.some((set) => set.title === 'Copy of Published Biology')).toBe(true);
-  })
+  });
 
   test('lets a user copy another users published set', async () => {
     const originalToken = await authToken('original@example.com');
@@ -669,7 +676,7 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     expect(list.status).toBe(200);
     expect(list.body.flashcardSets).toHaveLength(1);
     expect(list.body.flashcardSets.some((set) => set.title === 'Copy of Published Biology')).toBe(true);
-  })
+  });
 
   test('does not allow copying of unpublished set', async () => {
     const originalToken = await authToken('original@example.com');
@@ -690,7 +697,7 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     
     expect(list.status).toBe(200);
     expect(list.body.flashcardSets).toHaveLength(0);
-  })
+  });
 
   test('copying nonexistent set returns 404', async () => {
     const token = await authToken();
@@ -699,7 +706,7 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
       .set('Authorization', authHeader(token));
     
     expect(res.status).toBe(404);
-  })
+  });
 
   test('must be logged in to copy sets', async () => {
     const token = await authToken();
@@ -711,5 +718,93 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
       .post(`/api/flashcard-sets/${originalId}/copy`);
     
     expect(res.status).toBe(401);
+  });
+});
+
+// integration tests for analytics
+describe('analytics routes', () => {
+  async function setupSetWithCards() {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, setId);
+    return { token, setId };
+  }
+
+  test('computes accuracy correctly', async () => {
+    const { token, setId } = await setupSetWithCards();
+
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+
+    const res = await request(app)
+      .get(`/api/analytics/${setId}`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(200);
+    const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
+    expect(card1).toMatchObject({ attempts: 4, correctCount: 3, accuracy: 75 });
+  });
+
+  test('rounds accuracy up correctly', async () => {
+    const { token, setId } = await setupSetWithCards();
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+
+    const res = await request(app)
+      .get(`/api/analytics/${setId}`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(200);
+    const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
+    expect(card1).toMatchObject({ attempts: 3, correctCount: 2, accuracy: 67 });
+  });
+
+  test('rounds accuracy down correctly', async () => {
+    const { token, setId } = await setupSetWithCards();
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+
+    const res = await request(app)
+      .get(`/api/analytics/${setId}`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(200);
+    const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
+    expect(card1).toMatchObject({ attempts: 3, correctCount: 1, accuracy: 33 });
+  });
+
+  test('card accuracies are independent and total set accuracy is combined', async () => {
+    const { token, setId } = await setupSetWithCards();
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+    await recordAnalytics(token, {cardId: 'card-1', setId, correct: false });
+    
+    await recordAnalytics(token, {cardId: 'card-2', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-2', setId, correct: true });
+    await recordAnalytics(token, {cardId: 'card-2', setId, correct: true });
+
+    const res = await request(app)
+      .get(`/api/analytics/${setId}`)
+      .set('Authorization', authHeader(token));
+
+    expect(res.status).toBe(200);
+
+    const card1 = res.body.analytics.find((row) => row.cardId === 'card-1');
+    expect(card1).toMatchObject({ attempts: 3, correctCount: 1, accuracy: 33 });
+
+    const card2 = res.body.analytics.find((row) => row.cardId === 'card-2');
+    expect(card2).toMatchObject({ attempts: 3, correctCount: 3, accuracy: 100 });
+
+    const analytics = res.body.analytics;
+    const totalAttempts = analytics.reduce((sum, row) => sum + row.attempts, 0);
+    const totalCorrect = analytics.reduce((sum, row) => sum + row.correctCount, 0);
+    const setAccuracy = Math.round((totalCorrect / totalAttempts) * 100);
+
+    expect(setAccuracy).toBe(67);
   })
-})
+});
