@@ -284,6 +284,12 @@ export default function Dashboard() {
             >
               Public sets
             </button>
+            <button
+              className="dashboard-nav-link"
+              onClick={() => navigate('/analytics')}
+            >
+              Analytics
+            </button>
           </nav>
           <button className="dashboard-logout" onClick={logout}>
             Logout
