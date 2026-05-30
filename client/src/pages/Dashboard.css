@@ -18,10 +18,8 @@
 }
 
 .dashboard-header {
-  padding: 16px;
   display: flex;
   justify-content: flex-start;
-  gap: 12px;
   background: #101a41;
 }
 
@@ -176,7 +174,16 @@
   overflow-x: hidden;
 }
 
-.dashboard-greeting,
+.dashboard-greeting {
+  flex: 1;
+  text-algin: center;
+  padding: 16px;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #F5F0E1;
+}
+
 .dashboard-no-set,
 .dashboard-message {
   margin: 0 auto;
