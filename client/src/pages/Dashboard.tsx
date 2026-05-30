@@ -265,26 +265,26 @@ export default function Dashboard() {
             <circle cx="12" cy="12" r="10.5" stroke="#F5F0E1" strokeWidth="1.4" />
             <path d="M7.5 12.2l3.2 3.2 6-6.4" stroke="#F5F0E1" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Testable<span className="logo-dot">.</span>
-        </div>
-        <div className="dashboard-view-toggle" aria-label="Flashcard set view">
-          <button
-            className={activeView === 'mine' ? 'dashboard-view-button dashboard-view-button--active' : 'dashboard-view-button'}
-            onClick={() => setActiveView('mine')}
-          >
-            My sets
-          </button>
-          <button
-            className={activeView === 'public' ? 'dashboard-view-button dashboard-view-button--active' : 'dashboard-view-button'}
-            onClick={() => setActiveView('public')}
-          >
-            Public sets
-          </button>
+          Testable
         </div>
         <span className="dashboard-greeting"> Ready to continue your studying journey? </span>
       </header>
       <div className="dashboard-body">
         <div className="dashboard-left">
+          <nav className="dashboard-aria" aria-label="Flashcard set view">
+            <button
+              className={activeView === 'mine' ? 'dashboard-nav-link dashboard-nav-link--active' : 'dashboard-nav-link'}
+      onClick={() => setActiveView('mine')}
+            >
+              My sets
+            </button>
+            <button
+              className={activeView === 'public' ? 'dashboard-nav-link dashboard-nav-link--active' : 'dashboard-nav-link'}
+              onClick={() => setActiveView('public')}
+            >
+              Public sets
+            </button>
+          </nav>
           <button className="dashboard-logout" onClick={logout}>
             Logout
           </button>
