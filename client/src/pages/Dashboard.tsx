@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+  import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
@@ -18,6 +18,8 @@ export default function Dashboard() {
   const [deletingSetId, setDeletingSetId] = useState<string | null>(null);
   const [publishingSetId, setPublishingSetId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<FlashcardSetSummary[] | null>(null);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
@@ -30,6 +32,31 @@ export default function Dashboard() {
     localStorage.removeItem('token');
     navigate('/login');
   }, [navigate]);
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults(null);
+      return;
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/flashcard-sets/search?q=${encodeURIComponent(query)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError();
+          return;
+        }
+        return;
+      }
+      setSearchResults(data.flashcardSets);
+    } catch {
+      setMessage('Could not connect to the server');
+    }
+  };
 
   const createFlashcardSet = async () => {
     if (!token) {
@@ -228,7 +255,7 @@ export default function Dashboard() {
     loadPublicSets();
   }, [activeView]);
 
-  const displayedSets = activeView === 'mine' ? sets : publicSets;
+  const displayedSets = searchResults !== null ? searchResults : (activeView === 'mine' ? sets : publicSets);
 
   return (
     <main className="dashboard-root">

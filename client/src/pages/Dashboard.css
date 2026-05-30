@@ -298,12 +298,10 @@
   font-size: 12px;
   font-weight: 700;
 }
-
 .dashboard-set-badge--public {
   border-color: #3FB6B2;
   color: #18736f;
 }
-
 .dashboard-set-actions {
   display: flex;
   flex-wrap: wrap;
@@ -313,7 +311,6 @@
   box-sizing: border-box;
   margin-top: 20px;
 }
-
 .dashboard-set-publish {
   padding: 4px 10px;
   border: 1px solid #1a254f;
@@ -324,7 +321,6 @@
   font-weight: 600;
   cursor: pointer;
 }
-
 .dashboard-set-delete {
   align-self: flex-start;
   padding: 4px 10px;
@@ -336,9 +332,24 @@
   font-weight: 600;
   cursor: pointer;
 }
-
 .dashboard-set-delete:disabled,
 .dashboard-set-publish:disabled {
   cursor: not-allowed;
   opacity: 0.65;
+}
+.dashboard-search {
+  padding: 4px 12px;
+  border: 2px solid #3FB6B2;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  width: 220px;
+}
+.dashboard-search::placeholder {
+  color: #3FB6B2;
+  opacity: 0.7;
+}
 }
