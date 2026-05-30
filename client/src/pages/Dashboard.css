@@ -52,6 +52,32 @@
   gap: 12px;
 }
 
+.dashboard-aria {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dashboard-nav-link {
+  background: transparent;
+  border: 0;
+  padding: 2px 0;
+  text-align: left;
+  color: #F5F0E1;
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-nav-link:hover {
+  color: #3FB6B2;
+}
+ 
+.dashboard-nav-link--active {
+  color: #3FB6B2;
+}
+
 .dashboard-logout {
   align-items: center;
   justify-content: flex-end;
