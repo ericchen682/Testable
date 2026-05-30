@@ -252,7 +252,7 @@ export default function Dashboard() {
     loadPublicSets();
   }, [activeView]);
 
-  const displayedSets = activeView === 'mine' ? sets : publicSets;
+  const displayedSets = searchResults !== null ? searchResults : (activeView === 'mine' ? sets : publicSets);
 
   return (
     <main className="dashboard-root">
