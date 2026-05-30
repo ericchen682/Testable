@@ -7,6 +7,9 @@ const express = require('express');
 const cors = require('cors');
 const { Resend } = require('resend');
 
+// GETS FOR ANALYTICS
+const { insertAnalyticsRecord, getAnalyticsForSet } = require('./utils/analytics');
+
 const requireAuth = require('./middleware/requireAuth');
 
 const { 
@@ -41,9 +44,8 @@ const {
   getPublicFlashcardSets,
 } = require('./utils/flashcardSets');
 
-const { insertAnalyticsRecord } = require('./utils/analytics');
 
-// GETS FOR ANALYTICS
+
 
 
 
@@ -364,6 +366,16 @@ app.post('/api/analytics', requireAuth, (req, res) => {
 
   res.status(201).json({ ok: true });
 });
+
+
+
+
+
+app.get('/api/analytics/:setId', requireAuth, (req, res) => {
+  const results = getAnalyticsForSet(req.params.setId, req.user.id);
+  res.json({ analytics: results });
+});
+
 
 if (require.main === module) {
   app.listen(PORT, () => {
