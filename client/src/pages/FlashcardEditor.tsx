@@ -227,19 +227,26 @@ export default function FlashcardEditor() {
                   onChange={(event) => updateCard(card.id, 'back', event.target.value)} 
                   placeholder="Back"
                   />
-
+                  <button className="flashcard-delete-card" onClick={() => deleteCard(card.id)}>
+                      <svg width="22" height="25" viewBox="290 40 100 220" fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="280" y1="70" x2="400" y2="70"/>
+                        <path d="M310 70 L312 50 L368 50 L370 70"/>
+                        <path d="M328 50 L328 44 Q340 40 352 44 L352 50"/>
+                        <path d="M295 70 L305 250 Q340 260 375 250 L385 70 Z"/>
+                        <line x1="323" y1="95" x2="318" y2="235"/>
+                        <line x1="340" y1="95" x2="340" y2="235"/>
+                        <line x1="357" y1="95" x2="362" y2="235"/>
+                      </svg>
+                  </button>
                   {/* Later: add image upload fields to each card here. */}
                 </div>
               </div>
             ))}
           </div>
-          <div>
+          <div className="flashcard-editor-buttons">
             <button className="flashcard-add-card" onClick={addCard}>
               Add a Card +
             </button>
-            <button className="flashcard-delete-card" onClick={() => deleteCard(set.cards[set.cards.length - 1].id)}>
-              Delete Last Card -
-            </button> 
             <button className="flashcard-save-set" onClick={() => saveSet(set)}>
               Save Set
             </button>
