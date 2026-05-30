@@ -653,7 +653,7 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     expect(list.status).toBe(200);
     expect(list.body.flashcardSets).toHaveLength(2);
     expect(list.body.flashcardSets.some((set) => set.title === 'Copy of Published Biology')).toBe(true);
-  })
+  });
 
   test('lets a user copy another users published set', async () => {
     const originalToken = await authToken('original@example.com');
@@ -676,7 +676,7 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     expect(list.status).toBe(200);
     expect(list.body.flashcardSets).toHaveLength(1);
     expect(list.body.flashcardSets.some((set) => set.title === 'Copy of Published Biology')).toBe(true);
-  })
+  });
 
   test('does not allow copying of unpublished set', async () => {
     const originalToken = await authToken('original@example.com');
@@ -697,7 +697,7 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     
     expect(list.status).toBe(200);
     expect(list.body.flashcardSets).toHaveLength(0);
-  })
+  });
 
   test('copying nonexistent set returns 404', async () => {
     const token = await authToken();
@@ -706,7 +706,7 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
       .set('Authorization', authHeader(token));
     
     expect(res.status).toBe(404);
-  })
+  });
 
   test('must be logged in to copy sets', async () => {
     const token = await authToken();
@@ -718,5 +718,18 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
       .post(`/api/flashcard-sets/${originalId}/copy`);
     
     expect(res.status).toBe(401);
-  })
+  });
+});
+
+// integration tests for analytics
+describe('analytics routes', () => {
+  async function setupSetWithCards() {
+    const token = await authToken();
+    const createRes = await createFlashcardSet(token);
+    const setId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(token, setId);
+    return { token, setId };
+  }
+
+
 })
