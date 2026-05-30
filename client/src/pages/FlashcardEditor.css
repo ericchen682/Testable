@@ -200,3 +200,24 @@
   }
 }
 
+.flashcard-editor-right::-webkit-scrollbar, 
+.flashcard-editor-card textarea::-webkit-scrollbar {
+  width: 6px;
+  height: 100px;
+}
+
+.flashcard-editor-right::-webkit-scrollbar-track, 
+.flashcard-editor-card textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.flashcard-editor-right::-webkit-scrollbar-thumb, 
+.flashcard-editor-card textarea::-webkit-scrollbar-thumb {
+  background: #1f2b54;
+  border-radius: 999px;
+}
+
+.flashcard-editor-right::-webkit-scrollbar-thumb:hover,
+.flashcard-editor-card textarea::-webkit-scrollbar-thumb:hover {
+  background: #1f2b54;
+}
