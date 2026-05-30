@@ -365,7 +365,10 @@ app.post('/api/analytics', requireAuth, (req, res) => {
   res.status(201).json({ ok: true });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
 
+module.exports = app;
