@@ -670,4 +670,25 @@ describe('POST /api/flashcard-sets/:id/copy', () => {
     expect(list.body.flashcardSets).toHaveLength(1);
     expect(list.body.flashcardSets.some((set) => set.title === 'Copy of Published Biology')).toBe(true);
   })
+
+  test('does not allow copying of unpublished set', async () => {
+    const originalToken = await authToken('original@example.com');
+    const otherToken = await authToken('other@example.com');
+    const createRes = await createFlashcardSet(originalToken);
+    const originalId = createRes.body.flashcardSet.id;
+    await updateFlashcardSet(originalToken, originalId);
+
+    const res = await request(app)
+      .post(`/api/flashcard-sets/${originalId}/copy`)
+      .set('Authorization', authHeader(otherToken));
+    
+    expect(res.status).toBe(404);
+
+    const list = await request(app)
+      .get('/api/flashcard-sets')
+      .set('Authorization', authHeader(otherToken));
+    
+    expect(list.status).toBe(200);
+    expect(list.body.flashcardSets).toHaveLength(0);
+  })
 })
