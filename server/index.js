@@ -350,7 +350,7 @@ app.post('api/flashcard-sets/:id/copy', requireAuth, (req, res) => {
   const original = findFlashcardSetById(req.params.id);
 
   // check if owned/public set
-  if(!source || source.userId !== req.user.id && !source.isPublished)
+  if(!original || original.userId !== req.user.id && !original.isPublished)
   {
     return res.status(404).json({ error: 'Flashcard set not found.' });
   }
