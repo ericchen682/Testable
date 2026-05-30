@@ -66,6 +66,13 @@ async function publishFlashcardSet(token, setId, isPublished = true) {
     .send({ isPublished });
 }
 
+async function recordAnalytics(token, { cardId, setId, correct, timeSpent = 1000 }) {
+  return request(app)
+    .post('/api/analytics')
+    .set('Authorization', authHeader(token))
+    .send({ cardId, setId, correct, timeSpent });
+}
+
 beforeEach(() => {
   resetDb();
 });
