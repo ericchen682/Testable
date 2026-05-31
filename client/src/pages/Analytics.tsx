@@ -480,7 +480,7 @@ function SetRow({ set, period }: { set: CardSet; period: Period }) {
 }
 
 // ── Overview tab ──────────────────────────────────────────
-function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: Period; realAccuracy?: number | null })      {
+ function OverviewTab({ setId, period, realAccuracy, realReviews }: { setId: string; period: Period; realAccuracy?: number; realReviews?: number })    {
   const data = useMemo(() => summaryFor(setId, period), [setId, period]);
   const tough = TOUGH_CARDS[setId] || TOUGH_CARDS.all;
   const visibleSets = CARD_SETS.filter(s => s.id !== 'all');
@@ -492,7 +492,7 @@ function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: P
     <>
       <div className="an-grid an-stat-grid">
         <Stat icon={<TargetIcon />} label="Accuracy" value={realAccuracy ?? data.accuracy} unit="%" delta={data.accuracyDelta} deltaSuffix="%" sparkData={sparkAcc} sparkColor="rgb(86, 182, 198)" />
-        <Stat icon={<LayersIcon />} label="Reviews" value={data.reviews.toLocaleString()} delta={data.reviewsDelta} deltaSuffix="%" sparkData={sparkReviews} sparkColor="rgb(23, 12, 121)" />
+        <Stat icon={<LayersIcon />} label="Reviews" value={(realReviews ?? data.reviews).toLocaleString()} delta={data.reviewsDelta} deltaSuffix="%" sparkData={sparkReviews} sparkColor="rgb(23, 12, 121)" />
         <Stat icon={<FlameIcon />} label="Day streak" value={data.streak} unit=" days" delta={data.streakDelta} sparkData={[8,9,9,10,10,11,11]} sparkColor="rgb(138, 203, 208)" />
         <Stat icon={<ClockIcon />} label="Avg time / card" value={data.timePerCard} unit="s" delta={data.timeDelta} deltaSuffix="s" sparkData={[4.6, 4.5, 4.4, 4.4, 4.3, 4.2, 4.2]} sparkColor="rgb(239, 227, 202)" />
       </div>
@@ -639,7 +639,8 @@ export default function Analytics() {
   const [periodId, setPeriodId] = useState('7d');
   const [tab, setTab] = useState('overview');
   const [realSets, setRealSets] = useState<RealSet[]>([]);
-  const [realAccuracy, setRealAccuracy] = useState<number | null>(null);
+  const [realAccuracy, setRealAccuracy] = useState(0);
+  const [realReviews, setRealReviews] = useState(0);
   const period = PERIODS.find(p => p.id === periodId)!;
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -659,7 +660,8 @@ export default function Analytics() {
 
   useEffect(() => {
     if (!setId || !token) return;
-    setRealAccuracy(null);
+    setRealAccuracy(0);
+    setRealReviews(0);
     fetch(`http://localhost:3001/api/analytics/${setId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -671,6 +673,7 @@ export default function Analytics() {
         const totalCorrect = analytics.reduce((a, b) => a + b.correctCount, 0);
         if (totalAttempts === 0) return;
         setRealAccuracy(Math.round((totalCorrect / totalAttempts) * 100));
+        setRealReviews(totalAttempts);  
       })
       .catch(() => {});
   }, [setId, token]);
@@ -725,7 +728,7 @@ export default function Analytics() {
             </div>
           </div>
 
-          {tab === 'overview' && <OverviewTab setId={setId} period={period} realAccuracy={realAccuracy} />}
+          {tab === 'overview' && <OverviewTab setId={setId} period={period} realAccuracy={realAccuracy} realReviews={realReviews}/>}
           {tab === 'accuracy' && <AccuracyTab setId={setId} period={period} />}
           {tab === 'byset'    && <BySetTab period={period} />}
           {tab === 'history'  && <HistoryTab setId={setId} period={period} />}
