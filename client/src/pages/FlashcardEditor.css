@@ -163,6 +163,12 @@
   margin-top: 20px;
 }
 
+.flashcard-editor-list-description {
+  font-size: 20px;
+  color: #99a8dd;
+  font-size: 18px;
+}
+
 .flashcard-editor-list {
   padding: 0 -50px;
   width: 100%;
