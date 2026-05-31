@@ -163,10 +163,10 @@
 }
 
 .flashcard-editor-card {
-  display: grid;
-  gap: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 8px;
-  border-radius: 8px;
 }
 
 .flashcard-editor-card span {
@@ -176,24 +176,34 @@
 }
 
 .flashcard-editor-card-set {
+  flex: 1;
   display: flex;
-  gap: 2px;
+  gap: 0px;
+  align-items: stretch;
   margin-left: 50px;
-  align-items: center;
+  border: 1px solid #e5e4e7;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f3e8d4;
 }
 
 .flashcard-editor-card textarea {
-  min-height: 90px;
+  flex: 1;
+  width: auto;
+  height: 70px;
   resize: none;
-  padding: 1px;
-  border-radius: 20px;
-  background: #f3e8d4;
+  padding: 10px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
   color: #000000;
   font: inherit;
   text-align: center;
-  width: 360px;
-  margin-left: 0;
   caret-color: #0a1238;
+}
+
+.flashcard-editor-card textarea:first-child {
+  border-right: 5px solid #1a254f;
 }
 
 .flashcard-editor-buttons {
