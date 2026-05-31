@@ -199,36 +199,37 @@ const DownIcon = () => (
 
 // ── Sparkline ──────────────────────────────────────────────
 function Sparkline({ data, color = 'rgb(23, 12, 121)', height = 32, width = 100 }: {
-  data: (number | DataPoint)[];
-  color?: string;
-  height?: number;
-  width?: number;
-}) {
-  if (!data || !data.length) return null;
-  const vals = data.map(d => typeof d === 'number' ? d : d.value);
-  const min = Math.min(...vals);
-  const max = Math.max(...vals);
-  const range = Math.max(1, max - min);
-  const pad = 2;
-  const W = width - pad * 2;
-  const H = height - pad * 2;
-  const xs = (i: number) => pad + (W * i) / Math.max(1, vals.length - 1);
-  const ys = (v: number) => pad + H * (1 - (v - min) / range);
-  let d = `M ${xs(0)} ${ys(vals[0])}`;
-  for (let i = 1; i < vals.length; i++) {
-    const x0 = xs(i - 1), y0 = ys(vals[i - 1]);
-    const x1 = xs(i),     y1 = ys(vals[i]);
-    const cx = (x0 + x1) / 2;
-    d += ` C ${cx} ${y0}, ${cx} ${y1}, ${x1} ${y1}`;
+    data: (number | DataPoint)[];
+    color?: string;
+    height?: number;
+    width?: number;
+  }) 
+  {
+    if (!data || !data.length) return null;
+    const vals = data.map(d => typeof d === 'number' ? d : d.value);
+    const min = Math.min(...vals);
+    const max = Math.max(...vals);
+    const range = Math.max(1, max - min);
+    const pad = 2;
+    const W = width - pad * 2;
+    const H = height - pad * 2;
+    const xs = (i: number) => pad + (W * i) / Math.max(1, vals.length - 1);
+    const ys = (v: number) => pad + H * (1 - (v - min) / range);
+    let d = `M ${xs(0)} ${ys(vals[0])}`;
+    for (let i = 1; i < vals.length; i++) {
+      const x0 = xs(i - 1), y0 = ys(vals[i - 1]);
+      const x1 = xs(i),     y1 = ys(vals[i]);
+      const cx = (x0 + x1) / 2;
+      d += ` C ${cx} ${y0}, ${cx} ${y1}, ${x1} ${y1}`;
+    }
+    const area = d + ` L ${xs(vals.length - 1)} ${height - pad} L ${xs(0)} ${height - pad} Z`;
+    return (
+      <svg width={width} height={height} style={{ display: 'block' }}>
+        <path d={area} fill={color} opacity="0.15" />
+        <path d={d} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
   }
-  const area = d + ` L ${xs(vals.length - 1)} ${height - pad} L ${xs(0)} ${height - pad} Z`;
-  return (
-    <svg width={width} height={height} style={{ display: 'block' }}>
-      <path d={area} fill={color} opacity="0.15" />
-      <path d={d} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 // ── Line chart ──────────────────────────────────────────────
 function LineChart({ data, height = 280, accent = 'rgb(23, 12, 121)' }: {
@@ -440,17 +441,17 @@ function Stat({ icon, label, value, unit, delta, deltaSuffix, sparkData, sparkCo
         {value}{unit && <span className="an-unit">{unit}</span>}
       </div>
       <div className="an-stat-row">
-        {delta !== undefined && (
+        {/* {delta !== undefined && (
           <span className={'an-stat-delta ' + (isUp ? 'up' : isDown ? 'down' : '')}>
             {isUp && <UpIcon />}{isDown && <DownIcon />}
             {Math.abs(delta)}{deltaSuffix || ''}
           </span>
-        )}
-        {sparkData && (
+        )} */}
+        {/* {sparkData && (
           <div className="an-stat-spark">
             <Sparkline data={sparkData} color={sparkColor || 'rgb(86, 182, 198)'} width={100} height={32} />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
@@ -497,7 +498,7 @@ function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: P
         <Stat icon={<ClockIcon />} label="Avg time / card" value={data.timePerCard} unit="s" delta={data.timeDelta} deltaSuffix="s" sparkData={[4.6, 4.5, 4.4, 4.4, 4.3, 4.2, 4.2]} sparkColor="rgb(239, 227, 202)" />
       </div>
 
-      <div className="an-card" style={{ marginBottom: 20 }}>
+      {/* <div className="an-card" style={{ marginBottom: 20 }}>
         <div className="an-card-head">
           <div>
             <div className="an-title">Accuracy over time</div>
@@ -513,9 +514,9 @@ function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: P
             <LineChart data={data.series} accent="rgb(23, 12, 121)" />
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <div className="an-two-col">
+      {/* <div className="an-two-col">
         <div className="an-card">
           <div className="an-card-head">
             <div>
@@ -542,8 +543,8 @@ function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: P
               <div className="an-tough-miss">{t.miss}% miss</div>
             </div>
           ))}
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
     </>
   );
 }
@@ -629,9 +630,9 @@ function HistoryTab({ setId, period }: { setId: string; period: Period }) {
 // ── Main Analytics page ──────────────────────────────────
 const TABS = [
   { id: 'overview', label: 'Overview' },
-  { id: 'accuracy', label: 'Accuracy' },
-  { id: 'byset',   label: 'By set', count: CARD_SETS.length - 1 },
-  { id: 'history', label: 'History' },
+  // { id: 'accuracy', label: 'Accuracy' },
+  // { id: 'byset',   label: 'By set', count: CARD_SETS.length - 1 },
+  // { id: 'history', label: 'History' },
 ];
 
 export default function Analytics() {
@@ -716,13 +717,13 @@ export default function Analytics() {
                 </button>
               ))}
             </div>
-            <div className="an-seg">
+            {/* <div className="an-seg">
               {PERIODS.map(p => (
                 <button key={p.id}
                   className={periodId === p.id ? 'on' : ''}
                   onClick={() => setPeriodId(p.id)}>{p.id}</button>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {tab === 'overview' && <OverviewTab setId={setId} period={period} realAccuracy={realAccuracy} />}
