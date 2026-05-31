@@ -40,6 +40,12 @@ interface ToughCard {
   miss: number;
 }
 
+// NEW STUFF FOR DATA
+interface RealSet {                                                                                     
+    id: string;
+    title: string;                                                                                        
+    cardCount: number;
+  }
 // ── Data ──────────────────────────────────────────────────
 const CARD_SETS: CardSet[] = [
   { id: 'all',      name: 'All sets',                color: 'linear-gradient(135deg, rgb(23,12,121), rgb(86,182,198))', cards: 354, accuracy: 84 },
@@ -357,7 +363,7 @@ function LineChart({ data, height = 280, accent = 'rgb(23, 12, 121)' }: {
 }
 
 // ── Dropdown ──────────────────────────────────────────────
-function SetDropdown({ value, onChange }: { value: string; onChange: (id: string) => void }) {
+function SetDropdown({ value, onChange, sets }: { value: string; onChange: (id: string) => void; sets: RealSet[]}) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const ref = useRef<HTMLDivElement>(null);
@@ -370,16 +376,17 @@ function SetDropdown({ value, onChange }: { value: string; onChange: (id: string
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
 
-  const filtered = CARD_SETS.filter(s => s.name.toLowerCase().includes(q.toLowerCase()));
-  const current = CARD_SETS.find(s => s.id === value) || CARD_SETS[0];
+  const filtered = sets.filter(s => s.title.toLowerCase().includes(q.toLowerCase()));
+  const current = sets.find(s => s.id === value) || sets[0];
+  if (!current) return null;
 
   return (
     <div className="an-dd-wrap" ref={ref}>
       <button className="an-dd-trigger" aria-expanded={open} onClick={() => setOpen(o => !o)}>
-        <span className="an-dd-swatch" style={{ background: current.color }} />
+        <span className="an-dd-swatch" style={{ background: 'var(--teal)' }} />
         <span className="an-dd-text">
           <span className="an-dd-lbl">card set</span>
-          <span className="an-dd-val">{current.name}</span>
+          <span className="an-dd-val">{current.title}</span>
         </span>
         <span className="an-dd-chev"><ChevronIcon /></span>
       </button>
@@ -393,11 +400,11 @@ function SetDropdown({ value, onChange }: { value: string; onChange: (id: string
             <div key={s.id}
               className={'an-dd-item' + (s.id === value ? ' selected' : '')}
               onClick={() => { onChange(s.id); setOpen(false); setQ(''); }}>
-              <span className="an-sw" style={{ background: s.color }} />
+              <span className="an-sw" style={{ background: 'var(--teal)'}} />
               <div>
-                <div className="an-name">{s.name}</div>
+                <div className="an-name">{s.title}</div>
               </div>
-              <div className="an-meta">{s.cards} cards</div>
+              <div className="an-meta">{s.cardCount} cards</div>
               <span className="an-check"><CheckIcon /></span>
             </div>
           ))}
@@ -473,7 +480,7 @@ function SetRow({ set, period }: { set: CardSet; period: Period }) {
 }
 
 // ── Overview tab ──────────────────────────────────────────
-function OverviewTab({ setId, period }: { setId: string; period: Period }) {
+function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: Period; realAccuracy?: number | null })      {
   const data = useMemo(() => summaryFor(setId, period), [setId, period]);
   const tough = TOUGH_CARDS[setId] || TOUGH_CARDS.all;
   const visibleSets = CARD_SETS.filter(s => s.id !== 'all');
@@ -484,7 +491,7 @@ function OverviewTab({ setId, period }: { setId: string; period: Period }) {
   return (
     <>
       <div className="an-grid an-stat-grid">
-        <Stat icon={<TargetIcon />} label="Accuracy" value={data.accuracy} unit="%" delta={data.accuracyDelta} deltaSuffix="%" sparkData={sparkAcc} sparkColor="rgb(86, 182, 198)" />
+        <Stat icon={<TargetIcon />} label="Accuracy" value={realAccuracy ?? data.accuracy} unit="%" delta={data.accuracyDelta} deltaSuffix="%" sparkData={sparkAcc} sparkColor="rgb(86, 182, 198)" />
         <Stat icon={<LayersIcon />} label="Reviews" value={data.reviews.toLocaleString()} delta={data.reviewsDelta} deltaSuffix="%" sparkData={sparkReviews} sparkColor="rgb(23, 12, 121)" />
         <Stat icon={<FlameIcon />} label="Day streak" value={data.streak} unit=" days" delta={data.streakDelta} sparkData={[8,9,9,10,10,11,11]} sparkColor="rgb(138, 203, 208)" />
         <Stat icon={<ClockIcon />} label="Avg time / card" value={data.timePerCard} unit="s" delta={data.timeDelta} deltaSuffix="s" sparkData={[4.6, 4.5, 4.4, 4.4, 4.3, 4.2, 4.2]} sparkColor="rgb(239, 227, 202)" />
@@ -628,11 +635,45 @@ const TABS = [
 ];
 
 export default function Analytics() {
-  const [setId, setSetId] = useState('all');
+  const [setId, setSetId] = useState('');
   const [periodId, setPeriodId] = useState('7d');
   const [tab, setTab] = useState('overview');
+  const [realSets, setRealSets] = useState<RealSet[]>([]);
+  const [realAccuracy, setRealAccuracy] = useState<number | null>(null);
   const period = PERIODS.find(p => p.id === periodId)!;
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    if (!token) { navigate('/login'); return; }
+    fetch('http://localhost:3001/api/flashcard-sets', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(data => {
+        setRealSets(data.flashcardSets);
+        if (data.flashcardSets.length > 0) setSetId(data.flashcardSets[0].id);
+      })
+      .catch(() => {});
+  }, [token, navigate]);
+
+  useEffect(() => {
+    if (!setId || !token) return;
+    setRealAccuracy(null);
+    fetch(`http://localhost:3001/api/analytics/${setId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(data => {
+        const analytics = data.analytics as { attempts: number; correctCount: number }[];
+        if (!analytics?.length) return;
+        const totalAttempts = analytics.reduce((a, b) => a + b.attempts, 0);
+        const totalCorrect = analytics.reduce((a, b) => a + b.correctCount, 0);
+        if (totalAttempts === 0) return;
+        setRealAccuracy(Math.round((totalCorrect / totalAttempts) * 100));
+      })
+      .catch(() => {});
+  }, [setId, token]);
 
   return (
     <div className="analytics-root">
@@ -659,7 +700,7 @@ export default function Analytics() {
               <h1>Analytics</h1>
               <p>Track <span className="accent">accuracy</span>, streaks, and where to focus next.</p>
             </div>
-            <SetDropdown value={setId} onChange={setSetId} />
+            <SetDropdown value={setId} onChange={setSetId} sets={realSets} />   
           </div>
 
           <div className="an-tabs-row">
@@ -684,7 +725,7 @@ export default function Analytics() {
             </div>
           </div>
 
-          {tab === 'overview' && <OverviewTab setId={setId} period={period} />}
+          {tab === 'overview' && <OverviewTab setId={setId} period={period} realAccuracy={realAccuracy} />}
           {tab === 'accuracy' && <AccuracyTab setId={setId} period={period} />}
           {tab === 'byset'    && <BySetTab period={period} />}
           {tab === 'history'  && <HistoryTab setId={setId} period={period} />}
