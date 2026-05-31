@@ -157,15 +157,15 @@
 }
 
 .flashcard-editor-list {
-  padding: 0 -100px;
+  padding: 0 -50px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .flashcard-editor-card {
   display: grid;
-  gap: 10px;
-  padding: 1px;
+  gap: 1px;
+  padding: 8px;
   border-radius: 8px;
 }
 
@@ -203,7 +203,6 @@
 
 .flashcard-add-card,
 .flashcard-delete-card,
-.flashcard-save-set,
 .flashcard-editor-header button {
   width: fit-content;
   padding: 8px 12px;
@@ -215,11 +214,10 @@
   background:transparent;
 }
 
-.flashcard-add-card,
-.flashcard-save-set {
+.flashcard-add-card {
   background:#00b9b3;
   color:#0a1238;
-  margin-left: 30px;
+  margin-left: 90px;
   margin-bottom: 5px;
   margin-top: 10px;
 }
@@ -264,8 +262,7 @@
 
 .flashcard-publish-panel button:hover,
 .flashcard-add-card:hover,
-.flashcard-delete-card:hover,
-.flashcard-save-set:hover {
+.flashcard-delete-card:hover {
   box-shadow: 0 0 12px #3FB6B2;
   transition: box-shadow 0.2s ease-in-out;
 }

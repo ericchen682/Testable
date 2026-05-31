@@ -211,6 +211,9 @@ export default function FlashcardEditor() {
           <div className="flashcard-editor-list-header">
             Terms
           </div>
+          <div>
+            Term, Definition.
+          </div>
           <div className="flashcard-editor-right-inner">
             <div className="flashcard-editor-list">
               {set.cards.map((card) => (
@@ -248,9 +251,6 @@ export default function FlashcardEditor() {
             <div className="flashcard-editor-buttons">
               <button className="flashcard-add-card" onClick={addCard}>
                 Add a Card +
-              </button>
-              <button className="flashcard-save-set" onClick={() => saveSet(set)}>
-                Save Set
               </button>
             </div>
         </div>
