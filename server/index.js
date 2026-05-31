@@ -8,7 +8,7 @@ const cors = require('cors');
 const { Resend } = require('resend');
 
 // GETS FOR ANALYTICS
-const { insertAnalyticsRecord, getAnalyticsForSet, getStreakForUser } = require('./utils/analytics');
+const { insertAnalyticsRecord, getAnalyticsForSet, getStreakForUser, getAvgTimeForSet} = require('./utils/analytics');
 
 const requireAuth = require('./middleware/requireAuth');
 
@@ -404,7 +404,8 @@ app.post('/api/analytics', requireAuth, (req, res) => {
 app.get('/api/analytics/:setId', requireAuth, (req, res) => {
   const results = getAnalyticsForSet(req.params.setId, req.user.id);
   const streak = getStreakForUser(req.user.id);
-  res.json({ analytics: results, streak});
+  const avgTime = getAvgTimeForSet(req.params.setId, req.user.id);
+  res.json({ analytics: results, streak, avgTime});
 });
 
 

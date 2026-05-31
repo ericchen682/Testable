@@ -68,4 +68,14 @@ const crypto = require('crypto');
         }
         return streak;
     } 
-    module.exports = { insertAnalyticsRecord, getAnalyticsForSet, getStreakForUser};
+    const getAvgTimeForSetStmt = db.prepare(`                                                                            
+        SELECT AVG(time_spent) AS avg_time                                                                               
+        FROM analytics                                                                                                   
+        WHERE set_id = ? AND user_id = ?                                                                                 
+    `);                                                                                                                  
+    function getAvgTimeForSet(setId, userId) {
+        const row = getAvgTimeForSetStmt.get(setId, userId);
+        if (!row || !row.avg_time) return 0;
+        return Math.round(row.avg_time / 1000 * 10) / 10;
+    }
+    module.exports = { insertAnalyticsRecord, getAnalyticsForSet, getStreakForUser, getAvgTimeForSet};

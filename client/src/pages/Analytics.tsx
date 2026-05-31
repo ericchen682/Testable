@@ -480,7 +480,7 @@ function SetRow({ set, period }: { set: CardSet; period: Period }) {
 }
 
 // ── Overview tab ──────────────────────────────────────────
- function OverviewTab({ setId, period, realAccuracy, realReviews, realStreak }: { setId: string; period: Period; realAccuracy?: number; realReviews?: number; realStreak?: number;})    {
+ function OverviewTab({ setId, period, realAccuracy, realReviews, realStreak, realAvgTime }: { setId: string; period: Period; realAccuracy?: number; realReviews?: number; realStreak?: number; realAvgTime?:number})    {
   const data = useMemo(() => summaryFor(setId, period), [setId, period]);
   const tough = TOUGH_CARDS[setId] || TOUGH_CARDS.all;
   const visibleSets = CARD_SETS.filter(s => s.id !== 'all');
@@ -494,7 +494,7 @@ function SetRow({ set, period }: { set: CardSet; period: Period }) {
         <Stat icon={<TargetIcon />} label="Accuracy" value={realAccuracy ?? data.accuracy} unit="%" delta={data.accuracyDelta} deltaSuffix="%" sparkData={sparkAcc} sparkColor="rgb(86, 182, 198)" />
         <Stat icon={<LayersIcon />} label="Reviews" value={(realReviews ?? data.reviews).toLocaleString()} delta={data.reviewsDelta} deltaSuffix="%" sparkData={sparkReviews} sparkColor="rgb(23, 12, 121)" />
         <Stat icon={<FlameIcon />} label="Day streak" value={realStreak ?? data.streak} unit=" days" delta={data.streakDelta} sparkData={[8,9,9,10,10,11,11]} sparkColor="rgb(138, 203, 208)" />
-        <Stat icon={<ClockIcon />} label="Avg time / card" value={data.timePerCard} unit="s" delta={data.timeDelta} deltaSuffix="s" sparkData={[4.6, 4.5, 4.4, 4.4, 4.3, 4.2, 4.2]} sparkColor="rgb(239, 227, 202)" />
+        <Stat icon={<ClockIcon />} label="Avg time / card" value={realAvgTime ?? data.timePerCard} unit="s" delta={data.timeDelta} deltaSuffix="s" sparkData={[4.6, 4.5, 4.4, 4.4, 4.3, 4.2, 4.2]} sparkColor="rgb(239, 227, 202)" />
       </div>
 
       <div className="an-card" style={{ marginBottom: 20 }}>
@@ -644,6 +644,7 @@ export default function Analytics() {
   const [realAccuracy, setRealAccuracy] = useState(0);
   const [realReviews, setRealReviews] = useState(0);
   const [realStreak, setRealStreak] = useState(0); 
+  const [realAvgTime, setRealAvgTime] = useState(0);   
   const period = PERIODS.find(p => p.id === periodId)!;
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -667,6 +668,7 @@ export default function Analytics() {
     setRealAccuracy(0);
     setRealReviews(0);
     setRealStreak(0);
+    setRealAvgTime(0);
 
     fetch(`http://localhost:3001/api/analytics/${setId}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -680,7 +682,8 @@ export default function Analytics() {
         if (totalAttempts === 0) return;
         setRealAccuracy(Math.round((totalCorrect / totalAttempts) * 100));
         setRealReviews(totalAttempts);  
-        setRealStreak(data.streak ?? 0);    
+        setRealStreak(data.streak ?? 0);  
+        setRealAvgTime(data.avgTime??0);
       })
       .catch(() => {});
   }, [setId, token]);
@@ -690,7 +693,10 @@ export default function Analytics() {
       <header className="an-topnav">
           <div className="an-topnav-inner">
             <div className="an-brand">
-              <span className="an-brand-mark" />
+              <svg width={21} height={21} viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10.5" stroke="#EFE3CA" strokeWidth="1.4" />
+                <path d="M7.5 12.2l3.2 3.2 6-6.4" stroke="#EFE3CA" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
               Testable
             </div>
             <nav className="an-nav-links">
@@ -735,7 +741,7 @@ export default function Analytics() {
             </div>
           </div>
 
-          {tab === 'overview' && <OverviewTab setId={setId} period={period} realAccuracy={realAccuracy} realReviews={realReviews} realStreak={realStreak}/>}
+          {tab === 'overview' && <OverviewTab setId={setId} period={period} realAccuracy={realAccuracy} realReviews={realReviews} realStreak={realStreak} realAvgTime={realAvgTime}/>}
           {tab === 'accuracy' && <AccuracyTab setId={setId} period={period} />}
           {tab === 'byset'    && <BySetTab period={period} />}
           {tab === 'history'  && <HistoryTab setId={setId} period={period} />}
