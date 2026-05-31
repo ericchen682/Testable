@@ -209,10 +209,15 @@ export default function FlashcardEditor() {
 
         <div className="flashcard-editor-right">
           <div className="flashcard-editor-list-header">
-            Terms
+            Flashcards
           </div>
           <div className="flashcard-editor-list-description">
-            ------------------ Term -------------------------------------- Definition ------------------
+              <div className="flashcard-editor-list-description-text">
+                Terms
+              </div>
+              <div className="flashcard-editor-list-description-text">
+                Definition
+              </div>
           </div>
           <div className="flashcard-editor-right-inner">
             <div className="flashcard-editor-list">

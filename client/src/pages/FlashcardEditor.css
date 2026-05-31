@@ -167,6 +167,15 @@
   font-size: 20px;
   color: #99a8dd;
   font-size: 18px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 700px;
+}
+
+.flashcard-editor-list-description-text {
+  width: 350px;
+  text-align: center;
 }
 
 .flashcard-editor-list {
