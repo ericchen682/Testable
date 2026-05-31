@@ -86,13 +86,13 @@
   justify-content: space-between;
   gap: 16px;
   padding: 14px 16px;
-  border: 1px solid #e5e4e7;
+  border: 1px solid #3fb6b2;
   border-radius: 8px;
 }
 
 .flashcard-publish-panel p {
   margin: 6px 0 0;
-  color: #6b6375;
+  color: #6274b4;
   font-size: 22px;
 }
 
@@ -117,9 +117,9 @@
 .flashcard-publish-status {
   width: center;
   padding: 2px 8px;
-  border: 1px solid #c8c2d0;
+  border: 1px solid #6274b4;
   border-radius: 999px;
-  color: #6b6375;
+  color: #6274b4;
   font-size: 22px;
   font-weight: 700;
 }
