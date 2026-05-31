@@ -176,9 +176,6 @@ export default function FlashcardEditor() {
         <button onClick={() => navigate('/dashboard')}>
           {"<"} Back to dashboard
         </button>
-        <button  onClick={() => navigate(`/flashcards/${set.id}`)}>
-          View flashcards {">"}
-        </button>
       </header>
 
       <section className="flashcard-editor-content">
@@ -205,6 +202,9 @@ export default function FlashcardEditor() {
             </button>
           </div>
           {message && <p className="flashcard-editor-message">{message}</p>}
+          <button className="flashcard-view-cards" onClick={() => navigate(`/flashcards/${set.id}`)}>
+            Start Studying!
+          </button>
         </div>
 
         <div className="flashcard-editor-right">

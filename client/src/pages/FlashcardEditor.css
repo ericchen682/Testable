@@ -110,6 +110,7 @@
   font-size: 22px;
 }
 
+.flashcard-view-cards,
 .flashcard-publish-panel button {
   flex: 0 0 auto;
   min-width: 100px;
@@ -121,6 +122,12 @@
   font-weight: 700;
   cursor: pointer;
   text-align: center;
+}
+
+.flashcard-view-cards {
+  margin-bottom: -80px;
+  width: 200px;
+  align-self: center;
 }
 
 .flashcard-publish-panel button:disabled {
@@ -270,6 +277,7 @@
   background: #1f2b54;
 }
 
+.flashcard-view-cards:hover,
 .flashcard-publish-panel button:hover,
 .flashcard-add-card:hover,
 .flashcard-delete-card:hover {
@@ -280,3 +288,4 @@
 .flashcard-delete-card:hover {
   box-shadow: 0 0 8px #ba0000;
 }
+
