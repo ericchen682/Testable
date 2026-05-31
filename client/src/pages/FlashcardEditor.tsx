@@ -91,9 +91,7 @@ export default function FlashcardEditor() {
 
   const togglePublish = async () => {
     if (!set || !token || !setId) return;
-
     setPublishing(true);
-    setMessage('');
 
     try {
       const response = await fetch(`http://localhost:3001/api/flashcard-sets/${setId}/publish`, {
@@ -197,7 +195,7 @@ export default function FlashcardEditor() {
               <p>
                 {set.isPublished
                 ? 'This set is visible in public flashcard sets.'
-                : 'Publish this set to make it visible to other users.'}
+                : 'This set is not visible in public flashcard sets.'}
               </p>
             </div>
             <button onClick={togglePublish} disabled={publishing}>
