@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [message, setMessage] = useState('Loading flashcard sets...');
   const [deletingSetId, setDeletingSetId] = useState<string | null>(null);
   const [publishingSetId, setPublishingSetId] = useState<string | null>(null);
+  const [copyingSetId, setCopyingSetId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<FlashcardSetSummary[] | null>(null);
@@ -191,6 +192,47 @@ export default function Dashboard() {
       setPublishingSetId(null);
     }
   };
+  
+  const copyFlashcardSet = async (set: FlashcardSetSummary) => {
+    if (!token) {
+      handleAuthError();
+      return;
+    }
+
+    setCopyingSetId(set.id);
+    setMessage('');
+    
+    try {
+      const response = await fetch(`http://localhost:3001/api/flashcard-sets/${set.id}/copy`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if(!response.ok)
+      {
+        if(response.status === 401 || response.status === 403)
+        {
+          handleAuthError();
+          return;
+        }
+        else
+        {
+          setMessage(data.error || 'Could not copy set');
+          return;
+        }
+      }
+
+      navigate(`/flashcards/${data.flashcardSet.id}/edit`);
+    } catch {
+      setMessage('Could not connect to the server');
+    } finally {
+      setCopyingSetId(null);
+    }
+  };
 
   useEffect(() => {
     if (!token) {
@@ -345,8 +387,9 @@ export default function Dashboard() {
                   </div>
                 </button>
 
-                {activeView === 'mine' && (
-                  <div className="dashboard-set-actions">
+                
+                <div className="dashboard-set-actions">
+                  {activeView === 'mine' && (
                     <button
                       className="dashboard-set-publish"
                       disabled={publishingSetId === set.id}
@@ -356,6 +399,8 @@ export default function Dashboard() {
                         ? 'Saving...'
                         : set.isPublished ? 'Unpublish' : 'Publish'}
                     </button>
+                  )}
+                  {activeView === 'mine' && (
                     <button
                       className="dashboard-set-delete"
                       disabled={deletingSetId === set.id}
@@ -363,8 +408,15 @@ export default function Dashboard() {
                     >
                       {deletingSetId === set.id ? 'Deleting...' : 'Delete'}
                     </button>
-                  </div>
-                )}
+                  )}
+                  <button
+                    className="dashboard-set-copy"
+                    disabled={copyingSetId === set.id}
+                    onClick={() => copyFlashcardSet(set)}
+                  >
+                    Make a copy
+                  </button>
+                </div>
               </article>
             ))}
           </div>

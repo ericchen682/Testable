@@ -7,6 +7,9 @@ const express = require('express');
 const cors = require('cors');
 const { Resend } = require('resend');
 
+// GETS FOR ANALYTICS
+const { insertAnalyticsRecord, getAnalyticsForSet } = require('./utils/analytics');
+
 const requireAuth = require('./middleware/requireAuth');
 
 const { 
@@ -41,9 +44,8 @@ const {
   getPublicFlashcardSets,
 } = require('./utils/flashcardSets');
 
-const { insertAnalyticsRecord } = require('./utils/analytics');
 
-// GETS FOR ANALYTICS
+
 
 
 
@@ -346,6 +348,36 @@ app.put('/api/flashcard-sets/:id/publish', requireAuth, (req, res) => {
   res.json({ flashcardSet: updated });
 });
 
+app.post('/api/flashcard-sets/:id/copy', requireAuth, (req, res) => {
+  const original = findFlashcardSetById(req.params.id);
+
+  // check if owned/public set
+  if(!original || original.userId !== req.user.id && !original.isPublished)
+  {
+    return res.status(404).json({ error: 'Flashcard set not found.' });
+  }
+
+  const now = new Date().toISOString();
+
+  const newSet = createFlashcardSet({
+    id: crypto.randomUUID(),
+    userId: req.user.id,
+    createdAt: now,
+  });
+
+  const copy = updateFlashcardSet(newSet.id, {
+    title: `Copy of ${original.title}`,
+    cards: original.cards.map((card) => ({
+      id: crypto.randomUUID(),
+      front: card.front,
+      back: card.back,
+    })),
+    updatedAt: now,
+  });
+
+  res.status(201).json({ flashcardSet: copy });
+});
+
 app.post('/api/analytics', requireAuth, (req, res) => {
   const { cardId, setId, correct, timeSpent } = req.body;
 
@@ -365,7 +397,20 @@ app.post('/api/analytics', requireAuth, (req, res) => {
   res.status(201).json({ ok: true });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+
+
+
+
+app.get('/api/analytics/:setId', requireAuth, (req, res) => {
+  const results = getAnalyticsForSet(req.params.setId, req.user.id);
+  res.json({ analytics: results });
 });
 
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
