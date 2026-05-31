@@ -9,6 +9,7 @@
   background: #1a254f;
   font-size: 25px;
   overflow: hidden;
+  caret-color: transparent;
 }
 
 .flashcard-editor-header {
@@ -67,11 +68,13 @@
   text-align: left;
   font-family: 'Instrument Serif', Georgia, serif;
   width: 600px;
+  caret-color: transparent;
 }
 
 .flashcard-title-input:focus {
   outline: none;
   border-bottom-color: #3fb6b2;
+  caret-color: #F5F0E1;
 }
 
 .flashcard-editor-message {
@@ -180,6 +183,7 @@
   text-align: center;
   width: 360px;
   margin-left: 0;
+  caret-color: #0a1238;
 }
 
 .flashcard-editor-buttons {

@@ -175,7 +175,7 @@ export default function FlashcardEditor() {
           {"<"} Back to dashboard
         </button>
         <button  onClick={() => navigate(`/flashcards/${set.id}`)}>
-          View flashcards
+          View flashcards {">"}
         </button>
       </header>
 
