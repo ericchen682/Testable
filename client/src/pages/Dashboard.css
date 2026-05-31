@@ -4,10 +4,11 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   color: #F5F0E1;
   background: #07133b;
   overflow-x: hidden;
+  caret-color: transparent;
 }
 
 .dashboard-body {
@@ -50,12 +51,15 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  font-family: 'Instrument Serif', Georgia, serif;
 }
 
 .dashboard-aria {
   display: flex;
+  align-items: center;
   flex-direction: column;
   gap: 10px;
+  font-family: 'Instrument Serif', Georgia, serif;
 }
 
 .dashboard-nav-link {
@@ -64,7 +68,7 @@
   padding: 2px 0;
   text-align: left;
   color: #F5F0E1;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 24px;
   font-weight: 600;
   cursor: pointer;
@@ -83,12 +87,12 @@
   background: transparent;
   border: 0;
   padding: 2px 0;
-  text-align: left;
   color: #F5F0E1;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 24px;
   font-weight: 600;
   cursor: pointer;
+  align-items: center;
 }
 
 .dashboard-logout:hover {
@@ -110,7 +114,7 @@
   border-radius: 999px;
   background: transparent;
   color: #6b6375;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 700;
   cursor: pointer;
 }
@@ -139,10 +143,11 @@
   border-radius: 999px;
   background: #00b9b3;
   color: #1a254f;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: bold;
   cursor: pointer;
   margin-left: 20px;
+  text-shadow: 0.3px 0 0 #1a254f;
 }
 
 .dashboard-create:hover {
@@ -157,21 +162,14 @@
   border-radius: 999px;
   background: #00b9b3;
   color: #1a254f;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
+  text-shadow: 0.3px 0 0 #1a254f;
   cursor: pointer;
   margin-left: 58px;
-  font-size: 14px;
+  font-size: 20px;
   width: 200px;
   text-align: center;
-}
-
-.dashboard-continue {
-  font-weight: 900;
   margin-top: 24px;
-}
-
-.dashboard-edit {
-  font-weight: 600;
 }
 
 .dashboard-continue:hover,
@@ -189,6 +187,7 @@
   margin-top: 12px;
   margin-left: 24px;
   margin-bottom: 24px;
+  caret-color: transparent;
 }
 
 .dashboard-content {
@@ -204,7 +203,7 @@
 
 .dashboard-greeting {
   flex: 1;
-  text-algin: center;
+  text-align: center;
   padding: 16px;
   font-family: 'Instrument Serif', Georgia, serif;
   font-size: 30px;
@@ -218,7 +217,7 @@
   font-family: 'Instrument Serif', Georgia, serif;
   font-size: 30px;
   font-weight: 700;
-  margin-left: -200px;
+  text-align: center;
 }
 
 .dashboard-flashcards {
@@ -296,7 +295,7 @@
   background: #334071;
   color: #707ba5;
   text-align: left;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 400;
   font-size: 24px;
   cursor: pointer;
@@ -306,6 +305,7 @@
   display: flex;     
   align-items: center; 
   gap: 8px; 
+  caret-color: #707ba5;
 }
 
 .dashboard-search-bar input {
@@ -313,7 +313,7 @@
   border: none;
   outline: none;
   color: #F5F0E1;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 24px;
   font-weight: 400;
   width: 100%;
@@ -330,12 +330,14 @@
   border: 1px solid #c8c2d0;
   border-radius: 999px;
   color: #6b6375;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
+  text-shadow: 0.3px 0 0 #6b6375;
 }
 .dashboard-set-badge--public {
   border-color: #3FB6B2;
   color: #18736f;
+  text-shadow: 0.3px 0 0 #18736f;
 }
 .dashboard-set-actions {
   display: flex;
@@ -345,6 +347,7 @@
   justify-content: space-between;
   box-sizing: border-box;
   margin-top: 20px;
+  align-items: center;
 }
 .dashboard-set-publish {
   padding: 4px 10px;
@@ -352,33 +355,47 @@
   border-radius: 999px;
   background: #00b9b3;
   color: #1a254f;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 600;
   cursor: pointer;
 }
 .dashboard-set-delete {
-  align-self: flex-start;
+  align-self: center;
   padding: 4px 10px;
   border: 1px solid #3b0707;
   border-radius: 999px;
   color: #3b0707;
   background: #316cd4;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 600;
   cursor: pointer;
+  margin-left: 20px;
 }
 .dashboard-set-delete:disabled,
-.dashboard-set-publish:disabled {
+.dashboard-set-publish:disabled,
+.dashboard-set-copy:disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
+
+.dashboard-set-copy {
+  padding: 4px 10px;
+  border: 1px solid #1a254f;
+  border-radius: 999px;
+  background: #334071;
+  color: #F5F0E1;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .dashboard-search {
   padding: 4px 12px;
   border: 2px solid #3FB6B2;
   border-radius: 999px;
   background: transparent;
   color: inherit;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 14px;
   outline: none;
   width: 220px;
