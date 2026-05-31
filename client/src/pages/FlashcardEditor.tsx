@@ -211,23 +211,24 @@ export default function FlashcardEditor() {
           <div className="flashcard-editor-list-header">
             Terms
           </div>
-          <div className="flashcard-editor-list">
-            {set.cards.map((card) => (
-              <div className="flashcard-editor-card" key={card.id}>
+          <div className="flashcard-editor-right-inner">
+            <div className="flashcard-editor-list">
+              {set.cards.map((card) => (
+                <div className="flashcard-editor-card" key={card.id}>
                 
-                <div className="flashcard-editor-card-set">
-                  <textarea 
-                  value={card.front} 
-                  onChange={(event) => updateCard(card.id, 'front', event.target.value)} 
-                  placeholder="Front"
-                  />
+                  <div className="flashcard-editor-card-set">
+                    <textarea 
+                    value={card.front} 
+                    onChange={(event) => updateCard(card.id, 'front', event.target.value)} 
+                    placeholder="Front"
+                    />
 
-                  <textarea 
-                  value={card.back} 
-                  onChange={(event) => updateCard(card.id, 'back', event.target.value)} 
-                  placeholder="Back"
-                  />
-                  <button className="flashcard-delete-card" onClick={() => deleteCard(card.id)}>
+                    <textarea 
+                    value={card.back} 
+                    onChange={(event) => updateCard(card.id, 'back', event.target.value)} 
+                    placeholder="Back"
+                    />
+                    <button className="flashcard-delete-card" onClick={() => deleteCard(card.id)}>
                       <svg width="22" height="25" viewBox="290 40 100 220" fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="280" y1="70" x2="400" y2="70"/>
                         <path d="M310 70 L312 50 L368 50 L370 70"/>
@@ -237,20 +238,21 @@ export default function FlashcardEditor() {
                         <line x1="340" y1="95" x2="340" y2="235"/>
                         <line x1="357" y1="95" x2="362" y2="235"/>
                       </svg>
-                  </button>
-                  {/* Later: add image upload fields to each card here. */}
+                    </button>
+                    {/* Later: add image upload fields to each card here. */}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-          <div className="flashcard-editor-buttons">
-            <button className="flashcard-add-card" onClick={addCard}>
-              Add a Card +
-            </button>
-            <button className="flashcard-save-set" onClick={() => saveSet(set)}>
-              Save Set
-            </button>
-          </div>
+            <div className="flashcard-editor-buttons">
+              <button className="flashcard-add-card" onClick={addCard}>
+                Add a Card +
+              </button>
+              <button className="flashcard-save-set" onClick={() => saveSet(set)}>
+                Save Set
+              </button>
+            </div>
         </div>
       </section>
     </main>
