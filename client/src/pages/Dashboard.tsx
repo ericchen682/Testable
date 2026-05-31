@@ -17,6 +17,9 @@ export default function Dashboard() {
   const [message, setMessage] = useState('Loading flashcard sets...');
   const [deletingSetId, setDeletingSetId] = useState<string | null>(null);
   const [publishingSetId, setPublishingSetId] = useState<string | null>(null);
+  const [copyingSetId, setCopyingSetId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<FlashcardSetSummary[] | null>(null);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
@@ -29,6 +32,31 @@ export default function Dashboard() {
     localStorage.removeItem('token');
     navigate('/login');
   }, [navigate]);
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults(null);
+      return;
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/flashcard-sets/search?q=${encodeURIComponent(query)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          handleAuthError();
+          return;
+        }
+        return;
+      }
+      setSearchResults(data.flashcardSets);
+    } catch {
+      setMessage('Could not connect to the server');
+    }
+  };
 
   const createFlashcardSet = async () => {
     if (!token) {
@@ -162,6 +190,47 @@ export default function Dashboard() {
       setPublishingSetId(null);
     }
   };
+  
+  const copyFlashcardSet = async (set: FlashcardSetSummary) => {
+    if (!token) {
+      handleAuthError();
+      return;
+    }
+
+    setCopyingSetId(set.id);
+    setMessage('');
+    
+    try {
+      const response = await fetch(`http://localhost:3001/api/flashcard-sets/${set.id}/copy`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if(!response.ok)
+      {
+        if(response.status === 401 || response.status === 403)
+        {
+          handleAuthError();
+          return;
+        }
+        else
+        {
+          setMessage(data.error || 'Could not copy set');
+          return;
+        }
+      }
+
+      navigate(`/flashcards/${data.flashcardSet.id}/edit`);
+    } catch {
+      setMessage('Could not connect to the server');
+    } finally {
+      setCopyingSetId(null);
+    }
+  };
 
   useEffect(() => {
     if (!token) {
@@ -225,7 +294,7 @@ export default function Dashboard() {
     loadPublicSets();
   }, [activeView]);
 
-  const displayedSets = activeView === 'mine' ? sets : publicSets;
+  const displayedSets = searchResults !== null ? searchResults : (activeView === 'mine' ? sets : publicSets);
 
   return (
     <main className="dashboard-root">
@@ -247,12 +316,26 @@ export default function Dashboard() {
         <button className="dashboard-create" onClick={createFlashcardSet}>
           create flashcards +
         </button>
+        <input
+          className="dashboard-search"
+          type="text"
+          placeholder="Search flashcard sets..."
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+        />
         <button className="dashboard-logout" onClick={logout}>Log out</button>
       </header>
 
       <section className="dashboard-content">
         {message && <p className="dashboard-message">{message}</p>}
 
+        {searchResults !== null && searchQuery && (
+          <p className="dashboard-message">
+            {searchResults.length === 0
+              ? 'No flashcard sets found matching your search.'
+              : `${searchResults.length} result${searchResults.length === 1 ? '' : 's'} for "${searchQuery}"`}
+          </p>
+        )}
         <div className="dashboard-set-grid">
           {displayedSets.map((set) => (
             <article key={set.id} className="dashboard-set-card">
@@ -267,9 +350,9 @@ export default function Dashboard() {
                 <span>{set.cardCount} cards</span>
                 <span>Updated {new Date(set.updatedAt).toLocaleDateString()}</span>
               </button>
-              {activeView === 'mine' && (
+              
                 <div className="dashboard-set-actions">
-                  <button
+                  {activeView === 'mine' && (<button
                     className="dashboard-set-publish"
                     disabled={publishingSetId === set.id}
                     onClick={() => togglePublish(set)}
@@ -278,15 +361,23 @@ export default function Dashboard() {
                       ? 'Saving...'
                       : set.isPublished ? 'Unpublish' : 'Publish'}
                   </button>
-                  <button
+                  )}
+                  {activeView === 'mine' && (<button
                     className="dashboard-set-delete"
                     disabled={deletingSetId === set.id}
                     onClick={() => deleteFlashcardSet(set)}
                   >
                     {deletingSetId === set.id ? 'Deleting...' : 'Delete'}
                   </button>
+                  )}
+                  <button
+                    className="dashboard-set-copy"
+                    disabled={copyingSetId === set.id}
+                    onClick={() => copyFlashcardSet(set)}
+                  >
+                    Make a copy
+                  </button>
                 </div>
-              )}
             </article>
           ))}
         </div>
