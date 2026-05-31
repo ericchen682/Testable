@@ -52,6 +52,27 @@ const insertCardStmt = db.prepare(`
   VALUES (@id, @setId, @position, @front, @back)
 `);
 
+// copy a set and its cards in a transaction
+const copySetTx = db.transaction((newId, userId, originalSet, now) => {
+  insertSetStmt.run({
+    id: newId,
+    userId,
+    title: `${originalSet.title} (copy)`,
+    isPublished: 0,
+    createdAt: now,
+    updatedAt: now,
+  });
+  originalSet.cards.forEach((card, index) => {
+    insertCardStmt.run({
+      id: require('crypto').randomUUID(),
+      setId: newId,
+      position: index,
+      front: card.front,
+      back: card.back,
+    });
+  });
+});
+
 // convert snake to camelcase
 function mapSetRow(row) {
     if (!row) return null;
@@ -132,6 +153,13 @@ function getPublicFlashcardSets() {
   }));
 }
 
+function copyFlashcardSet(originalId, newId, userId, now) {
+  const original = findFlashcardSetById(originalId);
+  if (!original) return null;
+  copySetTx(newId, userId, original, now);
+  return findFlashcardSetById(newId);
+}
+
 module.exports = {
     getFlashcardSetsForUser,
     findFlashcardSetById,
@@ -140,5 +168,6 @@ module.exports = {
     deleteFlashcardSet,
     publishFlashcardSet,  
     getPublicFlashcardSets,
+    copyFlashcardSet,
 };
 

@@ -39,6 +39,7 @@ const {
   deleteFlashcardSet,
   publishFlashcardSet,
   getPublicFlashcardSets,
+  copyFlashcardSet,
 } = require('./utils/flashcardSets');
 
 const { insertAnalyticsRecord } = require('./utils/analytics');
@@ -311,6 +312,22 @@ app.put('/api/flashcard-sets/:id/publish', requireAuth, (req, res) => {
   const isPublished = req.body.isPublished === true;
   const updated = publishFlashcardSet(req.params.id, isPublished, new Date().toISOString());
   res.json({ flashcardSet: updated });
+});
+
+app.post('/api/flashcard-sets/:id/copy', requireAuth, (req, res) => {
+  const existing = findFlashcardSetById(req.params.id);
+  if (!existing) {
+    return res.status(404).json({ error: 'Flashcard set not found.' });
+  }
+
+  const copied = copyFlashcardSet(
+    req.params.id,
+    crypto.randomUUID(),
+    req.user.id,
+    new Date().toISOString()
+  );
+
+  res.status(201).json({ flashcardSet: copied });
 });
 
 app.post('/api/analytics', requireAuth, (req, res) => {
