@@ -38,7 +38,8 @@
   top: 0px;
   height: 500px;
   justify-content: center;
-  margin-left: -200px;}
+  margin-left: -200px;
+}
 
 .flashcard-editor-right {
   display: flex;
@@ -66,7 +67,8 @@
 }
 
 .flashcard-title-input {
-  width: 100%;
+  width: 510px;
+  max-width: 510px;
   font-size: 70px;
   padding: 8px 0;
   border: 0;
