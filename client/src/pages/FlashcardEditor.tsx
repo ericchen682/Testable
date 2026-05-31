@@ -25,8 +25,9 @@ export default function FlashcardEditor() {
   const { setId } = useParams();
   const navigate = useNavigate();
   const [set, setSet] = useState<FlashcardSet | null>(null);
-  const [message, setMessage] = useState('Loading flashcard set...');
+  const [message, setMessage] = useState('');
   const [publishing, setPublishing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
 
   const handleAuthError = useCallback(() => {
@@ -151,7 +152,8 @@ export default function FlashcardEditor() {
         }
 
         setSet(data.flashcardSet);
-        setMessage('');
+        setMessage(data.flashcardSet.isPublished ? 'Set published.' : 'Set unpublished.');
+        setLoading(false);
       } catch {
         setMessage('Could not connect to the server');
       }
@@ -163,7 +165,7 @@ export default function FlashcardEditor() {
   if (!set) {
     return (
       <main className="flashcard-editor-root">
-        <p className="flashcard-editor-message">{message}</p>
+        {loading && <p className="flashcard-editor-message">Loading flashcard set...</p>}
       </main>
     );
   }
