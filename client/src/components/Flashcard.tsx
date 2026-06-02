@@ -32,6 +32,7 @@ function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: Flash
                 cursor: 'pointer', 
                 padding: '1rem 1.25rem',
                 boxSizing: "border-box",
+                boxShadow: '0 0 10px 2px rgba(90, 190, 180, 0.6)',
             }} 
             onClick={onClick}
         >
