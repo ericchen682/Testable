@@ -57,65 +57,36 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                 alignItems:"center",
             }}
         >
-            <Flashcard 
-                id = {flashcardList[currCard].id} 
-                titleText={flashcardList[currCard].titleText} 
-                frontText={flashcardList[currCard].frontText} 
-                backText={flashcardList[currCard].backText}
-                isFlipped={isFlipped}
-                onClick={() => setFlipped(!isFlipped)}
-            >
-            </Flashcard>
-            <div
-                style = {{
-                    display:"flex",
-                    width:"27rem",
-                    boxSizing:"border-box",
-                    justifyContent:"space-between",
-                    alignItems:"center",
-                    padding:"0.5rem 0",
-                }}
-            >
-                {
-                    <Button
-                        style = {{
-                            backgroundColor:"transparent",
-                            color:"#079198",
-                            borderWidth:"0px",
-                            borderRadius:"1.5rem",
-                            width: "3rem",
-                            height: "3rem",
-                            visibility: currCard > 0 ? "visible" : "hidden",
-                            cursor: 'pointer', 
-                        }}
-                        
-                        onClick={() => {
-                            setCard(currCard-1);
-                            setFlipped(false);
-                        }}
-                        >
-                        ←
-                    </Button>
-                    
-                }
-                <ProgressBar
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                <Button
                     style = {{
-                        // borderWidth:"1px",
-                        width:"15rem",
-                        height:"1.5rem",
-                        borderRadius:"0.75rem",
-                        // @ts-expect-error - custom CSS properties
-                        "--bs-progress-bg": "rgba(239,227,202,0.18)",
-                        "--bs-progress-bar-bg": "#56B6C6",
-                        
+                        backgroundColor:"transparent",
+                        color:"#079198",
+                        borderWidth:"0px",
+                        borderRadius:"1.5rem",
+                        width: "3rem",
+                        height: "3rem",
+                        visibility: currCard > 0 ? "visible" : "hidden",
+                        cursor: 'pointer', 
+                    }}     
+                    onClick={() => {
+                        setCard(currCard-1);
+                        setFlipped(false);
                     }}
-                    now = {((currCard+(isFlipped ? 1 : 0.5))*100)/setSize} 
-                    // label = {`${currCard+1}/${setSize}`}
                 >
-                </ProgressBar>
-                {/* {
-                    <div style={{ width: "3rem", height: "3rem" }} /> 
-                } */}
+                    ←
+                </Button>
+
+                <Flashcard 
+                    id = {flashcardList[currCard].id} 
+                    titleText={flashcardList[currCard].titleText} 
+                    frontText={flashcardList[currCard].frontText} 
+                    backText={flashcardList[currCard].backText}
+                    isFlipped={isFlipped}
+                    onClick={() => setFlipped(!isFlipped)}
+                >
+                </Flashcard>
+
                 <Button
                     style = {{
                         backgroundColor:"transparent",
@@ -135,6 +106,37 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     →
                 </Button>
             </div>
+
+            <div
+                style = {{
+                    display:"flex",
+                    width:"27rem",
+                    boxSizing:"border-box",
+                    justifyContent:"center",
+                    alignItems:"center",
+                    padding:"0.5rem 0",
+                }}
+            >
+                <ProgressBar
+                    style = {{
+                        // borderWidth:"1px",
+                        width:"15rem",
+                        height:"1.5rem",
+                        borderRadius:"0.75rem",
+                        // @ts-expect-error - custom CSS properties
+                        "--bs-progress-bg": "rgba(239,227,202,0.18)",
+                        "--bs-progress-bar-bg": "#56B6C6",
+                        
+                    }}
+                    now = {((currCard+(isFlipped ? 1 : 0.5))*100)/setSize} 
+                    // label = {`${currCard+1}/${setSize}`}
+                >
+                </ProgressBar>
+                {/* {
+                    <div style={{ width: "3rem", height: "3rem" }} /> 
+                } */}
+            </div>
+
             <div style = {{ display: "flex", gap: "1rem"}}>
                 <Button
                     onMouseEnter={() => setHoveredBtn('wrong')}                          
@@ -185,8 +187,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     >
                     ✓
                 </Button>
-                    
-            </div>
+            </div>        
         </div>
     );
 }
