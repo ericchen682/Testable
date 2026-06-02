@@ -74,10 +74,10 @@ export default function FlashcardView() {
   return (
     <main className="flashcard-view-root">
       <header className="flashcard-view-header">
-        <button onClick={() => navigate('/dashboard')}>Back to dashboard</button>
+        <button onClick={() => navigate('/dashboard')}>{'<'} Back to dashboard</button>
         {set && (
           <button onClick={() => navigate(`/flashcards/${set.id}/edit`)}>
-            Edit
+            Edit {'>'}
           </button>
         )}
       </header>

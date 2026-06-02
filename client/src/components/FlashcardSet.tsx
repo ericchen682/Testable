@@ -79,8 +79,8 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                 {
                     <Button
                         style = {{
-                            backgroundColor:"#56B6C6",
-                            color:"#170C79",
+                            backgroundColor:"transparent",
+                            color:"#079198",
                             borderWidth:"0px",
                             borderRadius:"1.5rem",
                             width: "3rem",
@@ -118,8 +118,8 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                 } */}
                 <Button
                     style = {{
-                        backgroundColor:"#56B6C6",
-                        color:"#170C79",
+                        backgroundColor:"transparent",
+                        color:"#079198",
                         borderWidth:"0px",
                         borderRadius:"1.5rem",
                         width: "3rem",

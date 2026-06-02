@@ -19,16 +19,16 @@ const FONTS = {
 function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: FlashcardProps) {
     // const [isFlipped, setFlipped] = React.useState(false);
     const displayText = isFlipped ? backText : frontText;
-    const bgColor = isFlipped ? "#56B6C6" : "#EFE3CA";
-    const textColor = "#170C79"; 
+    const bgColor = isFlipped ? "#56B6C6" : "#f3e8d4";
+    const textColor = "#1a254f"; 
     
     const textFont = isFlipped ? FONTS.grotesk : FONTS.serif;
 
     return(
         <Card 
             style = {{ 
-                width: '27rem', 
-                height: '14.5rem', 
+                width: '45rem', 
+                height: '24.3rem', 
                 backgroundColor: bgColor, 
                 borderRadius: "1rem", 
                 cursor: 'pointer', 
@@ -43,20 +43,22 @@ function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: Flash
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center', 
-                    alignItems: 'flex-start', 
-                    textAlign: 'left', 
+                    alignItems: 'center', 
+                    textAlign: 'center', 
                     height: '100%', 
                 }}
             >
                 <Card.Title 
                     style = {{ 
-                        position: 'absolute', 
+                        position: 'absolute',
                         top: '0rem', 
                         left: '0rem', 
+                        width : '100%',
+                        textAlign: 'center',
                         textTransform: 'uppercase', 
-                        color: textColor, 
-                        fontSize: '1rem',
-                        fontFamily: FONTS.mono,
+                        color: '#9c9ba5', 
+                        fontSize: '1.5rem',
+                        fontFamily: FONTS.serif,
                     }}
                 >
                     {titleText}
@@ -64,7 +66,7 @@ function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: Flash
                 <Card.Text 
                     style = {{ 
                         color: textColor, 
-                        fontSize: isFlipped ? '1.5rem' : '3rem',    
+                        fontSize: isFlipped ? '1.5rem' : '6rem',    
                         fontFamily: textFont, 
                     }}
                 >
