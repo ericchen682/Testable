@@ -40,4 +40,42 @@ const crypto = require('crypto');
         }));
     }
 
-    module.exports = { insertAnalyticsRecord, getAnalyticsForSet};
+    // Code to See Streak
+    const getStreakForUserStmt = db.prepare(`                                                                            
+        SELECT DISTINCT date(reviewed_at) AS review_date                                                                   
+        FROM analytics                                                                                                     
+        WHERE user_id = ?                     
+        ORDER BY review_date DESC                                                                                          
+    `);      
+    // ALERT: WE ONLY NEED 1 COPY OF A DAY REVIEWED ENTRY ^ DO NOT USE THIS ONE FOR ANY OTHER DATA FETCHING
+
+    function getStreakForUser(userId) {                                                                                  
+        const dates = getStreakForUserStmt.all(userId).map(r => r.review_date);
+        if (!dates.length) return 0;
+
+        const today = new Date().toISOString().slice(0, 10);
+        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+
+        if (dates[0] !== today && dates[0] !== yesterday) return 0;
+
+        let streak = 1;
+        for (let i = 1; i < dates.length; i++) { // Cycle through to see number of consecutive days
+            const prev = new Date(dates[i - 1]);
+            const curr = new Date(dates[i]);
+            const diff = (prev - curr) / 86400000;
+            if (diff === 1) streak++;
+            else break;
+        }
+        return streak;
+    } 
+    const getAvgTimeForSetStmt = db.prepare(`                                                                            
+        SELECT AVG(time_spent) AS avg_time                                                                               
+        FROM analytics                                                                                                   
+        WHERE set_id = ? AND user_id = ?                                                                                 
+    `);                                                                                                                  
+    function getAvgTimeForSet(setId, userId) {
+        const row = getAvgTimeForSetStmt.get(setId, userId);
+        if (!row || !row.avg_time) return 0;
+        return Math.round(row.avg_time / 1000 * 10) / 10;
+    }
+    module.exports = { insertAnalyticsRecord, getAnalyticsForSet, getStreakForUser, getAvgTimeForSet};

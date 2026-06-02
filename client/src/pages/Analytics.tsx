@@ -199,36 +199,37 @@ const DownIcon = () => (
 
 // ── Sparkline ──────────────────────────────────────────────
 function Sparkline({ data, color = 'rgb(23, 12, 121)', height = 32, width = 100 }: {
-  data: (number | DataPoint)[];
-  color?: string;
-  height?: number;
-  width?: number;
-}) {
-  if (!data || !data.length) return null;
-  const vals = data.map(d => typeof d === 'number' ? d : d.value);
-  const min = Math.min(...vals);
-  const max = Math.max(...vals);
-  const range = Math.max(1, max - min);
-  const pad = 2;
-  const W = width - pad * 2;
-  const H = height - pad * 2;
-  const xs = (i: number) => pad + (W * i) / Math.max(1, vals.length - 1);
-  const ys = (v: number) => pad + H * (1 - (v - min) / range);
-  let d = `M ${xs(0)} ${ys(vals[0])}`;
-  for (let i = 1; i < vals.length; i++) {
-    const x0 = xs(i - 1), y0 = ys(vals[i - 1]);
-    const x1 = xs(i),     y1 = ys(vals[i]);
-    const cx = (x0 + x1) / 2;
-    d += ` C ${cx} ${y0}, ${cx} ${y1}, ${x1} ${y1}`;
+    data: (number | DataPoint)[];
+    color?: string;
+    height?: number;
+    width?: number;
+  }) 
+  {
+    if (!data || !data.length) return null;
+    const vals = data.map(d => typeof d === 'number' ? d : d.value);
+    const min = Math.min(...vals);
+    const max = Math.max(...vals);
+    const range = Math.max(1, max - min);
+    const pad = 2;
+    const W = width - pad * 2;
+    const H = height - pad * 2;
+    const xs = (i: number) => pad + (W * i) / Math.max(1, vals.length - 1);
+    const ys = (v: number) => pad + H * (1 - (v - min) / range);
+    let d = `M ${xs(0)} ${ys(vals[0])}`;
+    for (let i = 1; i < vals.length; i++) {
+      const x0 = xs(i - 1), y0 = ys(vals[i - 1]);
+      const x1 = xs(i),     y1 = ys(vals[i]);
+      const cx = (x0 + x1) / 2;
+      d += ` C ${cx} ${y0}, ${cx} ${y1}, ${x1} ${y1}`;
+    }
+    const area = d + ` L ${xs(vals.length - 1)} ${height - pad} L ${xs(0)} ${height - pad} Z`;
+    return (
+      <svg width={width} height={height} style={{ display: 'block' }}>
+        <path d={area} fill={color} opacity="0.15" />
+        <path d={d} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
   }
-  const area = d + ` L ${xs(vals.length - 1)} ${height - pad} L ${xs(0)} ${height - pad} Z`;
-  return (
-    <svg width={width} height={height} style={{ display: 'block' }}>
-      <path d={area} fill={color} opacity="0.15" />
-      <path d={d} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 // ── Line chart ──────────────────────────────────────────────
 function LineChart({ data, height = 280, accent = 'rgb(23, 12, 121)' }: {
@@ -440,17 +441,17 @@ function Stat({ icon, label, value, unit, delta, deltaSuffix, sparkData, sparkCo
         {value}{unit && <span className="an-unit">{unit}</span>}
       </div>
       <div className="an-stat-row">
-        {delta !== undefined && (
+        {/* {delta !== undefined && (
           <span className={'an-stat-delta ' + (isUp ? 'up' : isDown ? 'down' : '')}>
             {isUp && <UpIcon />}{isDown && <DownIcon />}
             {Math.abs(delta)}{deltaSuffix || ''}
           </span>
-        )}
-        {sparkData && (
+        )} */}
+        {/* {sparkData && (
           <div className="an-stat-spark">
             <Sparkline data={sparkData} color={sparkColor || 'rgb(86, 182, 198)'} width={100} height={32} />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
@@ -480,7 +481,7 @@ function SetRow({ set, period }: { set: CardSet; period: Period }) {
 }
 
 // ── Overview tab ──────────────────────────────────────────
-function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: Period; realAccuracy?: number | null })      {
+ function OverviewTab({ setId, period, realAccuracy, realReviews, realStreak, realAvgTime }: { setId: string; period: Period; realAccuracy?: number; realReviews?: number; realStreak?: number; realAvgTime?:number})    {
   const data = useMemo(() => summaryFor(setId, period), [setId, period]);
   const tough = TOUGH_CARDS[setId] || TOUGH_CARDS.all;
   const visibleSets = CARD_SETS.filter(s => s.id !== 'all');
@@ -492,12 +493,12 @@ function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: P
     <>
       <div className="an-grid an-stat-grid">
         <Stat icon={<TargetIcon />} label="Accuracy" value={realAccuracy ?? data.accuracy} unit="%" delta={data.accuracyDelta} deltaSuffix="%" sparkData={sparkAcc} sparkColor="rgb(86, 182, 198)" />
-        <Stat icon={<LayersIcon />} label="Reviews" value={data.reviews.toLocaleString()} delta={data.reviewsDelta} deltaSuffix="%" sparkData={sparkReviews} sparkColor="rgb(23, 12, 121)" />
-        <Stat icon={<FlameIcon />} label="Day streak" value={data.streak} unit=" days" delta={data.streakDelta} sparkData={[8,9,9,10,10,11,11]} sparkColor="rgb(138, 203, 208)" />
-        <Stat icon={<ClockIcon />} label="Avg time / card" value={data.timePerCard} unit="s" delta={data.timeDelta} deltaSuffix="s" sparkData={[4.6, 4.5, 4.4, 4.4, 4.3, 4.2, 4.2]} sparkColor="rgb(239, 227, 202)" />
+        <Stat icon={<LayersIcon />} label="Reviews" value={(realReviews ?? data.reviews).toLocaleString()} delta={data.reviewsDelta} deltaSuffix="%" sparkData={sparkReviews} sparkColor="rgb(23, 12, 121)" />
+        <Stat icon={<FlameIcon />} label="Day streak" value={realStreak ?? data.streak} unit=" days" delta={data.streakDelta} sparkData={[8,9,9,10,10,11,11]} sparkColor="rgb(138, 203, 208)" />
+        <Stat icon={<ClockIcon />} label="Avg time / card" value={realAvgTime ?? data.timePerCard} unit="s" delta={data.timeDelta} deltaSuffix="s" sparkData={[4.6, 4.5, 4.4, 4.4, 4.3, 4.2, 4.2]} sparkColor="rgb(239, 227, 202)" />
       </div>
 
-      <div className="an-card" style={{ marginBottom: 20 }}>
+      {/* <div className="an-card" style={{ marginBottom: 20 }}>
         <div className="an-card-head">
           <div>
             <div className="an-title">Accuracy over time</div>
@@ -513,9 +514,9 @@ function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: P
             <LineChart data={data.series} accent="rgb(23, 12, 121)" />
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <div className="an-two-col">
+      {/* <div className="an-two-col">
         <div className="an-card">
           <div className="an-card-head">
             <div>
@@ -542,8 +543,8 @@ function OverviewTab({ setId, period, realAccuracy }: { setId: string; period: P
               <div className="an-tough-miss">{t.miss}% miss</div>
             </div>
           ))}
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
     </>
   );
 }
@@ -629,17 +630,22 @@ function HistoryTab({ setId, period }: { setId: string; period: Period }) {
 // ── Main Analytics page ──────────────────────────────────
 const TABS = [
   { id: 'overview', label: 'Overview' },
-  { id: 'accuracy', label: 'Accuracy' },
-  { id: 'byset',   label: 'By set', count: CARD_SETS.length - 1 },
-  { id: 'history', label: 'History' },
+  // { id: 'accuracy', label: 'Accuracy' },
+  // { id: 'byset',   label: 'By set', count: CARD_SETS.length - 1 },
+  // { id: 'history', label: 'History' },
 ];
 
 export default function Analytics() {
   const [setId, setSetId] = useState('');
   const [periodId, setPeriodId] = useState('7d');
   const [tab, setTab] = useState('overview');
+
+  // ALL THE CONSTS 
   const [realSets, setRealSets] = useState<RealSet[]>([]);
-  const [realAccuracy, setRealAccuracy] = useState<number | null>(null);
+  const [realAccuracy, setRealAccuracy] = useState(0);
+  const [realReviews, setRealReviews] = useState(0);
+  const [realStreak, setRealStreak] = useState(0); 
+  const [realAvgTime, setRealAvgTime] = useState(0);   
   const period = PERIODS.find(p => p.id === periodId)!;
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -659,7 +665,12 @@ export default function Analytics() {
 
   useEffect(() => {
     if (!setId || !token) return;
-    setRealAccuracy(null);
+    // BASE
+    setRealAccuracy(0);
+    setRealReviews(0);
+    setRealStreak(0);
+    setRealAvgTime(0);
+
     fetch(`http://localhost:3001/api/analytics/${setId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -671,6 +682,9 @@ export default function Analytics() {
         const totalCorrect = analytics.reduce((a, b) => a + b.correctCount, 0);
         if (totalAttempts === 0) return;
         setRealAccuracy(Math.round((totalCorrect / totalAttempts) * 100));
+        setRealReviews(totalAttempts);  
+        setRealStreak(data.streak ?? 0);  
+        setRealAvgTime(data.avgTime??0);
       })
       .catch(() => {});
   }, [setId, token]);
@@ -680,7 +694,10 @@ export default function Analytics() {
       <header className="an-topnav">
           <div className="an-topnav-inner">
             <div className="an-brand">
-              <span className="an-brand-mark" />
+              <svg width={21} height={21} viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10.5" stroke="#EFE3CA" strokeWidth="1.4" />
+                <path d="M7.5 12.2l3.2 3.2 6-6.4" stroke="#EFE3CA" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
               Testable
             </div>
             <nav className="an-nav-links">
@@ -716,16 +733,16 @@ export default function Analytics() {
                 </button>
               ))}
             </div>
-            <div className="an-seg">
+            {/* <div className="an-seg">
               {PERIODS.map(p => (
                 <button key={p.id}
                   className={periodId === p.id ? 'on' : ''}
                   onClick={() => setPeriodId(p.id)}>{p.id}</button>
               ))}
-            </div>
+            </div> */}
           </div>
 
-          {tab === 'overview' && <OverviewTab setId={setId} period={period} realAccuracy={realAccuracy} />}
+          {tab === 'overview' && <OverviewTab setId={setId} period={period} realAccuracy={realAccuracy} realReviews={realReviews} realStreak={realStreak} realAvgTime={realAvgTime}/>}
           {tab === 'accuracy' && <AccuracyTab setId={setId} period={period} />}
           {tab === 'byset'    && <BySetTab period={period} />}
           {tab === 'history'  && <HistoryTab setId={setId} period={period} />}
