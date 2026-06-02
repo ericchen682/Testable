@@ -19,7 +19,7 @@ const FONTS = {
 function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: FlashcardProps) {
     // const [isFlipped, setFlipped] = React.useState(false);
     const displayText = isFlipped ? backText : frontText;
-    const bgColor = isFlipped ? "#56B6C6" : "#f3e8d4";
+    const bgColor = "#f3e8d4";
     const textColor = "#1a254f"; 
     
     const textFont = isFlipped ? FONTS.grotesk : FONTS.serif;
@@ -66,8 +66,8 @@ function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: Flash
                 <Card.Text 
                     style = {{ 
                         color: textColor, 
-                        fontSize: isFlipped ? '1.5rem' : '6rem',    
-                        fontFamily: textFont, 
+                        fontSize: isFlipped ? '2.3rem' : '6rem',    
+                        fontFamily: FONTS.serif, 
                     }}
                 >
                     {displayText}
