@@ -85,7 +85,6 @@ export default function FlashcardView() {
       <section className="flashcard-view-content">
         {set && (
           <div className="flashcard-view-title-row">
-            <h1 className="flashcard-view-title">{set.title}</h1>
             <span className={set.isPublished ? 'flashcard-view-badge flashcard-view-badge--public' : 'flashcard-view-badge'}>
               {set.isPublished ? 'Published' : 'Private'}
             </span>
