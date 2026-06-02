@@ -403,7 +403,7 @@ app.post('/api/analytics', requireAuth, (req, res) => {
 
 app.get('/api/analytics/:setId', requireAuth, (req, res) => {
   const results = getAnalyticsForSet(req.params.setId, req.user.id);
-  const streak = getStreakForUser(req.user.id);
+  const streak = getStreakForUser(req.user.id, req.params.setId);
   const avgTime = getAvgTimeForSet(req.params.setId, req.user.id);
   res.json({ analytics: results, streak, avgTime});
 });
