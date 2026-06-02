@@ -57,47 +57,79 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                 alignItems:"center",
             }}
         >
-            <Flashcard 
-                id = {flashcardList[currCard].id} 
-                titleText={flashcardList[currCard].titleText} 
-                frontText={flashcardList[currCard].frontText} 
-                backText={flashcardList[currCard].backText}
-                isFlipped={isFlipped}
-                onClick={() => setFlipped(!isFlipped)}
-            >
-            </Flashcard>
+            <div style={{ display: "flex", alignItems: "center", gap: "4rem" }}>
+                <Button
+                    style = {{
+                        backgroundColor:"transparent",
+                        color:"#079198",
+                        fontSize: "8rem",
+                        borderWidth:"0px",
+                        borderRadius:"1.5rem",
+                        width: "6rem",
+                        height: "6rem",
+                        overflow: "visible",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        lineHeight: "1", 
+                        visibility: currCard > 0 ? "visible" : "hidden",
+                        cursor: 'pointer',
+                        
+                    }}     
+                    onClick={() => {
+                        setCard(currCard-1);
+                        setFlipped(false);
+                    }}
+                >
+                    ←
+                </Button>
+
+                <Flashcard 
+                    id = {flashcardList[currCard].id} 
+                    titleText={flashcardList[currCard].titleText} 
+                    frontText={flashcardList[currCard].frontText} 
+                    backText={flashcardList[currCard].backText}
+                    isFlipped={isFlipped}
+                    onClick={() => setFlipped(!isFlipped)}
+                >
+                </Flashcard>
+
+                <Button
+                    style = {{
+                        backgroundColor:"transparent",
+                        color:"#079198",
+                        fontSize: "8rem",
+                        borderWidth:"0px",
+                        borderRadius:"1.5rem",
+                        width: "6rem",
+                        height: "6rem",
+                        overflow: "visible",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        lineHeight: "1",
+                        visibility: currCard+1 < setSize ? "visible" : "hidden",
+                        cursor: 'pointer', 
+                    }}
+                    onClick={() => {
+                        setCard(currCard+1);
+                        setFlipped(false);
+                    }}
+                    >
+                    →
+                </Button>
+            </div>
+
             <div
                 style = {{
                     display:"flex",
                     width:"27rem",
                     boxSizing:"border-box",
-                    justifyContent:"space-between",
+                    justifyContent:"center",
                     alignItems:"center",
                     padding:"0.5rem 0",
                 }}
             >
-                {
-                    <Button
-                        style = {{
-                            backgroundColor:"#56B6C6",
-                            color:"#170C79",
-                            borderWidth:"0px",
-                            borderRadius:"1.5rem",
-                            width: "3rem",
-                            height: "3rem",
-                            visibility: currCard > 0 ? "visible" : "hidden",
-                            cursor: 'pointer', 
-                        }}
-                        
-                        onClick={() => {
-                            setCard(currCard-1);
-                            setFlipped(false);
-                        }}
-                        >
-                        ←
-                    </Button>
-                    
-                }
                 <ProgressBar
                     style = {{
                         // borderWidth:"1px",
@@ -116,33 +148,16 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                 {/* {
                     <div style={{ width: "3rem", height: "3rem" }} /> 
                 } */}
-                <Button
-                    style = {{
-                        backgroundColor:"#56B6C6",
-                        color:"#170C79",
-                        borderWidth:"0px",
-                        borderRadius:"1.5rem",
-                        width: "3rem",
-                        height: "3rem",
-                        visibility: currCard+1 < setSize ? "visible" : "hidden",
-                        cursor: 'pointer', 
-                    }}
-                    onClick={() => {
-                        setCard(currCard+1);
-                        setFlipped(false);
-                    }}
-                    >
-                    →
-                </Button>
             </div>
+
             <div style = {{ display: "flex", gap: "1rem"}}>
-                <Button
+                <button
                     onMouseEnter={() => setHoveredBtn('wrong')}                          
                     onMouseLeave={() => setHoveredBtn(null)}       
                     style = {{
-                        border: "2px solid #56B6C6",
-                        backgroundColor: hoveredBtn === 'wrong' ? '#FF3131' : '#FFFFFF',
-                        color: hoveredBtn === 'wrong' ? '#FFFFFF' : '#FF3131',
+                        border: "2px solid #079198",
+                        backgroundColor: hoveredBtn === 'wrong' ? '#ad4e4e' : '#334071',
+                        color: hoveredBtn === 'wrong' ? '#334071' : '#ad4e4e',
                         // borderWidth:"0px",
                         borderRadius:"0.5rem",
                         width: "4rem",
@@ -159,15 +174,15 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     }}
                     >
                     X
-                </Button>
+                </button>
 
-                <Button
+                <button
                     onMouseEnter={() => setHoveredBtn('correct')}
                     onMouseLeave={() => setHoveredBtn(null)}
                     style = {{
-                        border: "2px solid #56B6C6",
-                        backgroundColor: hoveredBtn === 'correct' ? '#39FF14' :'#FFFFFF',
-                        color: hoveredBtn === 'correct' ? '#FFFFFF' : '#39FF14',
+                        border: "2px solid #079198",
+                        backgroundColor: hoveredBtn === 'correct' ? '#4ead69' :'#334071',
+                        color: hoveredBtn === 'correct' ? '#334071' : '#4ead69',
                         // borderWidth:"0px",
                         borderRadius:"0.5rem",
                         width: "4rem",
@@ -184,9 +199,8 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     }}
                     >
                     ✓
-                </Button>
-                    
-            </div>
+                </button>
+            </div>        
         </div>
     );
 }
