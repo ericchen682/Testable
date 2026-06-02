@@ -151,13 +151,13 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
             </div>
 
             <div style = {{ display: "flex", gap: "1rem"}}>
-                <Button
+                <button
                     onMouseEnter={() => setHoveredBtn('wrong')}                          
                     onMouseLeave={() => setHoveredBtn(null)}       
                     style = {{
-                        border: "2px solid #56B6C6",
-                        backgroundColor: hoveredBtn === 'wrong' ? '#FF3131' : '#FFFFFF',
-                        color: hoveredBtn === 'wrong' ? '#FFFFFF' : '#FF3131',
+                        border: "2px solid #079198",
+                        backgroundColor: hoveredBtn === 'wrong' ? '#ad4e4e' : '#334071',
+                        color: hoveredBtn === 'wrong' ? '#334071' : '#ad4e4e',
                         // borderWidth:"0px",
                         borderRadius:"0.5rem",
                         width: "4rem",
@@ -174,15 +174,15 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     }}
                     >
                     X
-                </Button>
+                </button>
 
-                <Button
+                <button
                     onMouseEnter={() => setHoveredBtn('correct')}
                     onMouseLeave={() => setHoveredBtn(null)}
                     style = {{
-                        border: "2px solid #56B6C6",
-                        backgroundColor: hoveredBtn === 'correct' ? '#39FF14' :'#FFFFFF',
-                        color: hoveredBtn === 'correct' ? '#FFFFFF' : '#39FF14',
+                        border: "2px solid #079198",
+                        backgroundColor: hoveredBtn === 'correct' ? '#4ead69' :'#334071',
+                        color: hoveredBtn === 'correct' ? '#334071' : '#4ead69',
                         // borderWidth:"0px",
                         borderRadius:"0.5rem",
                         width: "4rem",
@@ -199,7 +199,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     }}
                     >
                     ✓
-                </Button>
+                </button>
             </div>        
         </div>
     );
