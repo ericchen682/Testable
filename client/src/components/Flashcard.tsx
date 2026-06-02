@@ -19,8 +19,8 @@ const FONTS = {
 function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: FlashcardProps) {
     // const [isFlipped, setFlipped] = React.useState(false);
     const displayText = isFlipped ? backText : frontText;
-    const bgColor = "#f3e8d4";
-    const textColor = "#1a254f"; 
+    const bgColor = isFlipped ? "#334071" : "#f3e8d4";
+    const textColor = isFlipped ? "#f3e8d4" : "#1a254f"; 
 
     return(
         <Card 
