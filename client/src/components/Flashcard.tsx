@@ -64,12 +64,29 @@ function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: Flash
                 <Card.Text 
                     style = {{ 
                         color: textColor, 
-                        fontSize: isFlipped ? '2.3rem' : '6rem',    
+                        fontSize: isFlipped ? '2.7rem' : '6rem',    
                         fontFamily: FONTS.serif, 
                     }}
                 >
                     {displayText}
                 </Card.Text>
+                <Card.Footer
+                    style = {{ 
+                        position: 'absolute',
+                        bottom: '0rem', 
+                        left: '0rem', 
+                        width : '100%',
+                        textAlign: 'center',
+                        textTransform: 'uppercase', 
+                        color: '#9c9ba5', 
+                        fontSize: '1.5rem',
+                        fontFamily: FONTS.serif,
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                    }}
+                >
+                    Click To Flip
+                </Card.Footer>
             </Card.Body>
         </Card>
     )
