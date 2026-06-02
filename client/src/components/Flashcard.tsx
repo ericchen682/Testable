@@ -21,8 +21,6 @@ function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: Flash
     const displayText = isFlipped ? backText : frontText;
     const bgColor = "#f3e8d4";
     const textColor = "#1a254f"; 
-    
-    const textFont = isFlipped ? FONTS.grotesk : FONTS.serif;
 
     return(
         <Card 

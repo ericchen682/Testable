@@ -57,17 +57,24 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                 alignItems:"center",
             }}
         >
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "4rem" }}>
                 <Button
                     style = {{
                         backgroundColor:"transparent",
                         color:"#079198",
+                        fontSize: "8rem",
                         borderWidth:"0px",
                         borderRadius:"1.5rem",
-                        width: "3rem",
-                        height: "3rem",
+                        width: "6rem",
+                        height: "6rem",
+                        overflow: "visible",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        lineHeight: "1", 
                         visibility: currCard > 0 ? "visible" : "hidden",
-                        cursor: 'pointer', 
+                        cursor: 'pointer',
+                        
                     }}     
                     onClick={() => {
                         setCard(currCard-1);
@@ -91,10 +98,16 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     style = {{
                         backgroundColor:"transparent",
                         color:"#079198",
+                        fontSize: "8rem",
                         borderWidth:"0px",
                         borderRadius:"1.5rem",
-                        width: "3rem",
-                        height: "3rem",
+                        width: "6rem",
+                        height: "6rem",
+                        overflow: "visible",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        lineHeight: "1",
                         visibility: currCard+1 < setSize ? "visible" : "hidden",
                         cursor: 'pointer', 
                     }}
