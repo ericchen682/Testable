@@ -44,26 +44,42 @@ const crypto = require('crypto');
     const getStreakForUserStmt = db.prepare(`                                                                            
         SELECT DISTINCT date(reviewed_at) AS review_date                                                                   
         FROM analytics                                                                                                     
-        WHERE user_id = ?                     
+        WHERE user_id = ?  AND set_id = ?
         ORDER BY review_date DESC                                                                                          
     `);      
     // ALERT: WE ONLY NEED 1 COPY OF A DAY REVIEWED ENTRY ^ DO NOT USE THIS ONE FOR ANY OTHER DATA FETCHING
+    const MS_PER_DAY = 86400000;
 
-    function getStreakForUser(userId) {                                                                                  
-        const dates = getStreakForUserStmt.all(userId).map(r => r.review_date);
+    function toDateString(date) {
+        return date.toISOString().slice(0, 10);
+    }
+
+    function isConsecutiveDay(a, b) {
+        return (new Date(a) - new Date(b)) / MS_PER_DAY === 1;
+    }
+
+
+
+    function getStreakForUser(userId, setId) {                                                                                  
+        const dates = getStreakForUserStmt.all(userId, setId).map(r => r.review_date);
         if (!dates.length) return 0;
 
-        const today = new Date().toISOString().slice(0, 10);
-        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        const today = toDateString(new Date()); 
+        // const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+
+        const yesterday = toDateString( new Date(Date.now() - MS_PER_DAY));
+
 
         if (dates[0] !== today && dates[0] !== yesterday) return 0;
 
         let streak = 1;
         for (let i = 1; i < dates.length; i++) { // Cycle through to see number of consecutive days
-            const prev = new Date(dates[i - 1]);
-            const curr = new Date(dates[i]);
-            const diff = (prev - curr) / 86400000;
-            if (diff === 1) streak++;
+            // const prev = new Date(dates[i - 1]);
+            // const curr = new Date(dates[i]);
+            // const diff = (prev - curr) / 86400000;
+            if (isConsecutiveDay(dates[i-1], dates[i])){
+                streak++;
+            }
             else break;
         }
         return streak;

@@ -28,6 +28,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
     const [hoveredBtn, setHoveredBtn] = React.useState<'wrong' | 'correct' |
     null>(null);
     const [cardShownAt, setCardShownAt] = React.useState(Date.now());
+    const [done, setDone] = React.useState(false);   
     const recordAnswer = async (correct: boolean) => {
         const timeSpent = Date.now() - cardShownAt;
         const card = flashcardList[currCard];
@@ -59,6 +60,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
         {
             setCard(currCard - 1);
             setFlipped(false);
+            setDone(false);
         }
     };
 
@@ -75,6 +77,8 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
 
         if (currCard + 1 < setSize) {
             setCard(currCard + 1);
+        } else {
+            setDone(true);
         }
 
         setCardShownAt(Date.now());
@@ -218,7 +222,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                 } */}
             </div>
 
-            <div style = {{ display: "flex", gap: "1rem"}}>
+            {!done && <div style = {{ display: "flex", gap: "1rem"}}>
                 <button
                     onMouseEnter={() => setHoveredBtn('wrong')}                          
                     onMouseLeave={() => setHoveredBtn(null)}       
@@ -254,7 +258,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     >
                     ✓
                 </button>
-            </div>        
+            </div>}        
         </div>
     );
 }
