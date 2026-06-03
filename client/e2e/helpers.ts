@@ -12,11 +12,15 @@ export async function signup(page: Page, email: string) {
 }
 
 export async function login(page: Page, email: string) {
-
+    await page.goto('/login');
+    await page.getByTestId('login-email').fill(email);
+    await page.getByTestId('login-password').fill(password);
+    await page.getByTestId('login-submit').click();
+    await expect(page).toHaveURL(/\/dashboard/);
 }
 
 export async function clearAuth(page: Page) {
-
+    await page.evaluate(() => localStorage.removeItem('token'));
 }
 
 export async function createSet(page: Page, title: string, cards: { front: string, back: string }[]) {
