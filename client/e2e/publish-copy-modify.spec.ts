@@ -12,13 +12,13 @@ test('user can copy public flashcard set and modify it', async ({ page }) => {
         { front: 'card2 front', back: 'card2 back' },
     ]);
 
-    await createSet(page, 'private set',  [
+    await page.getByTestId('publish-button').click();
+    await expect(page.getByText('Set published.')).toBeVisible();
+
+     await createSet(page, 'private set',  [
         { front: 'private card1 front', back: 'private card1 back' },
         { front: 'private card2 front', back: 'private card2 back' },
     ]);
-
-    await page.getByTestId('publish-button').click();
-    await expect(page.getByText('Set published.')).toBeVisible();
 
     await clearAuth(page);
     await signup(page, copyEmail);
