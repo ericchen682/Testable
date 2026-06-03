@@ -169,12 +169,13 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                             recordAnswer(false);
                             if (currCard + 1 < setSize) {
                                 setCard(currCard + 1);
+                                setFlipped(false);
                             }
                             else{
                                 setDone(true);
                             }
                             setCardShownAt(Date.now());
-                            setFlipped(false);
+
                         }}
                         >
                         X
@@ -197,12 +198,13 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                             recordAnswer(true);
                             if (currCard + 1 < setSize) {
                                 setCard(currCard + 1);
+                                setFlipped(false);
                             }
                             else{
                                 setDone(true);
                             }
                             setCardShownAt(Date.now());
-                            setFlipped(false);
+                            
                         }}
                         >
                         ✓
