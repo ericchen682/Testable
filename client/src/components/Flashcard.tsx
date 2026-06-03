@@ -86,7 +86,7 @@ function Flashcard({ titleText, frontText, backText, isFlipped, onClick }: Flash
                         border: 'none',
                     }}
                 >
-                    Click To Flip
+                    Click Or Press Space To Flip
                 </Card.Footer>
             </Card.Body>
         </Card>
