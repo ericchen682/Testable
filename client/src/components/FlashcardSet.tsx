@@ -81,6 +81,42 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
         setFlipped(false);
     };
 
+    React.useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const target = event.target as HTMLElement | null;
+
+            if (
+                target?.tagName === 'INPUT' ||
+                target?.tagName === 'TEXTAREA' ||
+                target?.tagName === 'SELECT' ||
+                target?.isContentEditable
+            ) {
+                return;
+            }
+
+            if(event.code === 'Space') {
+                event.preventDefault();
+                flipCard();
+            }
+
+            if(event.key === 'ArrowLeft') {
+                goToPrevCard();
+            }
+
+            if(event.key === 'ArrowRight') {
+                goToNextCard();
+            }
+
+            if(event.key === '1') {
+                markAnswer(false);
+            }
+
+            if(event.key === '2') {
+                markAnswer(true);
+            }
+        }
+    })
+
     return(
         <div
             style = {{
