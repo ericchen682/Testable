@@ -40,5 +40,5 @@ export async function createSet(page: Page, title: string, cards: { front: strin
 }
 
 export function uniqueEmail(prefix: string) {
-
+    return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
 }
