@@ -114,8 +114,14 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
             if(event.key === '2') {
                 markAnswer(true);
             }
-        }
-    })
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };    
+    }, [currCard, setSize, isFlipped, cardShownAt]);
 
     return(
         <div
