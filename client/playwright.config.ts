@@ -1,8 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const e2eDbPath = path.join(os.tmpdir(), `testable-e2e-${Date.now()}.db`);
+const serverDir = path.resolve(currentDir, '../server');
 
 export default defineConfig({
     testDir: './e2e',
@@ -15,7 +18,7 @@ export default defineConfig({
     webServer: [
         {
         command: 'npm start',
-        cwd: path.resolve(__dirname, '../server'),
+        cwd: serverDir,
         url: 'http://127.0.0.1:3001/api/flashcard-sets/public',
         reuseExistingServer: false,
         env: {
@@ -27,7 +30,7 @@ export default defineConfig({
         },
         {
         command: 'npm run dev -- --host 127.0.0.1',
-        cwd: __dirname,
+        cwd: currentDir,
         url: 'http://127.0.0.1:5173',
         reuseExistingServer: false,
         },
