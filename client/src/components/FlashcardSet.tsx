@@ -49,6 +49,38 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
             // fire and forget, don't block UI
         }
     };
+
+    const flipCard = () => {
+        setFlipped(!isFlipped);
+    };
+
+    const goToPrevCard = () => {
+        if (currCard > 0)
+        {
+            setCard(currCard - 1);
+            setFlipped(false);
+        }
+    };
+
+    const goToNextCard = () => {
+        if (currCard + 1 < setSize)
+        {
+            setCard(currCard + 1);
+            setFlipped(false);
+        }
+    };
+
+    const markAnswer = (correct: boolean) => {
+        recordAnswer(correct);
+
+        if (currCard + 1 < setSize) {
+            setCard(currCard + 1);
+        }
+
+        setCardShownAt(Date.now());
+        setFlipped(false);
+    };
+
     return(
         <div
             style = {{
