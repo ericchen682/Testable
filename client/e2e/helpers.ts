@@ -24,7 +24,19 @@ export async function clearAuth(page: Page) {
 }
 
 export async function createSet(page: Page, title: string, cards: { front: string, back: string }[]) {
+    await page.goto('/dashboard');
+    await page.getByRole('button', { name: '+ Create set' }).click();
+    await expect(page).toHaveURL(/\/flashcards\/[^/]+\/edit/);
 
+    await page.getByTestId('set-title-input').fill(title);
+
+    for(let i = 0; i < cards.length; i += 1) {
+        await page.getByTestId('add-card-button').click();
+        await page.getByTestId(`card-front-${i}`).fill(cards[i].front);
+        await page.getByTestId(`card-back-${i}`).fill(cards[i].back);
+    }
+
+    await expect(page.getByTestId(`card-front-${cards.length - 1}`)).toHaveValue(cards[cards.length - 1].front);
 }
 
 export function uniqueEmail(prefix: string) {
