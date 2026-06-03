@@ -106,7 +106,7 @@
 
 .flashcard-publish-panel p {
   margin: 6px 0 0;
-  color: #6274b4;
+  color: #F5F0E1;
   font-size: 22px;
 }
 
@@ -138,9 +138,9 @@
 .flashcard-publish-status {
   width: center;
   padding: 2px 8px;
-  border: 1px solid #6274b4;
+  border: 1px solid #3fb6b2;
   border-radius: 999px;
-  color: #6274b4;
+  color: #F5F0E1;
   font-size: 22px;
   font-weight: 700;
   margin-left: 25px;
@@ -157,7 +157,7 @@
   justify-content: space-between;
   font-size: 50px;
   font-weight: 700;
-  color: #99a8dd;
+  color: #F5F0E1;
   padding: 0px 50px;
   margin-bottom: 0;
   margin-top: 20px;
