@@ -237,7 +237,7 @@ export default function FlashcardEditor() {
                       value={card.back} 
                       onChange={(event) => updateCard(card.id, 'back', event.target.value)} 
                       placeholder="Back"
-                      data-testid={`card-front-${index}`}
+                      data-testid={`card-back-${index}`}
                     />
                     {/* Later: add image upload fields to each card here. */}
                   </div>
