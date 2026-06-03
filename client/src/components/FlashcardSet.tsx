@@ -108,9 +108,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         cursor: 'pointer',
                         
                     }}     
-                    onClick={() => {
-                        goToPrevCard();
-                    }}
+                    onClick={() => goToPrevCard()}
                 >
                     ←
                 </Button>
@@ -142,9 +140,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         visibility: currCard+1 < setSize ? "visible" : "hidden",
                         cursor: 'pointer', 
                     }}
-                    onClick={() => {
-                        goToNextCard();
-                    }}
+                    onClick={() => goToNextCard()}
                     >
                     →
                 </Button>
@@ -194,9 +190,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         height: "3rem",
                         cursor: 'pointer',
                     }}
-                    onClick={() => {
-                        markAnswer(false);
-                    }}
+                    onClick={() => markAnswer(false)}
                     >
                     X
                 </button>
@@ -214,9 +208,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         height: "3rem",
                         cursor: 'pointer',
                     }}
-                    onClick={() => {
-                        markAnswer(true);
-                    }}
+                    onClick={() => markAnswer(true)}
                     >
                     ✓
                 </button>
