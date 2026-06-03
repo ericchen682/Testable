@@ -28,6 +28,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
     const [hoveredBtn, setHoveredBtn] = React.useState<'wrong' | 'correct' |
     null>(null);
     const [cardShownAt, setCardShownAt] = React.useState(Date.now());
+    const [done, setDone] = React.useState(false);   
     const recordAnswer = async (correct: boolean) => {
         const timeSpent = Date.now() - cardShownAt;
         const card = flashcardList[currCard];
@@ -149,59 +150,67 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     <div style={{ width: "3rem", height: "3rem" }} /> 
                 } */}
             </div>
+            {!done && (
+                <div style = {{ display: "flex", gap: "1rem"}}>
+                    <button
+                        onMouseEnter={() => setHoveredBtn('wrong')}                          
+                        onMouseLeave={() => setHoveredBtn(null)}       
+                        style = {{
+                            border: "2px solid #079198",
+                            backgroundColor: hoveredBtn === 'wrong' ? '#ad4e4e' : '#334071',
+                            color: hoveredBtn === 'wrong' ? '#334071' : '#ad4e4e',
+                            // borderWidth:"0px",
+                            borderRadius:"0.5rem",
+                            width: "4rem",
+                            height: "3rem",
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                            recordAnswer(false);
+                            if (currCard + 1 < setSize) {
+                                setCard(currCard + 1);
+                            }
+                            else{
+                                setDone(true);
+                            }
+                            setCardShownAt(Date.now());
+                            setFlipped(false);
+                        }}
+                        >
+                        X
+                    </button>
 
-            <div style = {{ display: "flex", gap: "1rem"}}>
-                <button
-                    onMouseEnter={() => setHoveredBtn('wrong')}                          
-                    onMouseLeave={() => setHoveredBtn(null)}       
-                    style = {{
-                        border: "2px solid #079198",
-                        backgroundColor: hoveredBtn === 'wrong' ? '#ad4e4e' : '#334071',
-                        color: hoveredBtn === 'wrong' ? '#334071' : '#ad4e4e',
-                        // borderWidth:"0px",
-                        borderRadius:"0.5rem",
-                        width: "4rem",
-                        height: "3rem",
-                        cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                        recordAnswer(false);
-                        if (currCard + 1 < setSize) {
-                            setCard(currCard + 1);
-                        }
-                        setCardShownAt(Date.now());
-                        setFlipped(false);
-                    }}
-                    >
-                    X
-                </button>
-
-                <button
-                    onMouseEnter={() => setHoveredBtn('correct')}
-                    onMouseLeave={() => setHoveredBtn(null)}
-                    style = {{
-                        border: "2px solid #079198",
-                        backgroundColor: hoveredBtn === 'correct' ? '#4ead69' :'#334071',
-                        color: hoveredBtn === 'correct' ? '#334071' : '#4ead69',
-                        // borderWidth:"0px",
-                        borderRadius:"0.5rem",
-                        width: "4rem",
-                        height: "3rem",
-                        cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                        recordAnswer(true);
-                        if (currCard + 1 < setSize) {
-                            setCard(currCard + 1);
-                        }
-                        setCardShownAt(Date.now());
-                        setFlipped(false);
-                    }}
-                    >
-                    ✓
-                </button>
-            </div>        
-        </div>
+                    <button
+                        onMouseEnter={() => setHoveredBtn('correct')}
+                        onMouseLeave={() => setHoveredBtn(null)}
+                        style = {{
+                            border: "2px solid #079198",
+                            backgroundColor: hoveredBtn === 'correct' ? '#4ead69' :'#334071',
+                            color: hoveredBtn === 'correct' ? '#334071' : '#4ead69',
+                            // borderWidth:"0px",
+                            borderRadius:"0.5rem",
+                            width: "4rem",
+                            height: "3rem",
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                            recordAnswer(true);
+                            if (currCard + 1 < setSize) {
+                                setCard(currCard + 1);
+                            }
+                            else{
+                                setDone(true);
+                            }
+                            setCardShownAt(Date.now());
+                            setFlipped(false);
+                        }}
+                        >
+                        ✓
+                    </button>
+                </div>   
+                )}     
+            </div>
+            
     );
 }
 
