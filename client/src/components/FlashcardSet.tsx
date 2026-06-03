@@ -109,8 +109,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         
                     }}     
                     onClick={() => {
-                        setCard(currCard-1);
-                        setFlipped(false);
+                        goToPrevCard();
                     }}
                 >
                     ←
@@ -122,7 +121,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     frontText={flashcardList[currCard].frontText} 
                     backText={flashcardList[currCard].backText}
                     isFlipped={isFlipped}
-                    onClick={() => setFlipped(!isFlipped)}
+                    onClick={() => flipCard()}
                 >
                 </Flashcard>
 
@@ -144,8 +143,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         cursor: 'pointer', 
                     }}
                     onClick={() => {
-                        setCard(currCard+1);
-                        setFlipped(false);
+                        goToNextCard();
                     }}
                     >
                     →
@@ -197,12 +195,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         cursor: 'pointer',
                     }}
                     onClick={() => {
-                        recordAnswer(false);
-                        if (currCard + 1 < setSize) {
-                            setCard(currCard + 1);
-                        }
-                        setCardShownAt(Date.now());
-                        setFlipped(false);
+                        markAnswer(false);
                     }}
                     >
                     X
@@ -222,12 +215,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         cursor: 'pointer',
                     }}
                     onClick={() => {
-                        recordAnswer(true);
-                        if (currCard + 1 < setSize) {
-                            setCard(currCard + 1);
-                        }
-                        setCardShownAt(Date.now());
-                        setFlipped(false);
+                        markAnswer(true);
                     }}
                     >
                     ✓
