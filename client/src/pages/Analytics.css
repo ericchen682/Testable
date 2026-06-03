@@ -1,21 +1,21 @@
 :root {
-  --indigo:    rgb(23, 12, 121);
-  --indigo-2:  rgb(46, 33, 158);
-  --indigo-3:  rgb(78, 64, 196);
-  --cream:     rgb(239, 227, 202);
-  --cream-2:   rgb(245, 236, 215);
-  --cream-3:   rgb(250, 244, 228);
-  --teal:      rgb(86, 182, 198);
-  --teal-2:    rgb(138, 203, 208);
-  --teal-3:    rgb(196, 230, 233);
+  --indigo:    #1a254f;
+  --indigo-2:  #2a3b78;
+  --indigo-3:  #334071;
+  --cream:     #F5F0E1;
+  --cream-2:   #2a3b78;
+  --cream-3:   #334071;
+  --teal:      #00b9b3;
+  --teal-2:    #3FB6B2;
+  --teal-3:    #1a254f;
 
-  --ink:       rgb(23, 12, 121);
-  --ink-soft:  rgba(23, 12, 121, 0.78);
-  --muted:     rgba(23, 12, 121, 0.55);
-  --line:      rgba(23, 12, 121, 0.12);
-  --line-2:    rgba(23, 12, 121, 0.22);
-  --surface:   #ffffff;
-  --bg:        rgb(239, 227, 202);
+  --ink:       #F5F0E1;
+  --ink-soft:  rgba(245, 240, 225, 0.78);
+  --muted:     rgba(245, 240, 225, 0.55);
+  --line:      rgba(245, 240, 225, 0.12);
+  --line-2:    rgba(245, 240, 225, 0.22);
+  --surface:   #2a3b78;
+  --bg:        #07133b;
 
   --ok:   rgb(31, 122, 90);
   --warn: rgb(180, 105, 28);
@@ -23,8 +23,8 @@
 
   --radius:    14px;
   --radius-sm: 10px;
-  --shadow-1: 0 1px 0 rgba(23, 12, 121, 0.04), 0 6px 24px -10px rgba(23, 12, 121, 0.12);
-  --shadow-2: 0 8px 28px -8px rgba(23, 12, 121, 0.25);
+  --shadow-1: 0 1px 0 rgba(0,0,0,0.2), 0 6px 24px -10px rgba(0,0,0,0.3);
+  --shadow-2: 0 8px 28px -8px rgba(0,0,0,0.4);
 
   --sans: "Instrument Serif", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -205,19 +205,19 @@
   font-weight: 800;
   margin: 0 0 6px;
   letter-spacing: -0.02em;
-  color: var(--indigo);
+  color: #F5F0E1;
   font-family: var(--sans);
 }
 
 .an-page-title p {
   margin: 0;
-  color: var(--ink-soft);
+  color: #F5F0E1;
   font-size: 15px;
   
 }
 
 .an-page-title .accent {
-  color: var(--indigo);
+  color: #F5F0E1;
   font-weight: 700;
   background: linear-gradient(180deg, transparent 62%, var(--teal-2) 62%);
   padding: 0 2px;
@@ -272,7 +272,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--muted);
+  color: #3FB6B2;
   font-weight: 600;
   display: block;
 }
@@ -281,10 +281,11 @@
   font-weight: 700;
   font-size: 14px;
   display: block;
+  color: #F5F0E1;
 }
 
 .an-dd-chev {
-  color: var(--muted);
+  color: #F5F0E1;
   transition: transform 0.2s ease;
   display: flex;
 }
@@ -410,7 +411,7 @@
   font-family: var(--sans);
   font-size: 14px;
   font-weight: 700;
-  color: var(--muted);
+  color: rgba(245, 240, 225, 0.65);
   cursor: pointer;
   position: relative;
   transition: color 0.15s ease;
@@ -421,7 +422,7 @@
 }
 
 .an-tab.active {
-  color: var(--indigo);
+  color: #F5F0E1;
 }
 
 .an-tab.active::after {
@@ -515,21 +516,21 @@
   box-shadow: 5px 5px 0 var(--indigo);
 }
 
-.an-stat:nth-child(1) { background: var(--surface); }
-.an-stat:nth-child(2) { background: var(--cream-3); }
-.an-stat:nth-child(3) { background: var(--teal-3); }
-.an-stat:nth-child(4) { background: var(--cream-2); }
+.an-stat:nth-child(1) { background: #2a3b78; }
+.an-stat:nth-child(2) { background: #2a3b78; }
+.an-stat:nth-child(3) { background: #2a3b78; }
+.an-stat:nth-child(4) { background: #2a3b78; }
 
 .an-stat-label {
-  font-size: 11px;
-  color: var(--indigo);
+  font-size: 15px;
+  color: #F5F0E1;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   display: flex;
   align-items: center;
   gap: 6px;
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .an-stat-icon {
@@ -546,7 +547,7 @@
   margin: 8px 0 6px;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
-  color: var(--indigo);
+  color: #F5F0E1;
 }
 
 .an-stat-value .an-unit {
