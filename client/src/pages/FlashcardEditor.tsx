@@ -185,6 +185,7 @@ export default function FlashcardEditor() {
             value={set.title}
             onChange={(event) => updateTitle(event.target.value)}
             placeholder="Untitled"
+            data-testid="set-title-input"
           />
           <div className="flashcard-publish-panel">
             <div>
@@ -197,12 +198,12 @@ export default function FlashcardEditor() {
                 : 'This set is not visible in public flashcard sets.'}
               </p>
             </div>
-            <button onClick={togglePublish} disabled={publishing}>
+            <button onClick={togglePublish} disabled={publishing} data-testid="publish-button">
             {publishing ? 'Saving...' : set.isPublished ? 'Unpublish' : 'Publish'}
             </button>
           </div>
           {message && <p className="flashcard-editor-message">{message}</p>}
-          <button className="flashcard-view-cards" onClick={() => navigate(`/flashcards/${set.id}`)}>
+          <button className="flashcard-view-cards" onClick={() => navigate(`/flashcards/${set.id}`)} data-testid="start-studying-button">
             Start Studying!
           </button>
         </div>
@@ -221,20 +222,22 @@ export default function FlashcardEditor() {
           </div>
           <div className="flashcard-editor-right-inner">
             <div className="flashcard-editor-list">
-              {set.cards.map((card) => (
+              {set.cards.map((card, index) => (
                 <div className="flashcard-editor-card" key={card.id}>
                 
                   <div className="flashcard-editor-card-set">
                     <textarea 
-                    value={card.front} 
-                    onChange={(event) => updateCard(card.id, 'front', event.target.value)} 
-                    placeholder="Front"
+                      value={card.front} 
+                      onChange={(event) => updateCard(card.id, 'front', event.target.value)} 
+                      placeholder="Front"
+                      data-testid={`card-front-${index}`}
                     />
 
                     <textarea 
-                    value={card.back} 
-                    onChange={(event) => updateCard(card.id, 'back', event.target.value)} 
-                    placeholder="Back"
+                      value={card.back} 
+                      onChange={(event) => updateCard(card.id, 'back', event.target.value)} 
+                      placeholder="Back"
+                      data-testid={`card-front-${index}`}
                     />
                     {/* Later: add image upload fields to each card here. */}
                   </div>
@@ -254,7 +257,7 @@ export default function FlashcardEditor() {
             </div>
           </div>
             <div className="flashcard-editor-buttons">
-              <button className="flashcard-add-card" onClick={addCard}>
+              <button className="flashcard-add-card" onClick={addCard} data-testid="add-card-button">
                 Add a Card +
               </button>
             </div>
