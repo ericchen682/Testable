@@ -60,7 +60,6 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
         {
             setCard(currCard - 1);
             setFlipped(false);
-            setDone(false);
         }
     };
 
