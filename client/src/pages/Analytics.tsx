@@ -635,7 +635,7 @@ const TABS = [
   // { id: 'history', label: 'History' },
 ];
 
-export default function Analytics() {
+export default function Analytics({ embedded = false }: { embedded?: boolean }) {
   const [setId, setSetId] = useState('');
   const [periodId, setPeriodId] = useState('7d');
   const [tab, setTab] = useState('overview');
@@ -690,8 +690,8 @@ export default function Analytics() {
   }, [setId, token]);
 
   return (
-    <div className="analytics-root">
-      <header className="an-topnav">
+    <div className={embedded ? "analytics-embedded" : "analytics-root page-fade-in"}>
+      {!embedded && <header className="an-topnav">
           <div className="an-topnav-inner">
             <div className="an-brand">
               <svg width={21} height={21} viewBox="0 0 24 24" fill="none">
@@ -709,7 +709,7 @@ export default function Analytics() {
               <div className="an-avatar">JM</div>
             </div>
           </div>
-        </header>
+        </header>}
       <div className="analytics-app">
         <div className="an-page">
           <div className="an-page-head">

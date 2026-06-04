@@ -822,3 +822,18 @@
   .an-page      { padding-left: 20px; padding-right: 20px; }
   .an-topnav    { padding-left: 20px; padding-right: 20px; }
 }
+
+.analytics-embedded {
+  width: 100%;
+}
+
+.analytics-embedded .an-page {
+  max-width: 100%;
+  padding: 16px;
+}
+
+.analytics-embedded .analytics-app {
+  max-width: 100%;
+  padding: 0;
+  position: static;
+}
