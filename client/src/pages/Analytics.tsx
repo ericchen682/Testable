@@ -715,7 +715,7 @@ export default function Analytics({ embedded = false }: { embedded?: boolean }) 
           <div className="an-page-head">
             <div className="an-page-title">
               <h1>Analytics</h1>
-              <p>Track <span className="accent">accuracy</span>, streaks, and where to focus next.</p>
+              <p>Track accuracy, streaks, and where to focus next.</p>
             </div>
             <SetDropdown value={setId} onChange={setSetId} sets={realSets} />   
           </div>
