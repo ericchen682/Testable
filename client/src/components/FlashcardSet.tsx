@@ -236,6 +236,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         cursor: 'pointer',
                     }}
                     onClick={() => markAnswer(false)}
+                    data-testid="answer-wrong"
                     >
                     X
                 </button>
@@ -254,6 +255,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         cursor: 'pointer',
                     }}
                     onClick={() => markAnswer(true)}
+                    data-testid="answer-correct"
                     >
                     ✓
                 </button>
