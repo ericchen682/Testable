@@ -1,4 +1,5 @@
   import { useCallback, useEffect, useState } from 'react';
+import Analytics from './Analytics';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
@@ -13,7 +14,7 @@ interface FlashcardSetSummary {
 export default function Dashboard() {
   const [sets, setSets] = useState<FlashcardSetSummary[]>([]);
   const [publicSets, setPublicSets] = useState<FlashcardSetSummary[]>([]);
-  const [activeView, setActiveView] = useState<'mine' | 'public'>('mine');
+  const [activeView, setActiveView] = useState<'mine' | 'public' | 'analytics'>('mine');
   const [message, setMessage] = useState('Loading flashcard sets...');
   const [deletingSetId, setDeletingSetId] = useState<string | null>(null);
   const [publishingSetId, setPublishingSetId] = useState<string | null>(null);
@@ -300,7 +301,7 @@ export default function Dashboard() {
   const displayedSets = searchResults !== null ? searchResults : (activeView === 'mine' ? sets : publicSets);
 
   return (
-    <main className="dashboard-root">
+    <main className="dashboard-root page-fade-in">
       <header className="dashboard-header">
         <div className="logo">
           <svg width={31} height={31} viewBox="0 0 24 24" fill="none">
@@ -327,8 +328,8 @@ export default function Dashboard() {
               Public sets
             </button>
             <button
-              className="dashboard-nav-link"
-              onClick={() => navigate('/analytics')}
+              className={activeView === 'analytics' ? 'dashboard-nav-link dashboard-nav-link--active' : 'dashboard-nav-link'}
+              onClick={() => setActiveView('analytics')}
             >
               Analytics
             </button>
@@ -338,6 +339,7 @@ export default function Dashboard() {
           </button>
         </div>
         <section className="dashboard-content">
+          {activeView === 'analytics' ? <Analytics embedded /> : <>
           <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginTop: '24px', marginLeft: '24px' }}>
             <div className="dashboard-search-bar" style={{ marginTop: 0, marginLeft: 0, flex: 1, maxWidth: '900px' }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -420,6 +422,7 @@ export default function Dashboard() {
               </article>
             ))}
           </div>
+        </>}
         </section>
       </div>
     </main>

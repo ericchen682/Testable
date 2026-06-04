@@ -20,7 +20,7 @@
   letter-spacing: 0.18px;
   color-scheme: light dark;
   color: var(--text);
-  background: var(--bg);
+  background: #07133b;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -35,7 +35,7 @@
   :root {
     --text: #9ca3af;
     --text-h: #f3f4f6;
-    --bg: #16171d;
+    background: #07133b;
     --border: #2e303a;
     --code-bg: #1f2028;
     --accent: #c084fc;
@@ -69,11 +69,13 @@
 /* COMMON TAGS */
 html {
   overflow-x: hidden;
+  background: #07133b;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
+  background: #07133b;
 }
 
 h1,
@@ -125,11 +127,24 @@ code {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { 
+    opacity: 0;
+    transform: translateY(8px); 
+    background-color: #07133b;
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0); 
+  }
 }
 
 @keyframes popIn {
   0% { transform: scale(0.4); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+.page-fade-in {
+  animation: fadeIn 0.6s ease-out both;
+  min-height: 100svh;
+  background-color: #07133b;
 }

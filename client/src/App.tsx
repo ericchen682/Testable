@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Navigate, Routes, Route, useLocation } from 'react-router-dom'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
@@ -10,19 +10,29 @@ import Analytics from './pages/Analytics'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 
+function PageFade({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
+  return (
+    <div key={location.pathname} className="page-fade-in">
+      { children }
+    </div>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/flashcards/:setId" element={<FlashcardView />} />
-        <Route path="/flashcards/:setId/edit" element={<FlashcardEditor />} />
-        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/login" element={<PageFade><Login /></PageFade>} />
+        <Route path="/signup" element={<PageFade><Signup /></PageFade>} />
+        <Route path="/forgot-password" element={<PageFade><ForgotPassword /></PageFade>} />
+        <Route path="/reset-password" element={<PageFade><ResetPassword /></PageFade>} />
+        <Route path="/dashboard" element={<PageFade><Dashboard /></PageFade>} />
+        <Route path="/flashcards/:setId" element={<PageFade><FlashcardView /></PageFade>} />
+        <Route path="/flashcards/:setId/edit" element={<PageFade><FlashcardEditor /></PageFade>} />
+        <Route path="/analytics" element={<PageFade><Analytics /></PageFade>} />
       </Routes>
     </BrowserRouter>
   );
