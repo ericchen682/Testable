@@ -114,6 +114,10 @@ npm run dev
 - If the database contains bad test data, stop the backend, delete `server/data/testable.db`, and restart it
 - If dependencies fail to install, confirm that you are using Node.js 20 or newer, then rerun `npm install` separately inside both `server/` and `client/`.
 
-### database visualization:
+### edit flashcards user flow diagram:
 
-<img src="TestableDBVisualization.jpg" alt="Testable database visualization">
+<img src="EditFlashcardsUserFlow.png" alt="edit flashcard user flow diagram">
+
+### user authentication sequence diagram:
+
+<img src="UserAuthenticationSequenceDiagram.png" alt="user authentication sequence diagram">
