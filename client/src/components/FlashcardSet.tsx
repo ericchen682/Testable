@@ -50,6 +50,82 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
             // fire and forget, don't block UI
         }
     };
+
+    const flipCard = () => {
+        setFlipped(!isFlipped);
+    };
+
+    const goToPrevCard = () => {
+        if (currCard > 0)
+        {
+            setCard(currCard - 1);
+            setFlipped(false);
+        }
+    };
+
+    const goToNextCard = () => {
+        if (currCard + 1 < setSize)
+        {
+            setCard(currCard + 1);
+            setFlipped(false);
+        }
+    };
+
+    const markAnswer = (correct: boolean) => {
+        recordAnswer(correct);
+
+        if (currCard + 1 < setSize) {
+            setCard(currCard + 1);
+        } else {
+            setDone(true);
+        }
+
+        setCardShownAt(Date.now());
+        setFlipped(false);
+    };
+
+    React.useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const target = event.target as HTMLElement | null;
+
+            if (
+                target?.tagName === 'INPUT' ||
+                target?.tagName === 'TEXTAREA' ||
+                target?.tagName === 'SELECT' ||
+                target?.isContentEditable
+            ) {
+                return;
+            }
+
+            if(event.code === 'Space') {
+                event.preventDefault();
+                flipCard();
+            }
+
+            if(event.key === 'ArrowLeft') {
+                goToPrevCard();
+            }
+
+            if(event.key === 'ArrowRight') {
+                goToNextCard();
+            }
+
+            if(event.key === '1') {
+                markAnswer(false);
+            }
+
+            if(event.key === '2') {
+                markAnswer(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };    
+    }, [currCard, setSize, isFlipped, cardShownAt]);
+
     return(
         <div
             style = {{
@@ -77,10 +153,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         cursor: 'pointer',
                         
                     }}     
-                    onClick={() => {
-                        setCard(currCard-1);
-                        setFlipped(false);
-                    }}
+                    onClick={() => goToPrevCard()}
                 >
                     ←
                 </Button>
@@ -91,7 +164,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     frontText={flashcardList[currCard].frontText} 
                     backText={flashcardList[currCard].backText}
                     isFlipped={isFlipped}
-                    onClick={() => setFlipped(!isFlipped)}
+                    onClick={() => flipCard()}
                 >
                 </Flashcard>
 
@@ -112,10 +185,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                         visibility: currCard+1 < setSize ? "visible" : "hidden",
                         cursor: 'pointer', 
                     }}
-                    onClick={() => {
-                        setCard(currCard+1);
-                        setFlipped(false);
-                    }}
+                    onClick={() => goToNextCard()}
                     >
                     →
                 </Button>
@@ -150,71 +220,47 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                     <div style={{ width: "3rem", height: "3rem" }} /> 
                 } */}
             </div>
-            {!done && (
-                <div style = {{ display: "flex", gap: "1rem"}}>
-                    <button
-                        onMouseEnter={() => setHoveredBtn('wrong')}                          
-                        onMouseLeave={() => setHoveredBtn(null)}       
-                        style = {{
-                            border: "2px solid #079198",
-                            backgroundColor: hoveredBtn === 'wrong' ? '#ad4e4e' : '#334071',
-                            color: hoveredBtn === 'wrong' ? '#334071' : '#ad4e4e',
-                            // borderWidth:"0px",
-                            borderRadius:"0.5rem",
-                            width: "4rem",
-                            height: "3rem",
-                            cursor: 'pointer',
-                        }}
-                        onClick={() => {
-                            recordAnswer(false);
-                            if (currCard + 1 < setSize) {
-                                setCard(currCard + 1);
-                                setFlipped(false);
-                            }
-                            else{
-                                setDone(true);
-                            }
-                            setCardShownAt(Date.now());
 
-                        }}
-                        data-testid="answer-wrong"
-                        >
-                        X
-                    </button>
+            {!done && <div style = {{ display: "flex", gap: "1rem"}}>
+                <button
+                    onMouseEnter={() => setHoveredBtn('wrong')}                          
+                    onMouseLeave={() => setHoveredBtn(null)}       
+                    style = {{
+                        border: "2px solid #079198",
+                        backgroundColor: hoveredBtn === 'wrong' ? '#ad4e4e' : '#334071',
+                        color: hoveredBtn === 'wrong' ? '#334071' : '#ad4e4e',
+                        // borderWidth:"0px",
+                        borderRadius:"0.5rem",
+                        width: "4rem",
+                        height: "3rem",
+                        cursor: 'pointer',
+                    }}
+                    onClick={() => markAnswer(false)}
+                    data-testid="answer-wrong"
+                    >
+                    X
+                </button>
 
-                    <button
-                        onMouseEnter={() => setHoveredBtn('correct')}
-                        onMouseLeave={() => setHoveredBtn(null)}
-                        style = {{
-                            border: "2px solid #079198",
-                            backgroundColor: hoveredBtn === 'correct' ? '#4ead69' :'#334071',
-                            color: hoveredBtn === 'correct' ? '#334071' : '#4ead69',
-                            // borderWidth:"0px",
-                            borderRadius:"0.5rem",
-                            width: "4rem",
-                            height: "3rem",
-                            cursor: 'pointer',
-                        }}
-                        onClick={() => {
-                            recordAnswer(true);
-                            if (currCard + 1 < setSize) {
-                                setCard(currCard + 1);
-                                setFlipped(false);
-                            }
-                            else{
-                                setDone(true);
-                            }
-                            setCardShownAt(Date.now());
-                            
-                        }}
-                        data-testid="answer-correct"
-                        >
-                        ✓
-                    </button>
-                </div>   
-                )}     
-            </div>
-            
+                <button
+                    onMouseEnter={() => setHoveredBtn('correct')}
+                    onMouseLeave={() => setHoveredBtn(null)}
+                    style = {{
+                        border: "2px solid #079198",
+                        backgroundColor: hoveredBtn === 'correct' ? '#4ead69' :'#334071',
+                        color: hoveredBtn === 'correct' ? '#334071' : '#4ead69',
+                        // borderWidth:"0px",
+                        borderRadius:"0.5rem",
+                        width: "4rem",
+                        height: "3rem",
+                        cursor: 'pointer',
+                    }}
+                    onClick={() => markAnswer(true)}
+                    data-testid="answer-correct"
+                    >
+                    ✓
+                </button>
+            </div>}        
+        </div>
     );
 }
 
