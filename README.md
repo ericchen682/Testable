@@ -113,7 +113,3 @@ npm run dev
 - If port `3001` is already in use, either stop the other process or change the backend `PORT`. If you change the backend port, update the hardcoded frontend fetch URLs in `client/src/pages`
 - If the database contains bad test data, stop the backend, delete `server/data/testable.db`, and restart it
 - If dependencies fail to install, confirm that you are using Node.js 20 or newer, then rerun `npm install` separately inside both `server/` and `client/`.
-
-### database visualization:
-
-<img src="TestableDBVisualization.jpg" alt="Testable database visualization">
