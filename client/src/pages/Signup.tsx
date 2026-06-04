@@ -2,7 +2,7 @@ import { type ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-const Field = ({ label, type = 'text', value, onChange, error, autoFocus, suffix }: {
+const Field = ({ label, type = 'text', value, onChange, error, autoFocus, suffix, testId }: {
   label: string;
   type?: string;
   value: string;
@@ -10,6 +10,7 @@ const Field = ({ label, type = 'text', value, onChange, error, autoFocus, suffix
   error?: string;
   autoFocus?: boolean;
   suffix?: ReactNode;
+  testId?: string;
 }) => (
   <div className="field">
     <label>{label}</label>
@@ -19,6 +20,7 @@ const Field = ({ label, type = 'text', value, onChange, error, autoFocus, suffix
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        data-testid={testId}
       />
       {suffix}
     </div>
@@ -157,7 +159,16 @@ export default function Signup() {
           </p>
         </div>
 
-        <Field label="Email" type="email" value={email} onChange={setEmail} error={errors.email} autoFocus />
+        <Field 
+          label="Email" 
+          type="email" 
+          value={email} 
+          onChange={setEmail} 
+          error={errors.email} 
+          autoFocus 
+          testId="signup-email" 
+        />
+
         <Field
           label="Password"
           type={showPw ? 'text' : 'password'}
@@ -165,7 +176,9 @@ export default function Signup() {
           onChange={setPassword}
           error={errors.password}
           suffix={<PasswordEye visible={showPw} onToggle={() => setShowPw(!showPw)} />}
+          testId="signup-password"
         />
+
         <Field
           label="Confirm password"
           type={showConfirmPw ? 'text' : 'password'}
@@ -173,11 +186,12 @@ export default function Signup() {
           onChange={setConfirmPassword}
           error={errors.confirmPassword}
           suffix={<PasswordEye visible={showConfirmPw} onToggle={() => setShowConfirmPw(!showConfirmPw)} />}
+          testId="signup-confirm-password"
         />
 
         {formError && <span className="field-error">{formError}</span>}
 
-        <button className="btn-primary" onClick={submit} disabled={loading}>
+        <button className="btn-primary" onClick={submit} disabled={loading} data-testid="signup-submit">
           {loading ? (
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="spin">
               <circle cx="12" cy="12" r="9" stroke="#0A1238" strokeWidth="2.5" strokeOpacity="0.25" />

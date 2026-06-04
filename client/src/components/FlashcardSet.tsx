@@ -177,6 +177,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                             setCardShownAt(Date.now());
 
                         }}
+                        data-testid="answer-wrong"
                         >
                         X
                     </button>
@@ -206,6 +207,7 @@ function FlashcardSet({ flashcardList, setId, token }: FlashcardSetProps)
                             setCardShownAt(Date.now());
                             
                         }}
+                        data-testid="answer-correct"
                         >
                         ✓
                     </button>
