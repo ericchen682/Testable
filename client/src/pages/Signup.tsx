@@ -139,9 +139,15 @@ export default function Signup() {
 
         <div className="flashcard-stack">
           <div className="flashcard">
-            <div className="flashcard-set">Bio 101 · set</div>
-            <div className="flashcard-term">Mitochondria</div>
-            <div className="flashcard-hint">tap to flip</div>
+            <div className="flashcard-set">
+              Bio 101 · set
+            </div>
+            <div className="flashcard-term">
+              Mitochondria
+            </div>
+            <div className="flashcard-hint">
+              tap to flip
+            </div>
           </div>
           <div className="flashcard-shadow" />
         </div>
@@ -153,7 +159,9 @@ export default function Signup() {
 
       <div className="login-right">
         <div>
-          <h2 className="login-title">Create account</h2>
+          <h2 className="login-title">
+            Create account
+          </h2>
           <p className="login-subtitle">
             Already have an account? <a href="/login" className="login-link">Sign in</a>
           </p>
@@ -191,7 +199,12 @@ export default function Signup() {
 
         {formError && <span className="field-error">{formError}</span>}
 
-        <button className="btn-primary" onClick={submit} disabled={loading} data-testid="signup-submit">
+        <button 
+          className="btn-primary" 
+          onClick={submit} 
+          disabled={loading} 
+          data-testid="signup-submit"
+        >
           {loading ? (
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="spin">
               <circle cx="12" cy="12" r="9" stroke="#0A1238" strokeWidth="2.5" strokeOpacity="0.25" />
@@ -218,9 +231,15 @@ export default function Signup() {
                 <path d="M5 12.5l4.5 4.5L19 7.5" stroke="#0A1238" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <div className="success-title">Account created.</div>
-            <div className="success-sub">Your study space is ready.</div>
-            <button onClick={reset} className="success-reset">reset demo</button>
+            <div className="success-title">
+              Account created.
+            </div>
+            <div className="success-sub">
+              Your study space is ready.
+            </div>
+            <button onClick={reset} className="success-reset">
+              reset demo
+            </button>
           </div>
         )}
       </div>
