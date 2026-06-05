@@ -106,6 +106,33 @@ cd client
 npm run dev
 ```
 
+## Testing the app
+
+
+To run integration tests:
+Starting at the root of the repository, run
+```bash
+cd client
+npm test
+```
+
+To run end to end tests:
+Before running end to end tests, ensure playwright is installed
+
+One time setup:
+Starting at the root of the repository, run
+```bash
+cd server
+npx playwright install
+```
+
+After one time setup is complete,
+Starting at the root of the repository, run
+```bash
+cd server
+npm run test:e2e
+```
+
 ## Troubleshooting
 
 - If signup or login fails immediately, check that `server/.env` exists and includes `JWT_SECRET`
