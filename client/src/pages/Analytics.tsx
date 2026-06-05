@@ -462,11 +462,8 @@ function SetRow({ set, period }: { set: CardSet; period: Period }) {
 // ── Overview tab ──────────────────────────────────────────
  function OverviewTab({ setId, period, realAccuracy, realReviews, realStreak, realAvgTime }: { setId: string; period: Period; realAccuracy?: number; realReviews?: number; realStreak?: number; realAvgTime?:number})    {
   const data = useMemo(() => summaryFor(setId, period), [setId, period]);
-  const tough = TOUGH_CARDS[setId] || TOUGH_CARDS.all;
-  const visibleSets = CARD_SETS.filter(s => s.id !== 'all');
   const sparkAcc = data.series.map(d => d.value);
   const sparkReviews = data.series.map(d => d.reviews);
-  const currentSet = CARD_SETS.find(s => s.id === setId) || CARD_SETS[0];
 
   return (
     <>
