@@ -2,8 +2,12 @@
 
 const db = require('./db');
 
-const findByEmailStmt = db.prepare('SELECT * FROM USERS WHERE email = ?');
-const findByIdStmt = db.prepare('SELECT * FROM USERS WHERE id = ?');
+const findByEmailStmt = db.prepare(`
+  SELECT * FROM USERS WHERE email = ?
+`);
+const findByIdStmt = db.prepare(`
+  SELECT * FROM USERS WHERE id = ?
+`);
 const insertUserStmt = db.prepare(`
   INSERT INTO users (id, email, password_hash, password_salt, created_at) 
   VALUES (@id, @email, @passwordHash, @passwordSalt, @createdAt)
