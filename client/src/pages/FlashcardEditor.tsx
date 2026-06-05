@@ -189,8 +189,13 @@ export default function FlashcardEditor() {
           />
           <div className="flashcard-publish-panel">
             <div>
-              <span className={set.isPublished ? 'flashcard-publish-status flashcard-publish-status--public' : 'flashcard-publish-status'}>
-              {set.isPublished ? 'Published' : 'Private'}
+              <span className={set.isPublished 
+                ? 'flashcard-publish-status flashcard-publish-status--public' 
+                : 'flashcard-publish-status'}
+              >
+                {set.isPublished 
+                ? 'Published' 
+                : 'Private'}
               </span>
               <p>
                 {set.isPublished
@@ -198,12 +203,26 @@ export default function FlashcardEditor() {
                 : 'This set is not visible in public flashcard sets.'}
               </p>
             </div>
-            <button onClick={togglePublish} disabled={publishing} data-testid="publish-button">
-            {publishing ? 'Saving...' : set.isPublished ? 'Unpublish' : 'Publish'}
+            <button 
+              onClick={togglePublish} 
+              disabled={publishing} 
+              data-testid="publish-button"
+            >
+              {publishing 
+              ? 'Saving...' 
+              : set.isPublished 
+                ? 'Unpublish' 
+                : 'Publish'}
             </button>
           </div>
+
           {message && <p className="flashcard-editor-message">{message}</p>}
-          <button className="flashcard-view-cards" onClick={() => navigate(`/flashcards/${set.id}`)} data-testid="start-studying-button">
+
+          <button 
+            className="flashcard-view-cards" 
+            onClick={() => navigate(`/flashcards/${set.id}`)} 
+            data-testid="start-studying-button"
+          >
             Start Studying!
           </button>
         </div>
@@ -241,7 +260,10 @@ export default function FlashcardEditor() {
                     />
                     {/* Later: add image upload fields to each card here. */}
                   </div>
-                  <button className="flashcard-delete-card" onClick={() => deleteCard(card.id)}>
+                  <button 
+                    className="flashcard-delete-card" 
+                    onClick={() => deleteCard(card.id)}
+                  >
                       <svg width="22" height="25" viewBox="290 40 100 220" fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="280" y1="70" x2="400" y2="70"/>
                         <path d="M310 70 L312 50 L368 50 L370 70"/>
@@ -257,7 +279,11 @@ export default function FlashcardEditor() {
             </div>
           </div>
             <div className="flashcard-editor-buttons">
-              <button className="flashcard-add-card" onClick={addCard} data-testid="add-card-button">
+              <button 
+                className="flashcard-add-card" 
+                onClick={addCard} 
+                data-testid="add-card-button"
+              >
                 Add a Card +
               </button>
             </div>

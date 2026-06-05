@@ -88,9 +88,15 @@ export default function ForgotPassword() {
 
         <div className="flashcard-stack">
           <div className="flashcard">
-            <div className="flashcard-set">Bio 101 · set</div>
-            <div className="flashcard-term">Mitochondria</div>
-            <div className="flashcard-hint">tap to flip</div>
+            <div className="flashcard-set">
+              Bio 101 · set
+            </div>
+            <div className="flashcard-term">
+              Mitochondria
+            </div>
+            <div className="flashcard-hint">
+              tap to flip
+            </div>
           </div>
           <div className="flashcard-shadow" />
         </div>
@@ -102,13 +108,21 @@ export default function ForgotPassword() {
 
       <div className="login-right">
         <div>
-          <h2 className="login-title">Reset password</h2>
+          <h2 className="login-title">
+            Reset password
+          </h2>
           <p className="login-subtitle">
             Remembered it? <a href="/login" className="login-link">Sign in</a>
           </p>
         </div>
 
-        <Field label="Email" type="email" value={email} onChange={setEmail} error={emailError} autoFocus />
+        <Field 
+          label="Email" 
+          type="email" 
+          value={email} 
+          onChange={setEmail} 
+          error={emailError} autoFocus 
+        />
 
         {formError && <span className="field-error">{formError}</span>}
         {message && <span className="field-success">{message}</span>}

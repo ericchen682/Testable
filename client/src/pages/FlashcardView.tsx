@@ -74,7 +74,9 @@ export default function FlashcardView() {
   return (
     <main className="flashcard-view-root">
       <header className="flashcard-view-header">
-        <button onClick={() => navigate('/dashboard')}>{'<'} Back to dashboard</button>
+        <button onClick={() => navigate('/dashboard')}>
+          {'<'} Back to dashboard
+        </button>
         {set && (
           <button onClick={() => navigate(`/flashcards/${set.id}/edit`)}>
             Edit {'>'}
@@ -85,11 +87,18 @@ export default function FlashcardView() {
       <section className="flashcard-view-content">
         {set && (
           <div className="flashcard-view-title-row">
-            <span className={set.isPublished ? 'flashcard-view-badge flashcard-view-badge--public' : 'flashcard-view-badge'}>
-              {set.isPublished ? 'Published' : 'Private'}
+            <span className={
+              set.isPublished 
+              ? 'flashcard-view-badge flashcard-view-badge--public' 
+              : 'flashcard-view-badge'}
+            >
+              {set.isPublished 
+              ? 'Published' 
+              : 'Private'}
             </span>
           </div>
         )}
+
         {message && <p className="flashcard-view-message">{message}</p>}
 
         {set && flashcardList.length === 0 && (
@@ -103,9 +112,14 @@ export default function FlashcardView() {
 
          {set && flashcardList.length > 0 && (
           <div className="flashcard-view-player">
-            <FlashcardSet flashcardList={flashcardList} setId={set.id} token={token!} />  
+            <FlashcardSet 
+              flashcardList={flashcardList} 
+              setId={set.id} 
+              token={token!} 
+            />  
           </div>
         )}
+        
       </section>
     </main>
   );

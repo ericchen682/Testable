@@ -11,9 +11,22 @@ const findTokenStmt = db.prepare(`
   FROM password_reset_tokens
   WHERE token_hash = ?
 `);
-const deleteTokenStmt = db.prepare('DELETE FROM password_reset_tokens WHERE token_hash = ?');
-const deleteUserTokensStmt = db.prepare('DELETE FROM password_reset_tokens WHERE user_id = ?');
-const deleteExpiredTokensStmt = db.prepare('DELETE FROM password_reset_tokens WHERE expires_at <= ?');
+const deleteTokenStmt = db.prepare(`
+  DELETE 
+  FROM password_reset_tokens 
+  WHERE token_hash = ?
+`);
+
+const deleteUserTokensStmt = db.prepare(`
+  DELETE 
+  FROM password_reset_tokens 
+  WHERE user_id = ?
+`);
+const deleteExpiredTokensStmt = db.prepare(`
+  DELETE 
+  FROM password_reset_tokens 
+  WHERE expires_at <= ?
+`);
 
 function hashResetToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');

@@ -133,15 +133,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* <div className="social-row">
-          <button className="btn-social">
-            <img src="https://www.google.com/favicon.ico" width="16" height="16" alt="" />
-            Google
-          </button>
-        </div>
-
-        <div className="divider"><span>or with email</span></div> */}
-
         <Field 
           label="Email" 
           type="email" 
@@ -170,7 +161,12 @@ export default function Login() {
 
         {formError && <span className="field-error">{formError}</span>}
 
-        <button className="btn-primary" onClick={submit} disabled={loading} data-testid="login-submit">
+        <button 
+          className="btn-primary" 
+          onClick={submit} 
+          disabled={loading} 
+          data-testid="login-submit"
+        >
           {loading ? (
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="spin">
               <circle cx="12" cy="12" r="9" stroke="#0A1238" strokeWidth="2.5" strokeOpacity="0.25" />
@@ -197,9 +193,15 @@ export default function Login() {
                 <path d="M5 12.5l4.5 4.5L19 7.5" stroke="#0A1238" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <div className="success-title">You're in.</div>
-            <div className="success-sub">Loading your decks…</div>
-            <button onClick={reset} className="success-reset">reset demo</button>
+            <div className="success-title">
+              You're in.
+            </div>
+            <div className="success-sub">
+              Loading your decks…
+            </div>
+            <button onClick={reset} className="success-reset">
+              reset demo
+            </button>
           </div>
         )}
       </div>
