@@ -65,18 +65,13 @@ const crypto = require('crypto');
         if (!dates.length) return 0;
 
         const today = toDateString(new Date()); 
-        // const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-
         const yesterday = toDateString( new Date(Date.now() - MS_PER_DAY));
 
 
         if (dates[0] !== today && dates[0] !== yesterday) return 0;
 
         let streak = 1;
-        for (let i = 1; i < dates.length; i++) { // Cycle through to see number of consecutive days
-            // const prev = new Date(dates[i - 1]);
-            // const curr = new Date(dates[i]);
-            // const diff = (prev - curr) / 86400000;
+        for (let i = 1; i < dates.length; i++) {
             if (isConsecutiveDay(dates[i-1], dates[i])){
                 streak++;
             }
