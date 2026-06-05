@@ -3,19 +3,27 @@ const db = require('./db');
 // find all sets given a specific user
 const listSetsForUserStmt = db.prepare(`
   SELECT s.id, s.title, s.is_published, s.updated_at,
-         COUNT(c.id) AS cardCount
-    FROM flashcard_sets s
-    LEFT JOIN flashcards c ON c.set_id = s.id
-   WHERE s.user_id = ?
-   GROUP BY s.id
-   ORDER BY s.updated_at DESC
+  COUNT(c.id) AS cardCount
+  FROM flashcard_sets s
+  LEFT JOIN flashcards c ON c.set_id = s.id
+  WHERE s.user_id = ?
+  GROUP BY s.id
+  ORDER BY s.updated_at DESC
 `);
 
 // find specific set given set id
-const findSetByIdStmt = db.prepare('SELECT * FROM flashcard_sets WHERE id = ?');
+const findSetByIdStmt = db.prepare(`
+  SELECT * FROM flashcard_sets 
+  WHERE id = ?
+`);
 
 // find cards given set id
-const listCardsBySetIdStmt = db.prepare('SELECT id, front, back FROM flashcards WHERE set_id = ? ORDER BY position ASC');
+const listCardsBySetIdStmt = db.prepare(`
+  SELECT id, front, back 
+  FROM flashcards 
+  WHERE set_id = ? 
+  ORDER BY position ASC
+`);
 
 // create a set
 const insertSetStmt = db.prepare(`
@@ -24,13 +32,27 @@ const insertSetStmt = db.prepare(`
 `);
 
 // update metadata of a set
-const updateSetMetaStmt = db.prepare('UPDATE flashcard_sets SET title = @title, updated_at = @updatedAt WHERE id = @id');
+const updateSetMetaStmt = db.prepare(`
+  UPDATE flashcard_sets 
+  SET title = @title, updated_at = @updatedAt 
+  WHERE id = @id
+`);
 
 // delete a set and cascade its cards
-const deleteSetStmt = db.prepare('DELETE FROM flashcard_sets WHERE id = ?');
+const deleteSetStmt = db.prepare(`
+  DELETE 
+  FROM flashcard_sets 
+  WHERE id = ?
+`);
 
 // toggle published status of a set
-const updatePublishedStmt = db.prepare('UPDATE flashcard_sets SET is_published = @isPublished, updated_at = @updatedAt WHERE id = @id');
+const updatePublishedStmt = db.prepare(`
+  UPDATE flashcard_sets 
+  SET 
+    is_published = @isPublished, 
+    updated_at = @updatedAt 
+  WHERE id = @id
+`);
 
 // get all public sets
 const listPublicSetsStmt = db.prepare(`
@@ -44,7 +66,11 @@ const listPublicSetsStmt = db.prepare(`
 `);
 
 // delete all flashcards in a set
-const deleteCardsForSetStmt = db.prepare('DELETE FROM flashcards WHERE set_id = ?');
+const deleteCardsForSetStmt = db.prepare(`
+  DELETE 
+  FROM flashcards 
+  WHERE set_id = ?
+`);
 
 // insert a card into a set
 const insertCardStmt = db.prepare(`
