@@ -115,9 +115,15 @@ export default function ResetPassword() {
 
         <div className="flashcard-stack">
           <div className="flashcard">
-            <div className="flashcard-set">Bio 101 · set</div>
-            <div className="flashcard-term">Mitochondria</div>
-            <div className="flashcard-hint">tap to flip</div>
+            <div className="flashcard-set">
+              Bio 101 · set
+            </div>
+            <div className="flashcard-term">
+              Mitochondria
+            </div>
+            <div className="flashcard-hint">
+              tap to flip
+            </div>
           </div>
           <div className="flashcard-shadow" />
         </div>
@@ -129,7 +135,9 @@ export default function ResetPassword() {
 
       <div className="login-right">
         <div>
-          <h2 className="login-title">Choose new password</h2>
+          <h2 className="login-title">
+            Choose new password
+          </h2>
           <p className="login-subtitle">
             Back to <a href="/login" className="login-link">sign in</a>
           </p>
